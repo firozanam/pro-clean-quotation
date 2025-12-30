@@ -244,9 +244,27 @@ $employees = Employee::getAll();
 
 .pcq-filter-row select,
 .pcq-filter-row input[type="text"] {
-    padding: 8px 12px;
+    padding: 8px 32px 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    min-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: #fff url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L1 4h10z"/></svg>') no-repeat right 10px center;
+    background-size: 12px;
+}
+
+.pcq-filter-row input[type="text"] {
+    background: #fff;
+    padding: 8px 12px;
+}
+
+.pcq-filter-row select option {
+    white-space: normal;
 }
 
 .pcq-table-container {
@@ -254,6 +272,90 @@ $employees = Employee::getAll();
     border: 1px solid #ccd0d4;
     border-radius: 8px;
     overflow: hidden;
+    overflow-x: auto;
+}
+
+/* Table layout fixes */
+.pcq-table-container table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Column widths to prevent overlapping */
+.pcq-table-container table thead th:nth-child(1),
+.pcq-table-container table tbody td:nth-child(1) {
+    width: 40px;
+}
+
+.pcq-table-container table thead th:nth-child(2),
+.pcq-table-container table tbody td:nth-child(2) {
+    width: 180px;
+}
+
+.pcq-table-container table thead th:nth-child(3),
+.pcq-table-container table tbody td:nth-child(3) {
+    width: 160px;
+    max-width: 160px;
+}
+
+.pcq-table-container table thead th:nth-child(4),
+.pcq-table-container table tbody td:nth-child(4) {
+    width: 140px;
+}
+
+.pcq-table-container table thead th:nth-child(5),
+.pcq-table-container table tbody td:nth-child(5) {
+    width: 140px;
+}
+
+.pcq-table-container table thead th:nth-child(6),
+.pcq-table-container table tbody td:nth-child(6) {
+    width: 80px;
+}
+
+.pcq-table-container table thead th:nth-child(7),
+.pcq-table-container table tbody td:nth-child(7) {
+    width: 90px;
+}
+
+.pcq-table-container table thead th:nth-child(8),
+.pcq-table-container table tbody td:nth-child(8) {
+    width: 100px;
+}
+
+.pcq-table-container table thead th:nth-child(9),
+.pcq-table-container table tbody td:nth-child(9) {
+    width: 60px;
+}
+
+/* Ensure table headers don't wrap */
+.pcq-table-container table thead th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Ensure table cells don't wrap unnecessarily */
+.pcq-table-container table tbody td {
+    white-space: normal;
+}
+
+/* Specific cells that should never wrap */
+.pcq-table-container table tbody td:nth-child(1),
+.pcq-table-container table tbody td:nth-child(5),
+.pcq-table-container table tbody td:nth-child(6),
+.pcq-table-container table tbody td:nth-child(7),
+.pcq-table-container table tbody td:nth-child(8) {
+    white-space: nowrap;
+}
+
+/* Customer and Employee columns can wrap if needed */
+.pcq-table-container table tbody td:nth-child(2) strong,
+.pcq-table-container table tbody td:nth-child(4) {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 
 .pcq-service-badge {
@@ -264,6 +366,11 @@ $employees = Employee::getAll();
     font-size: 12px;
     font-weight: 500;
     background-color: #2196F3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 145px;
+    vertical-align: middle;
 }
 
 .pcq-status-badge {
@@ -273,6 +380,7 @@ $employees = Employee::getAll();
     font-size: 12px;
     font-weight: 500;
     text-transform: capitalize;
+    white-space: nowrap;
 }
 
 .pcq-status-pending { background-color: #ff9800; color: #fff; }
