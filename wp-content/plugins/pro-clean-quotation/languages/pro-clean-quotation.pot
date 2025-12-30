@@ -1,0 +1,382 @@
+# Copyright (C) 2025 Pro Clean Development Team
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Pro Clean Quotation System 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wecleaning.com\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-12-30T16:00:00+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: Pro Clean Quotation i18n\n"
+"X-Domain: pro-clean-quotation\n"
+
+#: pro-clean-quotation.php:31
+msgid "Pro Clean Quotation System requires PHP 8.0 or higher. Please update your PHP version."
+msgstr ""
+
+#: includes/Plugin.php:162
+msgid "Calculating..."
+msgstr ""
+
+#: includes/Plugin.php:163
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: includes/Plugin.php:164
+msgid "This field is required."
+msgstr ""
+
+#: includes/Plugin.php:165
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: includes/Plugin.php:166
+msgid "Please enter a valid phone number."
+msgstr ""
+
+#: includes/Plugin.php:167
+msgid "Total Price"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:46
+#: includes/Admin/AdminMenu.php:47
+msgid "Pro Clean Quotation"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:47
+msgid "Quotations"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:58
+#: includes/Admin/AdminMenu.php:59
+msgid "Dashboard"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:68
+#: includes/Admin/AdminMenu.php:69
+msgid "Quotes"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:78
+#: includes/Admin/AdminMenu.php:79
+msgid "Appointments"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:88
+#: includes/Admin/AdminMenu.php:89
+msgid "Calendar"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:98
+#: includes/Admin/AdminMenu.php:99
+msgid "Settings"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:468
+msgid "MotoPress Appointment"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:469
+msgid "Active"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:469
+msgid "Inactive"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:473
+msgid "WooCommerce (Optional)"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:474
+msgid "Active - Online Payments Available"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:474
+msgid "Not Active - Cash/Bank Transfer Only"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:478
+msgid "Email Notifications"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:479
+msgid "Enabled"
+msgstr ""
+
+#: includes/Admin/Dashboard.php:479
+msgid "Disabled"
+msgstr ""
+
+#: includes/API/QuoteController.php:161
+msgid "An error occurred while calculating the quote."
+msgstr ""
+
+#: includes/API/QuoteController.php:188
+msgid "An error occurred while submitting the quote."
+msgstr ""
+
+#: includes/API/QuoteController.php:208
+#: includes/API/QuoteController.php:278
+msgid "Quote not found."
+msgstr ""
+
+#: includes/API/QuoteController.php:215
+msgid "Invalid token."
+msgstr ""
+
+#: includes/API/QuoteController.php:287
+msgid "Quote status updated successfully."
+msgstr ""
+
+#: includes/API/QuoteController.php:293
+msgid "Failed to update quote status."
+msgstr ""
+
+#: includes/API/BookingController.php:195
+msgid "An error occurred while fetching available slots."
+msgstr ""
+
+#: includes/API/BookingController.php:222
+msgid "An error occurred while creating the booking."
+msgstr ""
+
+#: includes/API/BookingController.php:243
+msgid "Booking not found."
+msgstr ""
+
+#: includes/API/BookingController.php:250
+msgid "Invalid token."
+msgstr ""
+
+#: includes/API/BookingController.php:351
+msgid "Invalid date format. Use YYYY-MM-DD."
+msgstr ""
+
+#: includes/API/BookingController.php:357
+msgid "Date cannot be in the past."
+msgstr ""
+
+#: includes/API/BookingController.php:363
+msgid "Date is too far in the future."
+msgstr ""
+
+#: includes/API/BookingController.php:391
+#, php-format
+msgid "Booking must be at least %d days in advance."
+msgstr ""
+
+#: includes/Frontend/ShortcodeManager.php:311
+msgid "Get My Quote"
+msgstr ""
+
+#: includes/Frontend/ShortcodeManager.php:312
+msgid "Calculating..."
+msgstr ""
+
+#: includes/Frontend/ShortcodeManager.php:336
+msgid "Booking form integration with MotoPress Appointment will be displayed here."
+msgstr ""
+
+#: includes/Frontend/ShortcodeManager.php:348
+msgid "Quick price calculator will be displayed here."
+msgstr ""
+
+#: includes/Services/PricingEngine.php:524
+#, php-format
+msgid "High Demand Surcharge (%s%.1f%%)"
+msgstr ""
+
+#: includes/Services/PricingEngine.php:527
+#, php-format
+msgid "Peak Season Surcharge (%s%.1f%%)"
+msgstr ""
+
+#: includes/Services/PricingEngine.php:528
+#, php-format
+msgid "Off-Season Discount (%s%.1f%%)"
+msgstr ""
+
+#: includes/Services/PricingEngine.php:530
+#, php-format
+msgid "Bulk Discount (%s%.1f%%)"
+msgstr ""
+
+#: includes/Services/PricingEngine.php:532
+#, php-format
+msgid "Repeat Customer Discount (%s%.1f%%)"
+msgstr ""
+
+#: includes/Services/PricingEngine.php:534
+#, php-format
+msgid "Urgency Surcharge (%s%.1f%%)"
+msgstr ""
+
+#: includes/Services/PricingEngine.php:536
+#, php-format
+msgid "Adjustment (%s%.1f%%)"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:33
+msgid "Booking Confirmed!"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:35
+msgid "Your service booking has been successfully confirmed. A confirmation email has been sent to your email address."
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:40
+msgid "Booking Reference"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:48
+msgid "Service Details"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:52
+msgid "Service Date"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:56
+msgid "Service Time"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:60
+msgid "Total Amount"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:68
+msgid "Payment Information"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:70
+msgid "Deposit Required"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:76
+msgid "Remaining Balance"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:77
+msgid "Payable on completion"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:83
+msgid "What's Next?"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:85
+msgid "You will receive a confirmation email shortly with all the booking details."
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:86
+msgid "Our team will contact you 24 hours before the scheduled service."
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:87
+msgid "Please ensure access to the property is available on the service date."
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:91
+msgid "Need to make changes?"
+msgstr ""
+
+#: templates/frontend/booking-confirmation.php:92
+msgid "If you need to reschedule or cancel, please contact us as soon as possible."
+msgstr ""
+
+#: templates/frontend/quote-form.php:15
+msgid "Get Your Instant Quote"
+msgstr ""
+
+#: templates/frontend/quote-form.php:19
+msgid "Service Type"
+msgstr ""
+
+#: templates/frontend/quote-form.php:21
+msgid "Select service type"
+msgstr ""
+
+#: templates/frontend/quote-form.php:22
+msgid "Façade Cleaning"
+msgstr ""
+
+#: templates/frontend/quote-form.php:23
+msgid "Roof Cleaning"
+msgstr ""
+
+#: templates/frontend/quote-form.php:24
+msgid "Gutter Cleaning"
+msgstr ""
+
+#: templates/frontend/quote-form.php:25
+msgid "Complete Exterior"
+msgstr ""
+
+#: templates/frontend/quote-form.php:31
+msgid "Property Size (sqm)"
+msgstr ""
+
+#: templates/frontend/quote-form.php:37
+msgid "Number of Floors"
+msgstr ""
+
+#: templates/frontend/quote-form.php:43
+msgid "Property Condition"
+msgstr ""
+
+#: templates/frontend/quote-form.php:45
+msgid "Select condition"
+msgstr ""
+
+#: templates/frontend/quote-form.php:46
+msgid "Light Dirt"
+msgstr ""
+
+#: templates/frontend/quote-form.php:47
+msgid "Moderate Dirt"
+msgstr ""
+
+#: templates/frontend/quote-form.php:48
+msgid "Heavy Dirt/Stains"
+msgstr ""
+
+#: templates/frontend/quote-form.php:54
+msgid "Contact Information"
+msgstr ""
+
+#: templates/frontend/quote-form.php:58
+msgid "Full Name"
+msgstr ""
+
+#: templates/frontend/quote-form.php:64
+msgid "Email Address"
+msgstr ""
+
+#: templates/frontend/quote-form.php:70
+msgid "Phone Number"
+msgstr ""
+
+#: templates/frontend/quote-form.php:76
+msgid "Postal Code"
+msgstr ""
+
+#: templates/frontend/quote-form.php:82
+msgid "Additional Notes"
+msgstr ""
+
+#: templates/frontend/quote-form.php:83
+msgid "Any special requirements or concerns..."
+msgstr ""
+
+#: templates/frontend/quote-form.php:89
+msgid "Get My Free Quote"
+msgstr ""
+
+#: templates/frontend/quote-form.php:90
+msgid "Processing..."
+msgstr ""

@@ -1,0 +1,120 @@
+# WordPress Plugin - Pro Clean Quotation
+# Only core plugin files will be tracked
+
+# ====================================
+# Dependencies
+# ====================================
+/vendor/
+/node_modules/
+composer.lock
+package-lock.json
+
+# ====================================
+# Development & Build Files
+# ====================================
+*.log
+*.cache
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ====================================
+# Compiled/Generated Files
+# ====================================
+*.mo
+/languages/*.mo
+
+# ====================================
+# Test Files & Coverage
+# ====================================
+/tests/
+phpunit.xml
+.phpunit.result.cache
+/coverage/
+/.phpunit.cache/
+
+# ====================================
+# Documentation (Development Only)
+# ====================================
+/docs/
+CHECKBOX_MULTISELECT_UI.md
+MULTIPLE_EMPLOYEES_IMPLEMENTATION.md
+MULTIPLE_EMPLOYEES_SUMMARY.md
+
+# ====================================
+# Temporary & Cache Files
+# ====================================
+*.tmp
+*.bak
+*.backup
+/tmp/
+/temp/
+/cache/
+
+# ====================================
+# Environment & Config
+# ====================================
+.env
+.env.local
+.env.*.local
+wp-config.php
+.htaccess
+
+# ====================================
+# OS Generated Files
+# ====================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ====================================
+# IDE & Editor Files
+# ====================================
+.idea/
+.vscode/
+*.code-workspace
+.project
+.settings/
+nbproject/
+*.sublime-project
+*.sublime-workspace
+
+# ====================================
+# Build & Distribution
+# ====================================
+/dist/
+/build/
+*.zip
+*.tar.gz
+*.tgz
+
+# ====================================
+# NPM/Yarn
+# ====================================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# ====================================
+# Composer
+# ====================================
+composer.phar
+/vendor/
+
+# ====================================
+# Git
+# ====================================
+*.orig
+*.rej

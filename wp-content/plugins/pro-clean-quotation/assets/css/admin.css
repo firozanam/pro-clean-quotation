@@ -1,0 +1,669 @@
+/**
+ * Pro Clean Quotation - Admin Styles
+ * 
+ * @package ProClean\Quotation
+ * @since 1.0.0
+ */
+
+/* Dashboard Styles */
+.pcq-dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.pcq-stat-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.pcq-stat-icon {
+    width: 50px;
+    height: 50px;
+    background: #2271b1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.pcq-stat-content h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.pcq-stat-content p {
+    margin: 5px 0 0 0;
+    color: #646970;
+    font-size: 14px;
+}
+
+/* Status Badges */
+.pcq-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.pcq-status-new {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.pcq-status-viewed {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.pcq-status-booked {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.pcq-status-expired {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.pcq-status-declined {
+    background: #fafafa;
+    color: #616161;
+}
+
+/* Form Styles */
+.pcq-form-table {
+    width: 100%;
+}
+
+.pcq-form-table th {
+    width: 200px;
+    text-align: left;
+    padding: 15px 10px 15px 0;
+    vertical-align: top;
+}
+
+.pcq-form-table td {
+    padding: 15px 0;
+}
+
+.pcq-form-table input[type="text"],
+.pcq-form-table input[type="number"],
+.pcq-form-table input[type="email"],
+.pcq-form-table select,
+.pcq-form-table textarea {
+    width: 100%;
+    max-width: 400px;
+}
+
+.pcq-form-table .description {
+    color: #646970;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* Settings Tabs */
+.pcq-nav-tab-wrapper {
+    border-bottom: 1px solid #ccd0d4;
+    margin-bottom: 20px;
+}
+
+.pcq-nav-tab {
+    display: inline-block;
+    padding: 8px 12px;
+    margin-right: 5px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-bottom: none;
+    background: #f1f1f1;
+    color: #555;
+}
+
+.pcq-nav-tab:hover {
+    background: #fafafa;
+    color: #444;
+}
+
+.pcq-nav-tab-active {
+    background: #fff;
+    border-color: #ccd0d4;
+    color: #000;
+}
+
+/* Notices */
+.pcq-notice {
+    padding: 12px;
+    margin: 5px 0 15px;
+    border-left: 4px solid #00a0d2;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+}
+
+.pcq-notice.notice-success {
+    border-left-color: #00a32a;
+}
+
+.pcq-notice.notice-error {
+    border-left-color: #d63638;
+}
+
+.pcq-notice.notice-warning {
+    border-left-color: #dba617;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pcq-dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .pcq-stat-card {
+        padding: 15px;
+    }
+    
+    .pcq-form-table th,
+    .pcq-form-table td {
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+    }
+    
+    .pcq-form-table th {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+}
+
+/* Calendar Styles */
+.pcq-calendar-container {
+    position: relative;
+}
+
+.pcq-calendar-container.loading::before {
+    content: "Loading calendar...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+.pcq-calendar-container .error {
+    text-align: center;
+    padding: 40px 20px;
+    color: #d63638;
+    background: #fff2f2;
+    border: 1px solid #f0c0c0;
+    border-radius: 4px;
+}
+
+/* FullCalendar customizations */
+.fc-event {
+    cursor: pointer;
+}
+
+.fc-event:hover {
+    opacity: 0.8;
+}
+
+.fc-daygrid-event {
+    border-radius: 3px;
+    padding: 2px 4px;
+}
+
+.fc-event-title {
+    font-weight: 500;
+}
+
+/* Calendar controls */
+.pcq-calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.pcq-calendar-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pcq-period-display {
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: 20px;
+    color: #2c3e50;
+}
+
+.pcq-calendar-views select,
+.pcq-calendar-filters select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.pcq-calendar-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Service legend */
+.pcq-service-legend {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+}
+
+.pcq-legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.pcq-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pcq-legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+/* Modal styles */
+.pcq-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pcq-modal-content {
+    background: #fff;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.pcq-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.pcq-modal-header h2 {
+    margin: 0;
+}
+
+.pcq-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pcq-modal-close:hover {
+    color: #000;
+}
+
+.pcq-modal-body {
+    padding: 20px;
+}
+
+.pcq-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+}
+
+/* Form styles in modal */
+.pcq-form-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.pcq-form-section h4 {
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+}
+
+.pcq-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.pcq-form-field {
+    margin-bottom: 15px;
+}
+
+.pcq-form-field label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.pcq-form-field input,
+.pcq-form-field select,
+.pcq-form-field textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.pcq-form-field input:focus,
+.pcq-form-field select:focus,
+.pcq-form-field textarea:focus {
+    outline: none;
+    border-color: #2196F3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.pcq-form-field.error input,
+.pcq-form-field.error select,
+.pcq-form-field.error textarea {
+    border-color: #d63638;
+}
+
+/* Responsive calendar */
+@media (max-width: 768px) {
+    .pcq-calendar-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pcq-calendar-nav,
+    .pcq-calendar-filters {
+        justify-content: center;
+    }
+    
+    .pcq-period-display {
+        margin-left: 0;
+        text-align: center;
+    }
+    
+    .pcq-form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .pcq-modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+}
+/* Calendar fallback styles */
+.pcq-calendar-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.pcq-calendar-fallback {
+    margin-top: 20px;
+}
+
+.pcq-calendar-fallback h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.pcq-calendar-fallback p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.pcq-calendar-fallback table {
+    background: #fff;
+}
+
+.pcq-calendar-fallback th {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+
+.pcq-calendar-fallback td {
+    padding: 12px 8px;
+}
+
+/* Loading animation */
+.pcq-calendar-loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   Actions Dropdown Styles (Global)
+   ======================================== */
+
+/* Prevent table row hover from bleeding into dropdown */
+.wp-list-table.widefat tbody tr:has(.pcq-actions-dropdown.active) {
+    background-color: transparent !important;
+}
+
+/* Remove hover effect from table rows when dropdown is active */
+.wp-list-table.widefat tbody tr:has(.pcq-actions-dropdown.active):hover {
+    background-color: transparent !important;
+}
+
+/* Ensure actions cell doesn't inherit row hover */
+.wp-list-table tbody tr td:has(.pcq-actions-dropdown.active) {
+    background-color: transparent !important;
+}
+
+/* Actions dropdown container */
+.pcq-actions-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Actions toggle button */
+.pcq-actions-toggle {
+    background: #f6f7f7;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.pcq-actions-toggle:hover {
+    background: #e8e9ea;
+    border-color: #999;
+}
+
+/* Remove hover background when dropdown is active */
+.pcq-actions-dropdown.active .pcq-actions-toggle {
+    background: #f6f7f7;
+    border-color: #2271b1;
+}
+
+.pcq-actions-dropdown.active .pcq-actions-toggle:hover {
+    background: #f6f7f7;
+    border-color: #2271b1;
+}
+
+.pcq-actions-toggle:focus {
+    outline: 2px solid #2271b1;
+    outline-offset: 1px;
+}
+
+.pcq-dots {
+    display: inline-block;
+    font-weight: bold;
+    color: #666;
+}
+
+/* Dropdown menu */
+.pcq-actions-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    padding: 6px 0;
+}
+
+.pcq-actions-dropdown.active .pcq-actions-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Menu items */
+.pcq-action-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #2c3e50;
+    font-size: 13px;
+    transition: background-color 0.15s ease;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.pcq-action-item:hover {
+    background-color: #f0f0f1;
+    color: #2c3e50;
+}
+
+.pcq-action-item:focus {
+    background-color: #f0f0f1;
+    color: #2c3e50;
+    outline: none;
+    box-shadow: inset 0 0 0 1px #2271b1;
+}
+
+.pcq-action-icon {
+    font-size: 14px;
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Action item variants */
+.pcq-action-primary {
+    color: #1976d2;
+    font-weight: 500;
+}
+
+.pcq-action-primary:hover {
+    background-color: #e7f3ff;
+    color: #0073aa;
+}
+
+.pcq-action-approve {
+    color: #388e3c;
+    font-weight: 500;
+}
+
+.pcq-action-approve:hover {
+    background-color: #f0f6ff;
+    color: #00a32a;
+}
+
+.pcq-action-danger {
+    color: #d32f2f;
+}
+
+.pcq-action-danger:hover {
+    background-color: #fcf0f1;
+    color: #d63638;
+}
+
+/* Divider */
+.pcq-action-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 4px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .pcq-actions-menu {
+        right: auto;
+        left: 0;
+        min-width: 180px;
+    }
+}

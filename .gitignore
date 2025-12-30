@@ -1,0 +1,135 @@
+# WordPress Site - WeClean
+# Only custom plugin (pro-clean-quotation) will be tracked
+
+# ====================================
+# WordPress Core
+# ====================================
+/wp-admin/
+/wp-includes/
+/wp-content/index.php
+/wp-content/themes/twentytwentythree/
+/wp-content/themes/twentytwentyfour/
+/wp-content/mu-plugins/
+index.php
+license.txt
+readme.html
+wp-*.php
+xmlrpc.php
+
+# ====================================
+# WordPress Plugins (Exclude All Except pro-clean-quotation)
+# ====================================
+/wp-content/plugins/*
+!/wp-content/plugins/pro-clean-quotation/
+
+# ====================================
+# WordPress Themes (Exclude All)
+# ====================================
+/wp-content/themes/
+
+# ====================================
+# WordPress Uploads & Cache
+# ====================================
+/wp-content/uploads/
+/wp-content/cache/
+/wp-content/backup*/
+/wp-content/backups/
+/wp-content/updraft/
+/wp-content/upgrade/
+
+# ====================================
+# WordPress Configuration
+# ====================================
+wp-config.php
+wp-config-sample.php
+.htaccess
+.htpasswd
+
+# ====================================
+# Database & Backups
+# ====================================
+*.sql
+*.sql.gz
+*.sql.zip
+*.db
+/wp-content/database/
+
+# ====================================
+# Maintenance & Utilities
+# ====================================
+/wp-content/maintenance/
+fix-*.php
+test-*.php
+test-*.html
+
+# ====================================
+# Documentation (Root Level)
+# ====================================
+/docs/
+README.md
+
+# ====================================
+# Development & Debug
+# ====================================
+debug.log
+error_log
+php_errors.log
+*.log
+wp-content/debug.log
+
+# ====================================
+# Dependencies
+# ====================================
+/vendor/
+/node_modules/
+composer.lock
+package-lock.json
+
+# ====================================
+# OS Generated Files
+# ====================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ====================================
+# IDE & Editor Files
+# ====================================
+.idea/
+.vscode/
+*.code-workspace
+.project
+.settings/
+nbproject/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# ====================================
+# Temporary & Cache Files
+# ====================================
+*.tmp
+*.bak
+*.backup
+*.cache
+/tmp/
+/temp/
+
+# ====================================
+# Git
+# ====================================
+*.orig
+*.rej
+git-commit.txt
+
+# ====================================
+# Shell Scripts
+# ====================================
+fix-wordpress-permissions.sh

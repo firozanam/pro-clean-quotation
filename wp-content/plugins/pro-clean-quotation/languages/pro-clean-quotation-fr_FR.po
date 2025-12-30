@@ -1,0 +1,237 @@
+# French (France) translation for Pro Clean Quotation System
+# Copyright (C) 2025 Pro Clean Development Team
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Pro Clean Quotation System 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wecleaning.com\n"
+"POT-Creation-Date: 2025-12-30T16:00:00+00:00\n"
+"PO-Revision-Date: 2025-12-30 16:30+0100\n"
+"Last-Translator: Pro Clean Team <info@wecleaning.com>\n"
+"Language-Team: French <fr@li.org>\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.0\n"
+
+msgid "Pro Clean Quotation System requires PHP 8.0 or higher. Please update your PHP version."
+msgstr "Pro Clean Quotation System nécessite PHP 8.0 ou supérieur. Veuillez mettre à jour votre version PHP."
+
+msgid "Calculating..."
+msgstr "Calcul en cours..."
+
+msgid "An error occurred. Please try again."
+msgstr "Une erreur s'est produite. Veuillez réessayer."
+
+msgid "This field is required."
+msgstr "Ce champ est obligatoire."
+
+msgid "Please enter a valid email address."
+msgstr "Veuillez saisir une adresse e-mail valide."
+
+msgid "Please enter a valid phone number."
+msgstr "Veuillez saisir un numéro de téléphone valide."
+
+msgid "Total Price"
+msgstr "Prix Total"
+
+msgid "Pro Clean Quotation"
+msgstr "Pro Clean Devis"
+
+msgid "Quotations"
+msgstr "Devis"
+
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+msgid "Quotes"
+msgstr "Devis"
+
+msgid "Appointments"
+msgstr "Rendez-vous"
+
+msgid "Calendar"
+msgstr "Calendrier"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "MotoPress Appointment"
+msgstr "MotoPress Rendez-vous"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Inactive"
+msgstr "Inactif"
+
+msgid "WooCommerce (Optional)"
+msgstr "WooCommerce (Optionnel)"
+
+msgid "Active - Online Payments Available"
+msgstr "Actif - Paiements en ligne disponibles"
+
+msgid "Not Active - Cash/Bank Transfer Only"
+msgstr "Non actif - Espèces/Virement bancaire uniquement"
+
+msgid "Email Notifications"
+msgstr "Notifications par e-mail"
+
+msgid "Enabled"
+msgstr "Activé"
+
+msgid "Disabled"
+msgstr "Désactivé"
+
+msgid "Get My Quote"
+msgstr "Obtenir Mon Devis"
+
+msgid "Booking Confirmed!"
+msgstr "Réservation Confirmée!"
+
+msgid "Your service booking has been successfully confirmed. A confirmation email has been sent to your email address."
+msgstr "Votre réservation de service a été confirmée avec succès. Un e-mail de confirmation a été envoyé à votre adresse e-mail."
+
+msgid "Booking Reference"
+msgstr "Référence de Réservation"
+
+msgid "Service Details"
+msgstr "Détails du Service"
+
+msgid "Service Date"
+msgstr "Date de Service"
+
+msgid "Service Time"
+msgstr "Heure de Service"
+
+msgid "Total Amount"
+msgstr "Montant Total"
+
+msgid "Payment Information"
+msgstr "Informations de Paiement"
+
+msgid "Deposit Required"
+msgstr "Acompte Requis"
+
+msgid "Remaining Balance"
+msgstr "Solde Restant"
+
+msgid "Payable on completion"
+msgstr "Payable à l'achèvement"
+
+msgid "What's Next?"
+msgstr "Et Maintenant?"
+
+msgid "You will receive a confirmation email shortly with all the booking details."
+msgstr "Vous recevrez bientôt un e-mail de confirmation avec tous les détails de la réservation."
+
+msgid "Our team will contact you 24 hours before the scheduled service."
+msgstr "Notre équipe vous contactera 24 heures avant le service prévu."
+
+msgid "Please ensure access to the property is available on the service date."
+msgstr "Veuillez vous assurer que l'accès à la propriété est disponible à la date du service."
+
+msgid "Need to make changes?"
+msgstr "Besoin de modifications?"
+
+msgid "If you need to reschedule or cancel, please contact us as soon as possible."
+msgstr "Si vous devez reprogrammer ou annuler, veuillez nous contacter dès que possible."
+
+msgid "Get Your Instant Quote"
+msgstr "Obtenez Votre Devis Instantané"
+
+msgid "Service Type"
+msgstr "Type de Service"
+
+msgid "Select service type"
+msgstr "Sélectionner le type de service"
+
+msgid "Façade Cleaning"
+msgstr "Nettoyage de Façade"
+
+msgid "Roof Cleaning"
+msgstr "Nettoyage de Toit"
+
+msgid "Gutter Cleaning"
+msgstr "Nettoyage de Gouttières"
+
+msgid "Complete Exterior"
+msgstr "Extérieur Complet"
+
+msgid "Property Size (sqm)"
+msgstr "Taille de la Propriété (m²)"
+
+msgid "Number of Floors"
+msgstr "Nombre d'Étages"
+
+msgid "Property Condition"
+msgstr "État de la Propriété"
+
+msgid "Select condition"
+msgstr "Sélectionner l'état"
+
+msgid "Light Dirt"
+msgstr "Saleté Légère"
+
+msgid "Moderate Dirt"
+msgstr "Saleté Modérée"
+
+msgid "Heavy Dirt/Stains"
+msgstr "Saleté Lourde/Taches"
+
+msgid "Contact Information"
+msgstr "Informations de Contact"
+
+msgid "Full Name"
+msgstr "Nom Complet"
+
+msgid "Email Address"
+msgstr "Adresse E-mail"
+
+msgid "Phone Number"
+msgstr "Numéro de Téléphone"
+
+msgid "Postal Code"
+msgstr "Code Postal"
+
+msgid "Additional Notes"
+msgstr "Notes Supplémentaires"
+
+msgid "Any special requirements or concerns..."
+msgstr "Des exigences ou préoccupations particulières..."
+
+msgid "Get My Free Quote"
+msgstr "Obtenir Mon Devis Gratuit"
+
+msgid "Processing..."
+msgstr "Traitement..."
+
+#, php-format
+msgid "High Demand Surcharge (%s%.1f%%)"
+msgstr "Supplément Forte Demande (%s%.1f%%)"
+
+#, php-format
+msgid "Peak Season Surcharge (%s%.1f%%)"
+msgstr "Supplément Haute Saison (%s%.1f%%)"
+
+#, php-format
+msgid "Off-Season Discount (%s%.1f%%)"
+msgstr "Remise Basse Saison (%s%.1f%%)"
+
+#, php-format
+msgid "Bulk Discount (%s%.1f%%)"
+msgstr "Remise en Gros (%s%.1f%%)"
+
+#, php-format
+msgid "Repeat Customer Discount (%s%.1f%%)"
+msgstr "Remise Client Fidèle (%s%.1f%%)"
+
+#, php-format
+msgid "Urgency Surcharge (%s%.1f%%)"
+msgstr "Supplément Urgence (%s%.1f%%)"
+
+#, php-format
+msgid "Adjustment (%s%.1f%%)"
+msgstr "Ajustement (%s%.1f%%)"

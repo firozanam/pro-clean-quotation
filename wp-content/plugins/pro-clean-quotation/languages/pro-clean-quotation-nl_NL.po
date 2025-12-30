@@ -1,0 +1,237 @@
+# Dutch (Netherlands) translation for Pro Clean Quotation System
+# Copyright (C) 2025 Pro Clean Development Team
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Pro Clean Quotation System 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wecleaning.com\n"
+"POT-Creation-Date: 2025-12-30T16:00:00+00:00\n"
+"PO-Revision-Date: 2025-12-30 16:30+0100\n"
+"Last-Translator: Pro Clean Team <info@wecleaning.com>\n"
+"Language-Team: Dutch <nl@li.org>\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0\n"
+
+msgid "Pro Clean Quotation System requires PHP 8.0 or higher. Please update your PHP version."
+msgstr "Pro Clean Quotation System vereist PHP 8.0 of hoger. Werk uw PHP-versie bij."
+
+msgid "Calculating..."
+msgstr "Berekenen..."
+
+msgid "An error occurred. Please try again."
+msgstr "Er is een fout opgetreden. Probeer het opnieuw."
+
+msgid "This field is required."
+msgstr "Dit veld is verplicht."
+
+msgid "Please enter a valid email address."
+msgstr "Voer een geldig e-mailadres in."
+
+msgid "Please enter a valid phone number."
+msgstr "Voer een geldig telefoonnummer in."
+
+msgid "Total Price"
+msgstr "Totaalprijs"
+
+msgid "Pro Clean Quotation"
+msgstr "Pro Clean Offerte"
+
+msgid "Quotations"
+msgstr "Offertes"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Quotes"
+msgstr "Offertes"
+
+msgid "Appointments"
+msgstr "Afspraken"
+
+msgid "Calendar"
+msgstr "Kalender"
+
+msgid "Settings"
+msgstr "Instellingen"
+
+msgid "MotoPress Appointment"
+msgstr "MotoPress Afspraak"
+
+msgid "Active"
+msgstr "Actief"
+
+msgid "Inactive"
+msgstr "Inactief"
+
+msgid "WooCommerce (Optional)"
+msgstr "WooCommerce (Optioneel)"
+
+msgid "Active - Online Payments Available"
+msgstr "Actief - Online betalingen beschikbaar"
+
+msgid "Not Active - Cash/Bank Transfer Only"
+msgstr "Niet actief - Alleen contant/bankoverschrijving"
+
+msgid "Email Notifications"
+msgstr "E-mailmeldingen"
+
+msgid "Enabled"
+msgstr "Ingeschakeld"
+
+msgid "Disabled"
+msgstr "Uitgeschakeld"
+
+msgid "Get My Quote"
+msgstr "Vraag Offerte Aan"
+
+msgid "Booking Confirmed!"
+msgstr "Boeking Bevestigd!"
+
+msgid "Your service booking has been successfully confirmed. A confirmation email has been sent to your email address."
+msgstr "Uw serviceboeking is succesvol bevestigd. Een bevestigingsmail is naar uw e-mailadres verzonden."
+
+msgid "Booking Reference"
+msgstr "Boekingsreferentie"
+
+msgid "Service Details"
+msgstr "Servicedetails"
+
+msgid "Service Date"
+msgstr "Servicedatum"
+
+msgid "Service Time"
+msgstr "Servicetijd"
+
+msgid "Total Amount"
+msgstr "Totaalbedrag"
+
+msgid "Payment Information"
+msgstr "Betalingsinformatie"
+
+msgid "Deposit Required"
+msgstr "Aanbetaling Vereist"
+
+msgid "Remaining Balance"
+msgstr "Restbedrag"
+
+msgid "Payable on completion"
+msgstr "Te betalen bij voltooiing"
+
+msgid "What's Next?"
+msgstr "Wat Nu?"
+
+msgid "You will receive a confirmation email shortly with all the booking details."
+msgstr "U ontvangt binnenkort een bevestigingsmail met alle boekingsgegevens."
+
+msgid "Our team will contact you 24 hours before the scheduled service."
+msgstr "Ons team neemt 24 uur voor de geplande service contact met u op."
+
+msgid "Please ensure access to the property is available on the service date."
+msgstr "Zorg ervoor dat toegang tot het pand beschikbaar is op de servicedatum."
+
+msgid "Need to make changes?"
+msgstr "Wijzigingen nodig?"
+
+msgid "If you need to reschedule or cancel, please contact us as soon as possible."
+msgstr "Als u wilt verzetten of annuleren, neem dan zo snel mogelijk contact met ons op."
+
+msgid "Get Your Instant Quote"
+msgstr "Ontvang Uw Directe Offerte"
+
+msgid "Service Type"
+msgstr "Servicetype"
+
+msgid "Select service type"
+msgstr "Selecteer servicetype"
+
+msgid "Façade Cleaning"
+msgstr "Gevelreiniging"
+
+msgid "Roof Cleaning"
+msgstr "Dakreiniging"
+
+msgid "Gutter Cleaning"
+msgstr "Gootreiniging"
+
+msgid "Complete Exterior"
+msgstr "Volledige Buitenkant"
+
+msgid "Property Size (sqm)"
+msgstr "Pand Grootte (m²)"
+
+msgid "Number of Floors"
+msgstr "Aantal Verdiepingen"
+
+msgid "Property Condition"
+msgstr "Staat van Pand"
+
+msgid "Select condition"
+msgstr "Selecteer staat"
+
+msgid "Light Dirt"
+msgstr "Licht Vuil"
+
+msgid "Moderate Dirt"
+msgstr "Matig Vuil"
+
+msgid "Heavy Dirt/Stains"
+msgstr "Zwaar Vuil/Vlekken"
+
+msgid "Contact Information"
+msgstr "Contactgegevens"
+
+msgid "Full Name"
+msgstr "Volledige Naam"
+
+msgid "Email Address"
+msgstr "E-mailadres"
+
+msgid "Phone Number"
+msgstr "Telefoonnummer"
+
+msgid "Postal Code"
+msgstr "Postcode"
+
+msgid "Additional Notes"
+msgstr "Extra Opmerkingen"
+
+msgid "Any special requirements or concerns..."
+msgstr "Speciale wensen of zorgen..."
+
+msgid "Get My Free Quote"
+msgstr "Vraag Gratis Offerte Aan"
+
+msgid "Processing..."
+msgstr "Verwerken..."
+
+#, php-format
+msgid "High Demand Surcharge (%s%.1f%%)"
+msgstr "Hoge Vraag Toeslag (%s%.1f%%)"
+
+#, php-format
+msgid "Peak Season Surcharge (%s%.1f%%)"
+msgstr "Hoogseizoen Toeslag (%s%.1f%%)"
+
+#, php-format
+msgid "Off-Season Discount (%s%.1f%%)"
+msgstr "Laagseizoen Korting (%s%.1f%%)"
+
+#, php-format
+msgid "Bulk Discount (%s%.1f%%)"
+msgstr "Bulk Korting (%s%.1f%%)"
+
+#, php-format
+msgid "Repeat Customer Discount (%s%.1f%%)"
+msgstr "Terugkerende Klant Korting (%s%.1f%%)"
+
+#, php-format
+msgid "Urgency Surcharge (%s%.1f%%)"
+msgstr "Spoed Toeslag (%s%.1f%%)"
+
+#, php-format
+msgid "Adjustment (%s%.1f%%)"
+msgstr "Aanpassing (%s%.1f%%)"

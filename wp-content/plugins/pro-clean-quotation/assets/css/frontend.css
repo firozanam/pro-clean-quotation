@@ -1,0 +1,956 @@
+/**
+ * Pro Clean Quotation - Frontend Styles
+ * 
+ * @package ProClean\Quotation
+ * @since 1.0.0
+ */
+
+/* ==========================================================================
+   Quote Form Container
+   ========================================================================== */
+
+.pcq-quote-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.pcq-quote-form-container.default {
+    border: 1px solid #e1e5e9;
+}
+
+.pcq-form-title {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    line-height: 1.3;
+}
+
+/* ==========================================================================
+   Form Layout
+   ========================================================================== */
+
+.pcq-quote-form {
+    display: grid;
+    gap: 2rem;
+}
+
+.pcq-quote-form.pcq-two-columns .pcq-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.pcq-quote-form.pcq-single-column .pcq-form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+/* ==========================================================================
+   Form Sections
+   ========================================================================== */
+
+.pcq-form-section {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+.pcq-form-section h4 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pcq-form-section h4::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: #3498db;
+    border-radius: 50%;
+}
+
+/* ==========================================================================
+   Form Fields
+   ========================================================================== */
+
+.pcq-form-field {
+    margin-bottom: 1rem;
+}
+
+.pcq-form-field:last-child {
+    margin-bottom: 0;
+}
+
+.pcq-form-field label {
+    display: block;
+    font-weight: 500;
+    color: #34495e;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.pcq-form-field input,
+.pcq-form-field select,
+.pcq-form-field textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.pcq-form-field input:focus,
+.pcq-form-field select:focus,
+.pcq-form-field textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.pcq-form-field input:invalid,
+.pcq-form-field select:invalid,
+.pcq-form-field textarea:invalid {
+    border-color: #e74c3c;
+}
+
+.pcq-form-field small {
+    display: block;
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    line-height: 1.4;
+}
+
+.required {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   Radio Groups
+   ========================================================================== */
+
+.pcq-radio-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.pcq-radio-group label {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: #ffffff;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.pcq-radio-group label:hover {
+    border-color: #3498db;
+    background: #f8f9fa;
+}
+
+.pcq-radio-group input[type="radio"] {
+    width: auto;
+    margin-right: 0.75rem;
+    margin-bottom: 0;
+}
+
+.pcq-radio-group input[type="radio"]:checked + label,
+.pcq-radio-group label:has(input[type="radio"]:checked) {
+    border-color: #3498db;
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+/* ==========================================================================
+   Checkbox Fields
+   ========================================================================== */
+
+.pcq-checkbox-field {
+    margin-bottom: 1rem;
+}
+
+.pcq-checkbox-field label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.pcq-checkbox-field input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.pcq-checkbox-field a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.pcq-checkbox-field a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Price Display
+   ========================================================================== */
+
+.pcq-price-display {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.pcq-price-display h4 {
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.pcq-price-breakdown {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.pcq-price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pcq-price-item:last-child {
+    border-bottom: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding-top: 1rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.pcq-price-label {
+    font-weight: 500;
+}
+
+.pcq-price-amount {
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+/* ==========================================================================
+   Form Actions
+   ========================================================================== */
+
+.pcq-form-actions {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.pcq-submit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.pcq-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.pcq-submit-btn:active {
+    transform: translateY(0);
+}
+
+.pcq-submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pcq-btn-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pcq-btn-loading::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: pcq-spin 1s linear infinite;
+}
+
+@keyframes pcq-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Messages
+   ========================================================================== */
+
+.pcq-form-messages {
+    margin-top: 1.5rem;
+}
+
+.pcq-message {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.pcq-message:last-child {
+    margin-bottom: 0;
+}
+
+.pcq-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.pcq-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.pcq-message.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* ==========================================================================
+   Field Errors
+   ========================================================================== */
+
+.pcq-field-error {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.pcq-form-field.has-error input,
+.pcq-form-field.has-error select,
+.pcq-form-field.has-error textarea {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+/* ==========================================================================
+   Maintenance Notice
+   ========================================================================== */
+
+.pcq-maintenance-notice {
+    background: #fff3cd;
+    color: #856404;
+    padding: 1.5rem;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .pcq-quote-form-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .pcq-form-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .pcq-quote-form.pcq-two-columns .pcq-form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .pcq-radio-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .pcq-form-section {
+        padding: 1rem;
+    }
+    
+    .pcq-submit-btn {
+        width: 100%;
+        padding: 1rem 2rem;
+    }
+    
+    .pcq-price-display {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .pcq-quote-form-container {
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    
+    .pcq-form-title {
+        font-size: 1.3rem;
+    }
+    
+    .pcq-form-section {
+        padding: 0.75rem;
+    }
+    
+    .pcq-form-field input,
+    .pcq-form-field select,
+    .pcq-form-field textarea {
+        padding: 0.625rem 0.75rem;
+    }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    .pcq-quote-form-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .pcq-submit-btn,
+    .pcq-form-actions {
+        display: none;
+    }
+    
+    .pcq-price-display {
+        background: #f5f5f5 !important;
+        color: #333 !important;
+        box-shadow: none;
+    }
+}
+
+/* ==========================================================================
+   Accessibility Enhancements
+   ========================================================================== */
+
+.pcq-form-field input:focus,
+.pcq-form-field select:focus,
+.pcq-form-field textarea:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+.pcq-submit-btn:focus {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ==========================================================================
+   High Contrast Mode
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+    .pcq-form-field input,
+    .pcq-form-field select,
+    .pcq-form-field textarea {
+        border-width: 3px;
+    }
+    
+    .pcq-submit-btn {
+        border: 3px solid #ffffff;
+    }
+}
+
+/* ==========================================================================
+   Booking Calendar Styles
+   ========================================================================== */
+
+.pcq-booking-form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.pcq-quote-summary {
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.pcq-quote-summary h4 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin: 0 0 1rem 0;
+}
+
+.pcq-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pcq-summary-table tr {
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.pcq-summary-table tr:last-child {
+    border-bottom: none;
+}
+
+.pcq-summary-table td {
+    padding: 0.75rem 0;
+}
+
+.pcq-summary-table td:first-child {
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.pcq-summary-table td:last-child {
+    text-align: right;
+}
+
+.pcq-price-highlight {
+    color: #2196F3;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.pcq-date-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 1rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin: 1rem auto;
+    display: block;
+}
+
+.pcq-date-input:focus {
+    outline: none;
+    border-color: #2196F3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.pcq-time-slots-container {
+    margin-top: 2rem;
+}
+
+.pcq-time-slots-container h5 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.pcq-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.pcq-time-slot {
+    padding: 1rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-align: center;
+}
+
+.pcq-slot-available:hover {
+    border-color: #2196F3;
+    background: #e3f2fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+}
+
+.pcq-slot-unavailable {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pcq-no-slots {
+    text-align: center;
+    color: #7f8c8d;
+    padding: 2rem;
+    font-style: italic;
+}
+
+.pcq-loading {
+    text-align: center;
+    padding: 2rem;
+    color: #2196F3;
+}
+
+.pcq-error {
+    background: #ffebee;
+    color: #c62828;
+    padding: 1rem;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.pcq-booking-confirmation {
+    background: #f8f9fa;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.pcq-booking-confirmation h5 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin: 0 0 1rem 0;
+}
+
+#pcq-selected-datetime {
+    background: #e3f2fd;
+    padding: 1.5rem;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+}
+
+.pcq-btn-primary,
+.pcq-btn-secondary {
+    padding: 0.875rem 1.75rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pcq-btn-primary {
+    background: #2196F3;
+    color: #ffffff;
+}
+
+.pcq-btn-primary:hover {
+    background: #1976D2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.pcq-btn-secondary {
+    background: #ffffff;
+    color: #2196F3;
+    border: 2px solid #2196F3;
+}
+
+.pcq-btn-secondary:hover {
+    background: #f0f7ff;
+}
+
+.pcq-form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.pcq-no-quote-notice {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.pcq-no-quote-notice p {
+    color: #856404;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .pcq-booking-form-container {
+        padding: 1rem;
+    }
+
+    .pcq-slots-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .pcq-time-slot {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .pcq-form-actions {
+        flex-direction: column;
+    }
+
+    .pcq-btn-primary,
+    .pcq-btn-secondary {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   Live Price Display
+   ========================================================================== */
+
+.pcq-price-display {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    color: #ffffff;
+}
+
+.pcq-price-display h4 {
+    color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pcq-price-breakdown {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    padding: 1.5rem;
+    min-height: 120px;
+}
+
+/* Loading State */
+.pcq-price-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    color: #667eea;
+    font-size: 0.95rem;
+}
+
+.pcq-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e3e8f7;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: pcq-spin 0.8s linear infinite;
+}
+
+@keyframes pcq-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Price Items */
+.pcq-price-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.pcq-price-item,
+.pcq-price-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e8ecf1;
+    color: #2c3e50;
+}
+
+.pcq-price-item:last-child,
+.pcq-price-total:last-child {
+    border-bottom: none;
+}
+
+.pcq-price-total {
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    border-top: 2px solid #667eea;
+    border-bottom: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.pcq-price-label {
+    font-weight: 500;
+    color: #34495e;
+}
+
+.pcq-price-total .pcq-price-label {
+    color: #667eea;
+}
+
+.pcq-price-amount {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.05rem;
+}
+
+.pcq-price-total .pcq-price-amount {
+    color: #667eea;
+    font-size: 1.2rem;
+}
+
+/* Final Price Highlight */
+.pcq-price-final {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fe 100%);
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: 2px solid #667eea;
+}
+
+.pcq-price-final-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.pcq-price-final-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+    text-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+/* Error State */
+.pcq-price-error {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #fff3f3;
+    border: 1px solid #ffcdd2;
+    border-radius: 8px;
+    color: #c62828;
+}
+
+.pcq-error-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.pcq-error-message {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Disclaimer */
+.pcq-price-disclaimer {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.pcq-price-disclaimer small {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pcq-price-display {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .pcq-price-display h4 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .pcq-price-breakdown {
+        padding: 1rem;
+    }
+
+    .pcq-price-final {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .pcq-price-final-amount {
+        font-size: 1.75rem;
+    }
+
+    .pcq-price-item,
+    .pcq-price-total {
+        font-size: 0.9rem;
+    }
+}
