@@ -24,12 +24,12 @@ $employees = Employee::getAll();
     </a>
     
     <!-- Filters -->
-    <div class="pcq-filters">
-        <form method="get" action="">
+    <div class="pcq-filters-container">
+        <form method="get" action="" class="pcq-filters-form">
             <input type="hidden" name="page" value="pcq-appointments">
             
-            <div class="pcq-filter-row">
-                <select name="status">
+            <div class="pcq-filters-row">
+                <select name="status" class="pcq-filter-select">
                     <option value=""><?php _e('All Statuses', 'pro-clean-quotation'); ?></option>
                     <option value="pending" <?php selected($status_filter, 'pending'); ?>><?php _e('Pending', 'pro-clean-quotation'); ?></option>
                     <option value="confirmed" <?php selected($status_filter, 'confirmed'); ?>><?php _e('Confirmed', 'pro-clean-quotation'); ?></option>
@@ -39,7 +39,7 @@ $employees = Employee::getAll();
                     <option value="no_show" <?php selected($status_filter, 'no_show'); ?>><?php _e('No Show', 'pro-clean-quotation'); ?></option>
                 </select>
                 
-                <select name="service_id">
+                <select name="service_id" class="pcq-filter-select">
                     <option value=""><?php _e('All Services', 'pro-clean-quotation'); ?></option>
                     <?php foreach ($services as $service): ?>
                         <option value="<?php echo $service->getId(); ?>" <?php selected($service_filter, $service->getId()); ?>>
@@ -48,7 +48,7 @@ $employees = Employee::getAll();
                     <?php endforeach; ?>
                 </select>
                 
-                <select name="employee_id">
+                <select name="employee_id" class="pcq-filter-select">
                     <option value=""><?php _e('All Employees', 'pro-clean-quotation'); ?></option>
                     <?php foreach ($employees as $employee): ?>
                         <option value="<?php echo $employee->getId(); ?>" <?php selected($employee_filter, $employee->getId()); ?>>
@@ -57,7 +57,7 @@ $employees = Employee::getAll();
                     <?php endforeach; ?>
                 </select>
                 
-                <input type="text" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php _e('Search appointments...', 'pro-clean-quotation'); ?>">
+                <input type="text" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php _e('Search appointments...', 'pro-clean-quotation'); ?>" class="pcq-search-input">
                 
                 <button type="submit" class="button"><?php _e('Filter', 'pro-clean-quotation'); ?></button>
                 
@@ -227,7 +227,8 @@ $employees = Employee::getAll();
 </div>
 
 <style>
-.pcq-filters {
+/* Filters Container */
+.pcq-filters-container {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 8px;
@@ -235,15 +236,18 @@ $employees = Employee::getAll();
     margin: 20px 0;
 }
 
-.pcq-filter-row {
+.pcq-filters-form {
+    margin: 0;
+}
+
+.pcq-filters-row {
     display: flex;
-    gap: 10px;
     align-items: center;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
-.pcq-filter-row select,
-.pcq-filter-row input[type="text"] {
+.pcq-filter-select {
     padding: 8px 32px 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -256,17 +260,30 @@ $employees = Employee::getAll();
     -moz-appearance: none;
     background: #fff url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L1 4h10z"/></svg>') no-repeat right 10px center;
     background-size: 12px;
+    font-size: 14px;
 }
 
-.pcq-filter-row input[type="text"] {
-    background: #fff;
+.pcq-filter-select:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.pcq-search-input {
     padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 250px;
+    font-size: 14px;
 }
 
-.pcq-filter-row select option {
-    white-space: normal;
+.pcq-search-input:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
 }
 
+/* Table Wrapper */
 .pcq-table-container {
     background: #fff;
     border: 1px solid #ccd0d4;
@@ -518,10 +535,16 @@ $employees = Employee::getAll();
     border-top: 1px solid #ddd;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
-    .pcq-filter-row {
+    .pcq-filters-row {
         flex-direction: column;
         align-items: stretch;
+    }
+    
+    .pcq-search-input {
+        width: 100%;
+        min-width: auto;
     }
     
     .pcq-actions {

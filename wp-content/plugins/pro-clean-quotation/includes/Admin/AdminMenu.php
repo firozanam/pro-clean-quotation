@@ -891,6 +891,16 @@ class AdminMenu {
         
         $quotes_data = \ProClean\Quotation\Models\Quote::getAll($page, 20, $filters);
         
+        // Prepare pagination arguments
+        $pagination_args = [
+            'base' => add_query_arg('paged', '%#%'),
+            'format' => '',
+            'prev_text' => __('&laquo; Previous', 'pro-clean-quotation'),
+            'next_text' => __('Next &raquo;', 'pro-clean-quotation'),
+            'total' => $quotes_data['pages'],
+            'current' => $quotes_data['current_page']
+        ];
+        
         include PCQ_PLUGIN_DIR . 'templates/admin/quotes-list.php';
     }
     

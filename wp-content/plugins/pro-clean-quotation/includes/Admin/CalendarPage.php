@@ -33,21 +33,7 @@ class CalendarPage {
         <div class="wrap pcq-calendar-page">
             <h1><?php _e('Appointment Calendar', 'pro-clean-quotation'); ?></h1>
             
-            <!-- Debug Info -->
-            <?php if (defined('WP_DEBUG') && WP_DEBUG): ?>
-                <div class="notice notice-info">
-                    <p><strong>Debug Info:</strong></p>
-                    <ul>
-                        <li>Services count: <?php echo count($services); ?></li>
-                        <li>Employees count: <?php echo count($employees); ?></li>
-                        <li>Current view: <?php echo esc_html($current_view); ?></li>
-                        <li>AJAX URL: <?php echo admin_url('admin-ajax.php'); ?></li>
-                        <li>Current screen: <?php echo get_current_screen()->id; ?></li>
-                        <li>Scripts enqueued: <?php echo wp_script_is('pcq-admin-script', 'enqueued') ? 'Yes' : 'No'; ?></li>
-                    </ul>
-                </div>
-            <?php endif; ?>
-            
+
             <!-- Calendar Controls -->
             <div class="pcq-calendar-controls">
                 <div class="pcq-calendar-nav">
@@ -59,10 +45,8 @@ class CalendarPage {
                 
                 <div class="pcq-calendar-views">
                     <select id="pcq-view-selector">
-                        <option value="month" <?php selected($current_view, 'month'); ?>><?php _e('Month View', 'pro-clean-quotation'); ?></option>
-                        <option value="agendaWeek" <?php selected($current_view, 'agendaWeek'); ?>><?php _e('Week View', 'pro-clean-quotation'); ?></option>
-                        <option value="agendaDay" <?php selected($current_view, 'agendaDay'); ?>><?php _e('Day View', 'pro-clean-quotation'); ?></option>
-                        <option value="listWeek" <?php selected($current_view, 'listWeek'); ?>><?php _e('List View', 'pro-clean-quotation'); ?></option>
+                        <option value="dayGridMonth" <?php selected($current_view, 'month'); ?>><?php _e('Calendar View', 'pro-clean-quotation'); ?></option>
+                        <option value="listWeek" <?php selected($current_view, 'list'); ?>><?php _e('List View', 'pro-clean-quotation'); ?></option>
                     </select>
                 </div>
                 
@@ -80,11 +64,7 @@ class CalendarPage {
                         <?php _e('Add Appointment', 'pro-clean-quotation'); ?>
                     </button>
                     
-                    <?php if (defined('WP_DEBUG') && WP_DEBUG): ?>
-                        <button id="pcq-test-ajax" class="button" style="margin-left: 10px;">
-                            <?php _e('Test AJAX', 'pro-clean-quotation'); ?>
-                        </button>
-                    <?php endif; ?>
+
                 </div>
             </div>
             
@@ -242,24 +222,47 @@ class CalendarPage {
         
         <style>
         .pcq-calendar-page {
-            margin: 20px 0;
+            margin: 20px 20px 20px 0;
         }
         
         .pcq-calendar-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin: 20px 0;
             padding: 15px;
             background: #fff;
             border: 1px solid #ccd0d4;
             border-radius: 8px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .pcq-calendar-nav {
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        .pcq-calendar-nav .button {
+            padding: 8px 12px;
+            font-size: 14px;
+            height: auto;
+            line-height: 1;
+        }
+        
+        .pcq-calendar-filters .button {
+            padding: 8px 12px;
+            font-size: 14px;
+            height: auto;
+            line-height: 1;
+        }
+        
+        .pcq-calendar-filters .button-primary {
+            padding: 8px 12px;
+            font-size: 14px;
+            height: auto;
+            line-height: 1;
         }
         
         .pcq-period-display {
@@ -271,9 +274,25 @@ class CalendarPage {
         
         .pcq-calendar-views select,
         .pcq-calendar-filters select {
-            padding: 8px 12px;
+            padding: 8px 32px 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            min-width: 150px;
+            font-size: 14px;
+            height: auto;
+            line-height: 1.4;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: #fff url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L1 4h10z"/></svg>') no-repeat right 10px center;
+            background-size: 12px;
+        }
+        
+        .pcq-calendar-views select:focus,
+        .pcq-calendar-filters select:focus {
+            outline: none;
+            border-color: #2271b1;
+            box-shadow: 0 0 0 1px #2271b1;
         }
         
         .pcq-calendar-filters {
@@ -500,7 +519,8 @@ class CalendarPage {
             // Initialize FullCalendar
             function initializeFullCalendar() {
                 try {
-                    var calendar = new FullCalendar.Calendar(document.getElementById('pcq-calendar'), {
+                    var calendarEl = document.getElementById('pcq-calendar');
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
                         initialView: 'dayGridMonth',
                         headerToolbar: {
                             left: 'prev,next today',
@@ -524,7 +544,27 @@ class CalendarPage {
                     
                     // Hide fallback and show FullCalendar
                     document.getElementById('pcq-calendar-fallback').style.display = 'none';
-                    document.getElementById('pcq-calendar').style.display = 'block';
+                    calendarEl.style.display = 'block';
+                    
+                    // Handle view selector change
+                    jQuery('#pcq-view-selector').on('change', function() {
+                        var selectedView = jQuery(this).val();
+                        console.log('Changing view to:', selectedView);
+                        calendar.changeView(selectedView);
+                    });
+                    
+                    // Handle navigation buttons
+                    jQuery('#pcq-prev-period').on('click', function() {
+                        calendar.prev();
+                    });
+                    
+                    jQuery('#pcq-next-period').on('click', function() {
+                        calendar.next();
+                    });
+                    
+                    jQuery('#pcq-today').on('click', function() {
+                        calendar.today();
+                    });
                     
                 } catch (error) {
                     console.error('FullCalendar initialization error:', error);

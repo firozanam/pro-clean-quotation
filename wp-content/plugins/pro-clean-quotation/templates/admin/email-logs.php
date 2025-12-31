@@ -16,11 +16,11 @@ if (!defined('ABSPATH')) {
     
     <div class="pcq-email-logs-container">
         <!-- Filters -->
-        <div class="pcq-filters">
-            <form method="get" action="">
+        <div class="pcq-filters-container">
+            <form method="get" action="" class="pcq-filters-form">
                 <input type="hidden" name="page" value="pcq-email-logs">
                 
-                <div class="pcq-filter-row">
+                <div class="pcq-filters-row">
                     <select name="email_type" id="email_type" class="pcq-filter-select">
                         <option value=""><?php _e('All Email Types', 'pro-clean-quotation'); ?></option>
                         <option value="quote_confirmation" <?php selected($_GET['email_type'] ?? '', 'quote_confirmation'); ?>><?php _e('Quote Confirmation', 'pro-clean-quotation'); ?></option>
@@ -255,67 +255,65 @@ if (!defined('ABSPATH')) {
     margin-top: 20px;
 }
 
-/* Filters Section */
-.pcq-filters {
+/* Filters Container */
+.pcq-filters-container {
     background: #fff;
     border: 1px solid #ccd0d4;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 15px;
     margin-bottom: 20px;
 }
 
-.pcq-filter-row {
+.pcq-filters-form {
+    margin: 0;
+}
+
+.pcq-filters-row {
     display: flex;
-    gap: 8px;
     align-items: center;
-    flex-wrap: nowrap;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .pcq-filter-select {
     padding: 8px 32px 8px 12px;
-    border: 1px solid #8c8f94;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    background: #fff url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L1 4h10z"/></svg>') no-repeat right 10px center;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    cursor: pointer;
-    font-size: 13px;
-    line-height: 1.5;
+    min-width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-width: 150px;
-}
-
-.pcq-filter-select:hover {
-    border-color: #2271b1;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: #fff url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L1 4h10z"/></svg>') no-repeat right 10px center;
+    background-size: 12px;
+    font-size: 14px;
 }
 
 .pcq-filter-select:focus {
+    outline: none;
     border-color: #2271b1;
-    outline: 2px solid transparent;
     box-shadow: 0 0 0 1px #2271b1;
 }
 
 .pcq-search-wrapper {
     display: flex;
-    gap: 8px;
+    gap: 5px;
     margin-left: auto;
 }
 
 .pcq-search-input {
     padding: 8px 12px;
-    border: 1px solid #8c8f94;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 13px;
-    line-height: 1.5;
     min-width: 250px;
+    font-size: 14px;
 }
 
 .pcq-search-input:focus {
+    outline: none;
     border-color: #2271b1;
-    outline: 2px solid transparent;
     box-shadow: 0 0 0 1px #2271b1;
 }
 
@@ -323,7 +321,7 @@ if (!defined('ABSPATH')) {
 .pcq-table-container {
     background: #fff;
     border: 1px solid #ccd0d4;
-    border-radius: 4px;
+    border-radius: 8px;
     overflow: hidden;
     margin-bottom: 20px;
 }
@@ -608,7 +606,7 @@ if (!defined('ABSPATH')) {
 .pcq-email-stats {
     background: #fff;
     border: 1px solid #ccd0d4;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 20px;
 }
 
@@ -650,10 +648,19 @@ if (!defined('ABSPATH')) {
 @media (max-width: 1200px) {
     .pcq-col-reference { width: 100px; }
     .pcq-col-type { width: 140px; }
+    
+    .pcq-search-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .pcq-search-input {
+        flex: 1;
+    }
 }
 
 @media (max-width: 782px) {
-    .pcq-filter-row {
+    .pcq-filters-row {
         flex-direction: column;
         align-items: stretch;
     }
@@ -661,11 +668,10 @@ if (!defined('ABSPATH')) {
     .pcq-filter-select,
     .pcq-search-input {
         width: 100%;
-        min-width: unset;
+        min-width: auto;
     }
     
     .pcq-search-wrapper {
-        margin-left: 0;
         width: 100%;
     }
     

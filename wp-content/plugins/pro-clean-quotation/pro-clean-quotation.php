@@ -3,7 +3,7 @@
  * Plugin Name: Pro Clean Quotation System
  * Plugin URI: https://wecleaning.com
  * Description: Automated quotation and booking system for façade and roof cleaning services. Integrates with MotoPress Appointment and WooCommerce.
- * Version: 1.0.0
+ * Version: 1.0.5
  * Requires at least: 6.4
  * Requires PHP: 8.0
  * Author: Pro Clean Development Team
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('PCQ_VERSION', '1.0.2');
+define('PCQ_VERSION', '1.0.5');
 define('PCQ_PLUGIN_FILE', __FILE__);
 define('PCQ_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('PCQ_PLUGIN_URL', plugin_dir_url(__FILE__));

@@ -18,11 +18,11 @@ if (!defined('ABSPATH')) {
     </a>
     
     <!-- Search -->
-    <div class="pcq-filters">
-        <form method="get" action="">
+    <div class="pcq-filters-container">
+        <form method="get" action="" class="pcq-filters-form">
             <input type="hidden" name="page" value="pcq-employees">
             
-            <div class="pcq-filter-row">
+            <div class="pcq-filters-row">
                 <input type="search" name="s" value="<?php echo isset($_GET['s']) ? esc_attr($_GET['s']) : ''; ?>" placeholder="<?php _e('Search employees...', 'pro-clean-quotation'); ?>" class="pcq-search-input">
                 <button type="submit" class="button"><?php _e('Filter', 'pro-clean-quotation'); ?></button>
                 
@@ -205,8 +205,8 @@ if (!defined('ABSPATH')) {
 </div>
 
 <style>
-/* Filters */
-.pcq-filters {
+/* Filters Container */
+.pcq-filters-container {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 8px;
@@ -214,23 +214,27 @@ if (!defined('ABSPATH')) {
     margin: 20px 0;
 }
 
-.pcq-filter-row {
+.pcq-filters-form {
+    margin: 0;
+}
+
+.pcq-filters-row {
     display: flex;
-    gap: 10px;
     align-items: center;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
-.pcq-filter-row .pcq-search-input {
-    flex: 1;
-    min-width: 250px;
+.pcq-search-input {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    flex: 1;
+    min-width: 250px;
     font-size: 14px;
 }
 
-.pcq-filter-row .pcq-search-input:focus {
+.pcq-search-input:focus {
     outline: none;
     border-color: #2271b1;
     box-shadow: 0 0 0 1px #2271b1;
@@ -564,12 +568,12 @@ if (!defined('ABSPATH')) {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .pcq-filter-row {
+    .pcq-filters-row {
         flex-direction: column;
         align-items: stretch;
     }
     
-    .pcq-filter-row .pcq-search-input {
+    .pcq-search-input {
         width: 100%;
         min-width: auto;
     }
