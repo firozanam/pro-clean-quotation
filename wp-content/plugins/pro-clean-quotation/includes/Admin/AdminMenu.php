@@ -617,7 +617,35 @@ class AdminMenu {
      * Render employees list
      */
     private function renderEmployeesList(): void {
-        $employees = \ProClean\Quotation\Models\Employee::getAll(false);
+        global $wpdb;
+        
+        // Get search parameter
+        $search = $_GET['s'] ?? '';
+        
+        if (!empty($search)) {
+            // Search employees by name, email, or description
+            $employees_table = $wpdb->prefix . 'pq_employees';
+            $search_term = '%' . $wpdb->esc_like($search) . '%';
+            
+            $employees_data = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM $employees_table WHERE name LIKE %s OR email LIKE %s OR description LIKE %s ORDER BY name ASC",
+                    $search_term,
+                    $search_term,
+                    $search_term
+                ),
+                ARRAY_A
+            );
+            
+            $employees = [];
+            foreach ($employees_data as $employee_data) {
+                $employees[] = new \ProClean\Quotation\Models\Employee($employee_data);
+            }
+        } else {
+            // Get all employees
+            $employees = \ProClean\Quotation\Models\Employee::getAll(false);
+        }
+        
         include PCQ_PLUGIN_DIR . 'templates/admin/employees-list.php';
     }
     

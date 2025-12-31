@@ -17,12 +17,30 @@ if (!defined('ABSPATH')) {
         <?php _e('Add New Employee', 'pro-clean-quotation'); ?>
     </a>
     
-    <div class="pcq-table-container">
+    <!-- Search -->
+    <div class="pcq-filters">
+        <form method="get" action="">
+            <input type="hidden" name="page" value="pcq-employees">
+            
+            <div class="pcq-filter-row">
+                <input type="search" name="s" value="<?php echo isset($_GET['s']) ? esc_attr($_GET['s']) : ''; ?>" placeholder="<?php _e('Search employees...', 'pro-clean-quotation'); ?>" class="pcq-search-input">
+                <button type="submit" class="button"><?php _e('Filter', 'pro-clean-quotation'); ?></button>
+                
+                <?php if (isset($_GET['s']) && !empty($_GET['s'])): ?>
+                    <a href="<?php echo admin_url('admin.php?page=pcq-employees'); ?>" class="button">
+                        <?php _e('Clear', 'pro-clean-quotation'); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+    
+    <div class="pcq-table-wrapper">
         <?php if (!empty($employees)): ?>
-            <table class="wp-list-table widefat fixed striped">
+            <table class="wp-list-table widefat fixed striped pcq-employees-table">
                 <thead>
                     <tr>
-                        <th style="width: 60px;"><?php _e('ID', 'pro-clean-quotation'); ?></th>
+                        <th><?php _e('ID', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Employee', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Contact Info', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Services', 'pro-clean-quotation'); ?></th>
@@ -39,7 +57,7 @@ if (!defined('ABSPATH')) {
                         ?>
                         <tr>
                             <td><?php echo $employee->getId(); ?></td>
-                            <td>
+                            <td class="pcq-employee-cell">
                                 <div class="pcq-employee-info">
                                     <?php if ($employee->getAvatarUrl()): ?>
                                         <img src="<?php echo esc_url($employee->getAvatarUrl()); ?>" 
@@ -52,7 +70,7 @@ if (!defined('ABSPATH')) {
                                     <?php endif; ?>
                                     
                                     <div class="pcq-employee-details">
-                                        <strong><?php echo esc_html($employee->getName()); ?></strong>
+                                        <div class="pcq-employee-name"><?php echo esc_html($employee->getName()); ?></div>
                                         <?php if ($employee->getDescription()): ?>
                                             <div class="pcq-employee-description">
                                                 <?php echo esc_html($employee->getDescription()); ?>
@@ -61,7 +79,7 @@ if (!defined('ABSPATH')) {
                                     </div>
                                 </div>
                             </td>
-                            <td>
+                            <td class="pcq-contact-cell">
                                 <?php if ($employee->getEmail()): ?>
                                     <div>
                                         <a href="mailto:<?php echo esc_attr($employee->getEmail()); ?>">
@@ -82,7 +100,7 @@ if (!defined('ABSPATH')) {
                                     <span class="pcq-no-contact"><?php _e('No contact info', 'pro-clean-quotation'); ?></span>
                                 <?php endif; ?>
                             </td>
-                            <td>
+                            <td class="pcq-services-cell">
                                 <?php if (!empty($services)): ?>
                                     <div class="pcq-services-list">
                                         <?php foreach ($services as $service): ?>
@@ -95,7 +113,7 @@ if (!defined('ABSPATH')) {
                                     <span class="pcq-no-services"><?php _e('No services assigned', 'pro-clean-quotation'); ?></span>
                                 <?php endif; ?>
                             </td>
-                            <td>
+                            <td class="pcq-hours-cell">
                                 <?php if ($working_hours): ?>
                                     <div class="pcq-working-hours">
                                         <?php 
@@ -173,6 +191,7 @@ if (!defined('ABSPATH')) {
                     <?php endforeach; ?>
                 </tbody>
             </table>
+        </div>
             
         <?php else: ?>
             <div class="pcq-no-results">
@@ -186,12 +205,100 @@ if (!defined('ABSPATH')) {
 </div>
 
 <style>
-.pcq-table-container {
+/* Filters */
+.pcq-filters {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.pcq-filter-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.pcq-filter-row .pcq-search-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.pcq-filter-row .pcq-search-input:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* Table Wrapper */
+.pcq-table-wrapper {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 8px;
     overflow: hidden;
-    margin-top: 20px;
+    overflow-x: auto;
+}
+
+/* Table Layout */
+.pcq-employees-table {
+    table-layout: fixed;
+    width: 100%;
+    margin: 0 !important;
+}
+
+/* Column widths */
+.pcq-employees-table thead th:nth-child(1),
+.pcq-employees-table tbody td:nth-child(1) {
+    width: 50px;
+}
+
+.pcq-employees-table thead th:nth-child(2),
+.pcq-employees-table tbody td:nth-child(2) {
+    width: 280px;
+}
+
+.pcq-employees-table thead th:nth-child(3),
+.pcq-employees-table tbody td:nth-child(3) {
+    width: 180px;
+}
+
+.pcq-employees-table thead th:nth-child(4),
+.pcq-employees-table tbody td:nth-child(4) {
+    width: auto;
+}
+
+.pcq-employees-table thead th:nth-child(5),
+.pcq-employees-table tbody td:nth-child(5) {
+    width: 140px;
+}
+
+.pcq-employees-table thead th:nth-child(6),
+.pcq-employees-table tbody td:nth-child(6) {
+    width: 90px;
+}
+
+.pcq-employees-table thead th:nth-child(7),
+.pcq-employees-table tbody td:nth-child(7) {
+    width: 60px;
+}
+
+/* Table headers */
+.pcq-employees-table thead th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 12px 10px;
+}
+
+/* Employee cell */
+.pcq-employee-cell {
+    padding: 8px 10px !important;
 }
 
 .pcq-employee-info {
@@ -205,6 +312,7 @@ if (!defined('ABSPATH')) {
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
+    flex-shrink: 0;
 }
 
 .pcq-avatar-placeholder {
@@ -219,18 +327,71 @@ if (!defined('ABSPATH')) {
 
 .pcq-employee-details {
     flex: 1;
+    min-width: 0;
+}
+
+.pcq-employee-name {
+    font-weight: 600;
+    color: #2c3e50;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .pcq-employee-description {
     font-size: 13px;
     color: #666;
     margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Contact cell */
+.pcq-contact-cell {
+    font-size: 13px;
+}
+
+.pcq-contact-cell a {
+    color: #2271b1;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.pcq-contact-cell a:hover {
+    text-decoration: underline;
+}
+
+/* Services cell */
+.pcq-services-cell {
+    padding: 8px 10px !important;
 }
 
 .pcq-services-list {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
+    max-height: 52px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.pcq-services-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.pcq-services-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.pcq-services-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.pcq-services-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .pcq-service-tag {
@@ -240,6 +401,12 @@ if (!defined('ABSPATH')) {
     color: #fff;
     font-size: 11px;
     font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Hours cell */
+.pcq-hours-cell {
+    font-size: 13px;
 }
 
 .pcq-working-hours {
@@ -260,11 +427,12 @@ if (!defined('ABSPATH')) {
 
 .pcq-status-badge {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
     text-transform: capitalize;
+    white-space: nowrap;
 }
 
 .pcq-status-active { 
@@ -394,15 +562,22 @@ if (!defined('ABSPATH')) {
     padding: 40px 20px;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
+    .pcq-filter-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pcq-filter-row .pcq-search-input {
+        width: 100%;
+        min-width: auto;
+    }
+    
     .pcq-employee-info {
         flex-direction: column;
         align-items: flex-start;
         text-align: center;
-    }
-    
-    .pcq-actions {
-        flex-direction: column;
     }
     
     .pcq-services-list {
