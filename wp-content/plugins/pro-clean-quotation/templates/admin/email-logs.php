@@ -322,7 +322,8 @@ if (!defined('ABSPATH')) {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 8px;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: visible;
     margin-bottom: 20px;
 }
 
@@ -511,7 +512,7 @@ if (!defined('ABSPATH')) {
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     min-width: 180px;
-    z-index: 1000;
+    z-index: 10000;
     display: none;
     padding: 4px 0;
     margin-top: 4px;
@@ -535,6 +536,7 @@ if (!defined('ABSPATH')) {
     text-align: left;
     cursor: pointer;
     width: 100%;
+    white-space: nowrap;
 }
 
 .pcq-action-item:hover {
@@ -597,9 +599,53 @@ if (!defined('ABSPATH')) {
 
 /* Pagination */
 .pcq-pagination {
-    padding: 20px;
+    padding: 15px 20px;
     text-align: center;
-    border-top: 1px solid #dcdcde;
+    border-top: 1px solid #ccd0d4;
+    background: #fff;
+    margin-top: -1px;
+}
+
+.pcq-pagination .page-numbers {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 0 2px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #2271b1;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.pcq-pagination .page-numbers:hover {
+    background: #f6f7f7;
+    border-color: #2271b1;
+}
+
+.pcq-pagination .page-numbers.current {
+    background: #2271b1;
+    color: #fff;
+    border-color: #2271b1;
+    font-weight: 600;
+}
+
+.pcq-pagination .page-numbers.dots {
+    border: none;
+    background: transparent;
+    color: #666;
+    cursor: default;
+}
+
+.pcq-pagination .page-numbers.dots:hover {
+    background: transparent;
+    border: none;
+}
+
+.pcq-pagination .prev,
+.pcq-pagination .next {
+    font-weight: 500;
 }
 
 /* Email Stats */

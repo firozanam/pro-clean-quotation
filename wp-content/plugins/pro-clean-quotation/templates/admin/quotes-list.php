@@ -159,17 +159,23 @@ if (!defined('ABSPATH')) {
             <?php endif; ?>
         </tbody>
     </table>
-    </div>
     
-    <!-- Bottom Pagination -->
-    <div class="tablenav bottom">
-        <div class="tablenav-pages">
+    <!-- Pagination -->
+    <?php if ($quotes_data['pages'] > 1): ?>
+        <div class="pcq-pagination">
             <?php
-            if ($quotes_data['pages'] > 1) {
-                echo paginate_links($pagination_args);
-            }
+            $pagination_args = [
+                'base' => add_query_arg('paged', '%#%'),
+                'format' => '',
+                'prev_text' => __('&laquo; Previous', 'pro-clean-quotation'),
+                'next_text' => __('Next &raquo;', 'pro-clean-quotation'),
+                'total' => $quotes_data['pages'],
+                'current' => $quotes_data['current_page']
+            ];
+            echo paginate_links($pagination_args);
             ?>
         </div>
+    <?php endif; ?>
     </div>
 </div>
 
@@ -241,8 +247,8 @@ if (!defined('ABSPATH')) {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 8px;
-    overflow: hidden;
     overflow-x: auto;
+    overflow-y: visible;
 }
 
 /* Table Layout */
@@ -426,12 +432,13 @@ if (!defined('ABSPATH')) {
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     min-width: 180px;
-    z-index: 1000;
+    z-index: 10000;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.2s ease;
     padding: 6px 0;
+    margin-top: 4px;
 }
 
 .pcq-actions-dropdown.active .pcq-actions-menu {
@@ -452,6 +459,7 @@ if (!defined('ABSPATH')) {
     background: none;
     text-align: left;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .pcq-action-item:hover {
@@ -506,6 +514,57 @@ if (!defined('ABSPATH')) {
     height: 1px;
     background-color: #e0e0e0;
     margin: 4px 0;
+}
+
+/* Pagination */
+.pcq-pagination {
+    padding: 15px 20px;
+    text-align: center;
+    border-top: 1px solid #ccd0d4;
+    background: #fff;
+    margin-top: -1px;
+}
+
+.pcq-pagination .page-numbers {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 0 2px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #2271b1;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.pcq-pagination .page-numbers:hover {
+    background: #f6f7f7;
+    border-color: #2271b1;
+}
+
+.pcq-pagination .page-numbers.current {
+    background: #2271b1;
+    color: #fff;
+    border-color: #2271b1;
+    font-weight: 600;
+}
+
+.pcq-pagination .page-numbers.dots {
+    border: none;
+    background: transparent;
+    color: #666;
+    cursor: default;
+}
+
+.pcq-pagination .page-numbers.dots:hover {
+    background: transparent;
+    border: none;
+}
+
+.pcq-pagination .prev,
+.pcq-pagination .next {
+    font-weight: 500;
 }
 
 /* Responsive adjustments */
