@@ -15,12 +15,47 @@
         initFormValidation();
         initCalendar();
         initAppointmentModal();
+        
+        // Failsafe: Ensure settings page elements are visible
+        ensureSettingsPageVisibility();
     });
+
+    /**
+     * Ensure settings page elements are always visible
+     */
+    function ensureSettingsPageVisibility() {
+        // Only run on settings page
+        if (!jQuery('.pcq-settings-page').length) {
+            return;
+        }
+        
+        // Force visibility of key elements
+        jQuery('.pcq-settings-page.wrap').css({
+            'display': 'block',
+            'visibility': 'visible'
+        });
+        
+        jQuery('.pcq-settings-page.wrap > h1').css({
+            'display': 'block',
+            'visibility': 'visible'
+        });
+        
+        jQuery('.pcq-nav-tab-wrapper').css({
+            'display': 'flex',
+            'visibility': 'visible'
+        });
+        
+        // Log for debugging
+        console.log('PCQ: Settings page visibility ensured');
+    }
 
     /**
      * Initialize settings tabs
      */
     function initSettingsTabs() {
+        // Hide all tab content initially
+        jQuery('.pcq-tab-content').hide();
+        
         jQuery('.pcq-nav-tab').on('click', function(e) {
             e.preventDefault();
             
@@ -32,18 +67,24 @@
             
             // Show/hide tab content
             jQuery('.pcq-tab-content').hide();
-            jQuery('#' + targetTab).show();
+            jQuery('#' + targetTab).fadeIn(200);
             
-            // Update URL hash
-            window.location.hash = targetTab;
+            // Update URL hash without jumping
+            if (history.pushState) {
+                history.pushState(null, null, '#' + targetTab);
+            } else {
+                window.location.hash = targetTab;
+            }
         });
         
         // Show active tab on page load
         const hash = window.location.hash.substring(1);
         if (hash && jQuery('#' + hash).length) {
-            jQuery('.pcq-nav-tab[href="#' + hash + '"]').click();
+            jQuery('.pcq-nav-tab[href="#' + hash + '"]').addClass('pcq-nav-tab-active');
+            jQuery('#' + hash).show();
         } else {
-            jQuery('.pcq-nav-tab').first().click();
+            jQuery('.pcq-nav-tab').first().addClass('pcq-nav-tab-active');
+            jQuery('.pcq-tab-content').first().show();
         }
     }
 

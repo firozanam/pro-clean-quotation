@@ -114,32 +114,284 @@
     margin-top: 5px;
 }
 
-/* Settings Tabs */
-.pcq-nav-tab-wrapper {
-    border-bottom: 1px solid #ccd0d4;
-    margin-bottom: 20px;
-}
-
-.pcq-nav-tab {
-    display: inline-block;
-    padding: 8px 12px;
-    margin-right: 5px;
-    text-decoration: none;
-    border: 1px solid transparent;
-    border-bottom: none;
-    background: #f1f1f1;
-    color: #555;
-}
-
-.pcq-nav-tab:hover {
-    background: #fafafa;
-    color: #444;
-}
-
-.pcq-nav-tab-active {
+/* Settings Page */
+.pcq-settings-page.wrap,
+#wpbody-content .pcq-settings-page.wrap {
+    max-width: 1200px !important;
     background: #fff;
-    border-color: #ccd0d4;
-    color: #000;
+    margin: 20px 20px 20px 0 !important;
+    padding: 0 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 8px;
+}
+
+.pcq-settings-page.wrap > h1,
+#wpbody-content .pcq-settings-page.wrap > h1 {
+    display: block !important;
+    visibility: visible !important;
+    margin: 0 !important;
+    padding: 25px 30px !important;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1d2327;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Settings Tabs */
+.pcq-settings-page.wrap .pcq-nav-tab-wrapper,
+#wpbody-content .pcq-settings-page.wrap .pcq-nav-tab-wrapper {
+    display: flex !important;
+    visibility: visible !important;
+    margin: 0 !important;
+    padding: 0 30px !important;
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+    gap: 0;
+}
+
+.pcq-settings-page.wrap .pcq-nav-tab,
+#wpbody-content .pcq-settings-page.wrap .pcq-nav-tab {
+    display: inline-block !important;
+    padding: 14px 20px;
+    margin: 0;
+    text-decoration: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    position: relative;
+    top: 2px;
+}
+
+.pcq-settings-page.wrap .pcq-nav-tab:hover,
+#wpbody-content .pcq-settings-page.wrap .pcq-nav-tab:hover {
+    background: transparent;
+    color: #2271b1;
+    border-bottom-color: #9ca3af;
+}
+
+.pcq-settings-page.wrap .pcq-nav-tab-active,
+#wpbody-content .pcq-settings-page.wrap .pcq-nav-tab-active {
+    background: transparent !important;
+    border-bottom-color: #2271b1 !important;
+    color: #2271b1 !important;
+    font-weight: 600;
+}
+
+.pcq-settings-page.wrap .pcq-nav-tab:focus,
+#wpbody-content .pcq-settings-page.wrap .pcq-nav-tab:focus {
+    outline: 2px solid #2271b1;
+    outline-offset: -2px;
+    box-shadow: none;
+}
+
+/* Settings Form */
+.pcq-settings-page.wrap .pcq-settings-form,
+#wpbody-content .pcq-settings-page.wrap .pcq-settings-form {
+    padding: 30px !important;
+}
+
+.pcq-settings-page.wrap .pcq-tab-content,
+#wpbody-content .pcq-settings-page.wrap .pcq-tab-content {
+    display: none;
+}
+
+.pcq-settings-page.wrap .pcq-tab-content h2,
+#wpbody-content .pcq-settings-page.wrap .pcq-tab-content h2 {
+    margin: 0 0 25px 0 !important;
+    padding: 0 0 15px 0 !important;
+    border-bottom: 2px solid #e5e7eb;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+/* Form Styles */
+.pcq-settings-page.wrap .pcq-form-table,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table {
+    width: 100%;
+    background: #fff;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.pcq-settings-page.wrap .pcq-form-table th,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table th {
+    width: 250px;
+    text-align: left;
+    padding: 15px 20px 15px 0 !important;
+    vertical-align: top;
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+}
+
+.pcq-settings-page.wrap .pcq-form-table td,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table td {
+    padding: 15px 0 !important;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.pcq-settings-page.wrap .pcq-form-table tr:last-child td,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table tr:last-child td {
+    border-bottom: none;
+}
+
+.pcq-settings-page.wrap .pcq-form-table input[type="text"],
+.pcq-settings-page.wrap .pcq-form-table input[type="number"],
+.pcq-settings-page.wrap .pcq-form-table input[type="email"],
+.pcq-settings-page.wrap .pcq-form-table input[type="tel"],
+.pcq-settings-page.wrap .pcq-form-table select,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="text"],
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="number"],
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="email"],
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="tel"],
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table select {
+    width: 100%;
+    max-width: 500px;
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+    background: #fff;
+    height: auto;
+}
+
+.pcq-settings-page.wrap .pcq-form-table textarea,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table textarea {
+    width: 100%;
+    max-width: 500px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.pcq-settings-page.wrap .pcq-form-table input[type="text"]:focus,
+.pcq-settings-page.wrap .pcq-form-table input[type="number"]:focus,
+.pcq-settings-page.wrap .pcq-form-table input[type="email"]:focus,
+.pcq-settings-page.wrap .pcq-form-table input[type="tel"]:focus,
+.pcq-settings-page.wrap .pcq-form-table select:focus,
+.pcq-settings-page.wrap .pcq-form-table textarea:focus,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="text"]:focus,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="number"]:focus,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="email"]:focus,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="tel"]:focus,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table select:focus,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table textarea:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.1);
+}
+
+.pcq-settings-page.wrap .pcq-form-table textarea,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table textarea {
+    min-height: 80px;
+    resize: vertical;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.pcq-settings-page.wrap .pcq-form-table input[type="checkbox"],
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.pcq-settings-page.wrap .pcq-form-table label,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #374151;
+}
+
+.pcq-settings-page.wrap .pcq-form-table .description,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table .description {
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+/* Submit Button */
+.pcq-settings-page.wrap .pcq-settings-form .submit,
+#wpbody-content .pcq-settings-page.wrap .pcq-settings-form .submit {
+    margin: 25px 0 0 0 !important;
+    padding: 20px 0 0 0 !important;
+    border-top: 2px solid #e5e7eb;
+}
+
+.pcq-settings-page.wrap .pcq-settings-form .button-primary,
+#wpbody-content .pcq-settings-page.wrap .pcq-settings-form .button-primary {
+    background: #2271b1 !important;
+    border-color: #2271b1 !important;
+    color: #fff !important;
+    padding: 8px 20px !important;
+    font-size: 14px !important;
+    font-weight: 500;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+    text-shadow: none !important;
+    height: auto;
+    line-height: 1.5;
+}
+
+.pcq-settings-page.wrap .pcq-settings-form .button-primary:hover,
+#wpbody-content .pcq-settings-page.wrap .pcq-settings-form .button-primary:hover {
+    background: #135e96 !important;
+    border-color: #135e96 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+.pcq-settings-page.wrap .pcq-settings-form .button-primary:active,
+#wpbody-content .pcq-settings-page.wrap .pcq-settings-form .button-primary:active {
+    transform: translateY(0) !important;
+}
+
+/* Integration Status Indicators */
+.pcq-settings-page.wrap .pcq-form-table .description span,
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table .description span {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.pcq-settings-page.wrap .pcq-form-table .description span[style*="green"],
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table .description span[style*="green"] {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.pcq-settings-page.wrap .pcq-form-table .description span[style*="orange"],
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table .description span[style*="orange"] {
+    background: #fed7aa;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.pcq-settings-page.wrap .pcq-form-table .description span[style*="#666"],
+#wpbody-content .pcq-settings-page.wrap .pcq-form-table .description span[style*="#666"] {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
 }
 
 /* Notices */
@@ -183,6 +435,53 @@
     .pcq-form-table th {
         font-weight: 600;
         margin-bottom: 5px;
+    }
+    
+    /* Settings page responsive */
+    .pcq-settings-page.wrap,
+    #wpbody-content .pcq-settings-page.wrap {
+        margin: 10px !important;
+        border-radius: 4px;
+    }
+    
+    .pcq-settings-page.wrap > h1,
+    #wpbody-content .pcq-settings-page.wrap > h1 {
+        padding: 20px !important;
+        font-size: 20px !important;
+    }
+    
+    .pcq-settings-page.wrap .pcq-nav-tab-wrapper,
+    #wpbody-content .pcq-settings-page.wrap .pcq-nav-tab-wrapper {
+        padding: 0 20px !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .pcq-settings-page.wrap .pcq-nav-tab,
+    #wpbody-content .pcq-settings-page.wrap .pcq-nav-tab {
+        padding: 12px 16px !important;
+        font-size: 13px !important;
+        white-space: nowrap;
+    }
+    
+    .pcq-settings-page.wrap .pcq-settings-form,
+    #wpbody-content .pcq-settings-page.wrap .pcq-settings-form {
+        padding: 20px !important;
+    }
+    
+    .pcq-settings-page.wrap .pcq-form-table input[type="text"],
+    .pcq-settings-page.wrap .pcq-form-table input[type="number"],
+    .pcq-settings-page.wrap .pcq-form-table input[type="email"],
+    .pcq-settings-page.wrap .pcq-form-table input[type="tel"],
+    .pcq-settings-page.wrap .pcq-form-table select,
+    .pcq-settings-page.wrap .pcq-form-table textarea,
+    #wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="text"],
+    #wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="number"],
+    #wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="email"],
+    #wpbody-content .pcq-settings-page.wrap .pcq-form-table input[type="tel"],
+    #wpbody-content .pcq-settings-page.wrap .pcq-form-table select,
+    #wpbody-content .pcq-settings-page.wrap .pcq-form-table textarea {
+        max-width: 100%;
     }
 }
 

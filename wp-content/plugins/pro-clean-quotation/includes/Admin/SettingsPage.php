@@ -17,7 +17,7 @@ class SettingsPage {
         $active_tab = $_GET['tab'] ?? 'general';
         
         ?>
-        <div class="wrap">
+        <div class="wrap pcq-settings-page">
             <h1><?php _e('Pro Clean Quotation Settings', 'pro-clean-quotation'); ?></h1>
             
             <nav class="pcq-nav-tab-wrapper">
