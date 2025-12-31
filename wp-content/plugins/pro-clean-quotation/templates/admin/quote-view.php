@@ -10,6 +10,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * @var \ProClean\Quotation\Models\Quote $quote Quote object passed from controller
+ */
+
 // Get quote data
 $quote_data = $quote->toArray();
 $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
@@ -130,13 +134,20 @@ $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
                         <div class="pcq-detail-value">
                             <span class="pcq-service-badge pcq-service-<?php echo esc_attr($quote->getServiceType()); ?>">
                                 <?php 
+                                // Support both old and new service type formats
+                                $service_type = $quote->getServiceType();
                                 $service_labels = [
+                                    // New format (from quote form)
+                                    'facade' => __('Façade Cleaning', 'pro-clean-quotation'),
+                                    'roof' => __('Roof Cleaning', 'pro-clean-quotation'),
+                                    'both' => __('Both Services', 'pro-clean-quotation'),
+                                    // Legacy format (backward compatibility)
                                     'facade_cleaning' => __('Façade Cleaning', 'pro-clean-quotation'),
                                     'roof_cleaning' => __('Roof Cleaning', 'pro-clean-quotation'),
                                     'complete_package' => __('Complete Package', 'pro-clean-quotation'),
                                     'window_cleaning' => __('Window Cleaning', 'pro-clean-quotation')
                                 ];
-                                echo $service_labels[$quote->getServiceType()] ?? ucfirst(str_replace('_', ' ', $quote->getServiceType()));
+                                echo $service_labels[$service_type] ?? ucfirst(str_replace('_', ' ', $service_type));
                                 ?>
                             </span>
                         </div>

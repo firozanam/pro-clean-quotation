@@ -10,6 +10,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * @var \ProClean\Quotation\Models\Quote $quote Quote object passed from controller
+ */
+
 // Get quote data
 $quote_data = $quote->toArray();
 ?>
@@ -101,10 +105,15 @@ $quote_data = $quote->toArray();
                             <td>
                                 <select name="service_type" id="service_type" class="regular-text" required>
                                     <option value=""><?php _e('Select Service Type', 'pro-clean-quotation'); ?></option>
-                                    <option value="facade_cleaning" <?php selected($quote->getServiceType(), 'facade_cleaning'); ?>><?php _e('Façade Cleaning', 'pro-clean-quotation'); ?></option>
-                                    <option value="roof_cleaning" <?php selected($quote->getServiceType(), 'roof_cleaning'); ?>><?php _e('Roof Cleaning', 'pro-clean-quotation'); ?></option>
-                                    <option value="complete_package" <?php selected($quote->getServiceType(), 'complete_package'); ?>><?php _e('Complete Package', 'pro-clean-quotation'); ?></option>
-                                    <option value="window_cleaning" <?php selected($quote->getServiceType(), 'window_cleaning'); ?>><?php _e('Window Cleaning', 'pro-clean-quotation'); ?></option>
+                                    <!-- New format (from quote form) -->
+                                    <option value="facade" <?php selected($quote->getServiceType(), 'facade'); ?>><?php _e('Façade Cleaning', 'pro-clean-quotation'); ?></option>
+                                    <option value="roof" <?php selected($quote->getServiceType(), 'roof'); ?>><?php _e('Roof Cleaning', 'pro-clean-quotation'); ?></option>
+                                    <option value="both" <?php selected($quote->getServiceType(), 'both'); ?>><?php _e('Both Services', 'pro-clean-quotation'); ?></option>
+                                    <!-- Legacy format (backward compatibility) -->
+                                    <option value="facade_cleaning" <?php selected($quote->getServiceType(), 'facade_cleaning'); ?>><?php _e('Façade Cleaning (Legacy)', 'pro-clean-quotation'); ?></option>
+                                    <option value="roof_cleaning" <?php selected($quote->getServiceType(), 'roof_cleaning'); ?>><?php _e('Roof Cleaning (Legacy)', 'pro-clean-quotation'); ?></option>
+                                    <option value="complete_package" <?php selected($quote->getServiceType(), 'complete_package'); ?>><?php _e('Complete Package (Legacy)', 'pro-clean-quotation'); ?></option>
+                                    <option value="window_cleaning" <?php selected($quote->getServiceType(), 'window_cleaning'); ?>><?php _e('Window Cleaning (Legacy)', 'pro-clean-quotation'); ?></option>
                                 </select>
                             </td>
                         </tr>

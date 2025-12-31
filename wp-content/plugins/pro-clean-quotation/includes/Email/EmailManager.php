@@ -48,6 +48,28 @@ class EmailManager {
     }
     
     /**
+     * Get service type label
+     * 
+     * @param string $service_type Service type code
+     * @return string Formatted service type label
+     */
+    private function getServiceTypeLabel(string $service_type): string {
+        $labels = [
+            // New format (from quote form)
+            'facade' => __('Façade Cleaning', 'pro-clean-quotation'),
+            'roof' => __('Roof Cleaning', 'pro-clean-quotation'),
+            'both' => __('Both Services', 'pro-clean-quotation'),
+            // Legacy format (backward compatibility)
+            'facade_cleaning' => __('Façade Cleaning', 'pro-clean-quotation'),
+            'roof_cleaning' => __('Roof Cleaning', 'pro-clean-quotation'),
+            'complete_package' => __('Complete Package', 'pro-clean-quotation'),
+            'window_cleaning' => __('Window Cleaning', 'pro-clean-quotation')
+        ];
+        
+        return $labels[$service_type] ?? ucfirst(str_replace('_', ' ', $service_type));
+    }
+    
+    /**
      * Send quote confirmation email to customer
      * 
      * @param Quote $quote Quote object
@@ -431,7 +453,7 @@ class EmailManager {
         // Service details
         $html .= '<h3 style="color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px;">Service Details</h3>';
         $html .= '<table style="width: 100%; margin-bottom: 20px;">';
-        $html .= '<tr><td><strong>Service Type:</strong></td><td>' . esc_html(ucfirst($quote->getServiceType())) . '</td></tr>';
+        $html .= '<tr><td><strong>Service Type:</strong></td><td>' . esc_html($this->getServiceTypeLabel($quote->getServiceType())) . '</td></tr>';
         $html .= '<tr><td><strong>Property Size:</strong></td><td>' . number_format($quote->getSquareMeters(), 1) . ' sqm</td></tr>';
         if ($quote->getLinearMeters() > 0) {
             $html .= '<tr><td><strong>Linear Meters:</strong></td><td>' . number_format($quote->getLinearMeters(), 1) . ' m</td></tr>';
@@ -496,7 +518,7 @@ class EmailManager {
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Customer:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($quote->getCustomerName()) . '</td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Email:</strong></td><td style="padding: 8px; border: 1px solid #ddd;"><a href="mailto:' . esc_attr($quote->getCustomerEmail()) . '">' . esc_html($quote->getCustomerEmail()) . '</a></td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Phone:</strong></td><td style="padding: 8px; border: 1px solid #ddd;"><a href="tel:' . esc_attr($quote->getCustomerPhone()) . '">' . esc_html($quote->getCustomerPhone()) . '</a></td></tr>';
-        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Service:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html(ucfirst($quote->getServiceType())) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Service:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($this->getServiceTypeLabel($quote->getServiceType())) . '</td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Property Size:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . number_format($quote->getSquareMeters(), 1) . ' sqm</td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Address:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($quote->getPropertyAddress()) . '</td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Estimated Value:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">€' . number_format($quote->getTotalPrice(), 2) . '</td></tr>';
@@ -534,7 +556,7 @@ class EmailManager {
         $html .= '<h3 style="color: #34495e; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">Booking Details</h3>';
         $html .= '<table style="width: 100%; margin-bottom: 20px;">';
         $html .= '<tr><td><strong>Booking Reference:</strong></td><td>#' . esc_html($booking['booking_number']) . '</td></tr>';
-        $html .= '<tr><td><strong>Service:</strong></td><td>' . esc_html(ucfirst($booking['service_type'])) . '</td></tr>';
+        $html .= '<tr><td><strong>Service:</strong></td><td>' . esc_html($this->getServiceTypeLabel($booking['service_type'])) . '</td></tr>';
         $html .= '<tr><td><strong>Date:</strong></td><td>' . date('l, F j, Y', strtotime($booking['service_date'])) . '</td></tr>';
         $html .= '<tr><td><strong>Time:</strong></td><td>' . date('H:i', strtotime($booking['service_time_start'])) . ' - ' . date('H:i', strtotime($booking['service_time_end'])) . '</td></tr>';
         $html .= '<tr><td><strong>Address:</strong></td><td>' . esc_html($booking['property_address']) . '</td></tr>';
@@ -578,7 +600,7 @@ class EmailManager {
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Customer:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($booking['customer_name']) . '</td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Email:</strong></td><td style="padding: 8px; border: 1px solid #ddd;"><a href="mailto:' . esc_attr($booking['customer_email']) . '">' . esc_html($booking['customer_email']) . '</a></td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Phone:</strong></td><td style="padding: 8px; border: 1px solid #ddd;"><a href="tel:' . esc_attr($booking['customer_phone']) . '">' . esc_html($booking['customer_phone']) . '</a></td></tr>';
-        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Service:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html(ucfirst($booking['service_type'])) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Service:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($this->getServiceTypeLabel($booking['service_type'])) . '</td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Date:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . date('l, F j, Y', strtotime($booking['service_date'])) . '</td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Time:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . date('H:i', strtotime($booking['service_time_start'])) . ' - ' . date('H:i', strtotime($booking['service_time_end'])) . '</td></tr>';
         $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Duration:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . ($booking['estimated_duration'] ?? 'N/A') . ' hours</td></tr>';

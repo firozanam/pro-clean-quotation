@@ -1149,3 +1149,160 @@ button.pcq-btn-secondary:hover {
         font-size: 0.9rem;
     }
 }
+
+/* ==========================================================================
+   Booking Confirmation Page
+   ========================================================================== */
+
+/* Outer wrapper for proper spacing and containment */
+.pcq-confirmation-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 2rem 1rem;
+    margin: 0 auto;
+    min-height: 400px;
+    position: relative;
+    z-index: 1;
+    clear: both;
+    overflow: visible;
+}
+
+.pcq-quote-success-container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0;
+    background: #ffffff;
+    border-radius: 4px;
+    border: 1px solid #e8ebed;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 2;
+}
+
+.pcq-success-header {
+    text-align: left;
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.pcq-success-title {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+    text-align: left;
+}
+
+.pcq-success-message {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.pcq-quote-details-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin: 2rem;
+}
+
+.pcq-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.pcq-detail-row:first-child {
+    padding-top: 0;
+}
+
+.pcq-detail-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.pcq-detail-label {
+    color: #111827;
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.pcq-detail-value {
+    color: #374151;
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.pcq-price-row {
+    background: transparent;
+    margin: 0;
+    padding: 0.75rem 0;
+    border-top: none;
+    border-bottom: none;
+}
+
+.pcq-price-row:last-child {
+    border-bottom: none;
+    padding-top: 0.875rem;
+    padding-bottom: 0;
+    border-top: 2px solid #60a5fa;
+    margin-top: 0.5rem;
+}
+
+.pcq-price-highlight {
+    color: #60a5fa;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.pcq-quote-reference {
+    margin: 0;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.pcq-small-text {
+    color: #6b7280;
+    font-size: 0.8125rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Responsive Confirmation Page */
+@media (max-width: 768px) {
+    .pcq-confirmation-wrapper {
+        padding: 1rem 0.5rem;
+    }
+
+    .pcq-quote-success-container {
+        padding: 0;
+        margin: 0;
+    }
+
+    .pcq-success-header {
+        padding: 1.5rem;
+    }
+
+    .pcq-quote-details-card {
+        margin: 1.5rem;
+    }
+
+    .pcq-quote-reference {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .pcq-success-title {
+        font-size: 1.25rem;
+    }
+
+    .pcq-detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}
