@@ -1747,8 +1747,26 @@ class AdminMenu {
      */
     private function renderServiceCategoriesList(): void {
         global $wpdb;
+        
+        // Get search parameter
+        $search = $_GET['s'] ?? '';
+        
         $categories_table = $wpdb->prefix . 'pq_service_categories';
-        $categories = $wpdb->get_results("SELECT * FROM $categories_table ORDER BY sort_order ASC, name ASC");
+        
+        if (!empty($search)) {
+            // Search categories by name or description
+            $search_term = '%' . $wpdb->esc_like($search) . '%';
+            $categories = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM $categories_table WHERE name LIKE %s OR description LIKE %s ORDER BY sort_order ASC, name ASC",
+                    $search_term,
+                    $search_term
+                )
+            );
+        } else {
+            // Get all categories
+            $categories = $wpdb->get_results("SELECT * FROM $categories_table ORDER BY sort_order ASC, name ASC");
+        }
         
         include PCQ_PLUGIN_DIR . 'templates/admin/service-categories-list.php';
     }
