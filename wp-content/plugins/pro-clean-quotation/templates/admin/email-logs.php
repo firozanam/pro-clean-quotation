@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
                 <input type="hidden" name="page" value="pcq-email-logs">
                 
                 <div class="pcq-filter-row">
-                    <select name="email_type" id="email_type">
+                    <select name="email_type" id="email_type" class="pcq-filter-select">
                         <option value=""><?php _e('All Email Types', 'pro-clean-quotation'); ?></option>
                         <option value="quote_confirmation" <?php selected($_GET['email_type'] ?? '', 'quote_confirmation'); ?>><?php _e('Quote Confirmation', 'pro-clean-quotation'); ?></option>
                         <option value="appointment_confirmation" <?php selected($_GET['email_type'] ?? '', 'appointment_confirmation'); ?>><?php _e('Appointment Confirmation', 'pro-clean-quotation'); ?></option>
@@ -30,23 +30,26 @@ if (!defined('ABSPATH')) {
                         <option value="appointment_rescheduled" <?php selected($_GET['email_type'] ?? '', 'appointment_rescheduled'); ?>><?php _e('Appointment Rescheduled', 'pro-clean-quotation'); ?></option>
                     </select>
                     
-                    <select name="status" id="status">
+                    <select name="status" id="status" class="pcq-filter-select">
                         <option value=""><?php _e('All Statuses', 'pro-clean-quotation'); ?></option>
                         <option value="sent" <?php selected($_GET['status'] ?? '', 'sent'); ?>><?php _e('Sent', 'pro-clean-quotation'); ?></option>
                         <option value="failed" <?php selected($_GET['status'] ?? '', 'failed'); ?>><?php _e('Failed', 'pro-clean-quotation'); ?></option>
                         <option value="pending" <?php selected($_GET['status'] ?? '', 'pending'); ?>><?php _e('Pending', 'pro-clean-quotation'); ?></option>
                     </select>
                     
-                    <input type="text" name="search" placeholder="<?php _e('Search by email or subject...', 'pro-clean-quotation'); ?>" 
-                           value="<?php echo esc_attr($_GET['search'] ?? ''); ?>" class="regular-text">
-                    
-                    <input type="submit" class="button" value="<?php _e('Filter', 'pro-clean-quotation'); ?>">
+                    <button type="submit" class="button"><?php _e('Filter', 'pro-clean-quotation'); ?></button>
                     
                     <?php if (!empty($_GET['email_type']) || !empty($_GET['status']) || !empty($_GET['search'])): ?>
                         <a href="<?php echo admin_url('admin.php?page=pcq-email-logs'); ?>" class="button">
-                            <?php _e('Clear Filters', 'pro-clean-quotation'); ?>
+                            <?php _e('Clear', 'pro-clean-quotation'); ?>
                         </a>
                     <?php endif; ?>
+                    
+                    <div class="pcq-search-wrapper">
+                        <input type="search" name="search" placeholder="<?php _e('Search by email or subject...', 'pro-clean-quotation'); ?>" 
+                               value="<?php echo esc_attr($_GET['search'] ?? ''); ?>" class="pcq-search-input">
+                        <button type="submit" class="button"><?php _e('Search', 'pro-clean-quotation'); ?></button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -54,17 +57,17 @@ if (!defined('ABSPATH')) {
         <!-- Email Logs Table -->
         <div class="pcq-table-container">
             <?php if (!empty($logs)): ?>
-                <table class="wp-list-table widefat fixed striped">
+                <table class="wp-list-table widefat fixed striped pcq-email-logs-table">
                     <thead>
                         <tr>
-                            <th style="width: 60px;"><?php _e('ID', 'pro-clean-quotation'); ?></th>
-                            <th style="width: 120px;"><?php _e('Date/Time', 'pro-clean-quotation'); ?></th>
-                            <th style="width: 150px;"><?php _e('Type', 'pro-clean-quotation'); ?></th>
-                            <th style="width: 200px;"><?php _e('Recipient', 'pro-clean-quotation'); ?></th>
-                            <th><?php _e('Subject', 'pro-clean-quotation'); ?></th>
-                            <th style="width: 100px;"><?php _e('Reference', 'pro-clean-quotation'); ?></th>
-                            <th style="width: 80px;"><?php _e('Status', 'pro-clean-quotation'); ?></th>
-                            <th style="width: 100px;"><?php _e('Actions', 'pro-clean-quotation'); ?></th>
+                            <th class="pcq-col-id"><?php _e('ID', 'pro-clean-quotation'); ?></th>
+                            <th class="pcq-col-datetime"><?php _e('Date/Time', 'pro-clean-quotation'); ?></th>
+                            <th class="pcq-col-type"><?php _e('Type', 'pro-clean-quotation'); ?></th>
+                            <th class="pcq-col-recipient"><?php _e('Recipient', 'pro-clean-quotation'); ?></th>
+                            <th class="pcq-col-subject"><?php _e('Subject', 'pro-clean-quotation'); ?></th>
+                            <th class="pcq-col-reference"><?php _e('Reference', 'pro-clean-quotation'); ?></th>
+                            <th class="pcq-col-status"><?php _e('Status', 'pro-clean-quotation'); ?></th>
+                            <th class="pcq-col-actions"><?php _e('Actions', 'pro-clean-quotation'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,56 +95,46 @@ if (!defined('ABSPATH')) {
                                         ?>
                                     </span>
                                 </td>
-                                <td>
+                                <td class="pcq-recipient-cell">
                                     <div class="pcq-recipient">
                                         <?php echo esc_html($log->recipient_email); ?>
                                     </div>
                                 </td>
-                                <td>
-                                    <div class="pcq-subject">
+                                <td class="pcq-subject-cell">
+                                    <div class="pcq-subject-text">
                                         <?php echo esc_html($log->subject); ?>
-                                        <?php if ($log->error_message): ?>
-                                            <div class="pcq-error-preview">
-                                                <small class="pcq-error-text">
-                                                    <?php echo esc_html(substr($log->error_message, 0, 100)); ?>
-                                                    <?php if (strlen($log->error_message) > 100): ?>...<?php endif; ?>
-                                                </small>
-                                            </div>
-                                        <?php endif; ?>
                                     </div>
+                                    <?php if ($log->error_message): ?>
+                                        <div class="pcq-error-preview">
+                                            <small class="pcq-error-text">
+                                                <?php echo esc_html(substr($log->error_message, 0, 60)); ?>
+                                                <?php if (strlen($log->error_message) > 60): ?>...<?php endif; ?>
+                                            </small>
+                                        </div>
+                                    <?php endif; ?>
                                 </td>
-                                <td>
+                                <td class="pcq-reference-cell">
                                     <?php if ($log->reference_type && $log->reference_id): ?>
                                         <div class="pcq-reference">
-                                            <span class="pcq-ref-type"><?php echo ucfirst($log->reference_type); ?></span>
-                                            <span class="pcq-ref-id">#<?php echo $log->reference_id; ?></span>
+                                            <?php echo ucfirst($log->reference_type); ?> #<?php echo $log->reference_id; ?>
                                         </div>
                                     <?php else: ?>
                                         <span class="pcq-no-reference">—</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
+                                <td class="pcq-status-cell">
                                     <span class="pcq-status pcq-status-<?php echo esc_attr($log->status); ?>">
                                         <?php 
                                         $status_labels = [
-                                            'sent' => __('Sent', 'pro-clean-quotation'),
-                                            'failed' => __('Failed', 'pro-clean-quotation'),
-                                            'pending' => __('Pending', 'pro-clean-quotation')
+                                            'sent' => __('SENT', 'pro-clean-quotation'),
+                                            'failed' => __('FAILED', 'pro-clean-quotation'),
+                                            'pending' => __('PENDING', 'pro-clean-quotation')
                                         ];
-                                        echo $status_labels[$log->status] ?? ucfirst($log->status);
+                                        echo $status_labels[$log->status] ?? strtoupper($log->status);
                                         ?>
                                     </span>
-                                    
                                     <?php if ($log->opened_at): ?>
-                                        <div class="pcq-engagement">
-                                            <span class="pcq-opened" title="<?php _e('Email opened', 'pro-clean-quotation'); ?>">👁</span>
-                                        </div>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($log->clicked_at): ?>
-                                        <div class="pcq-engagement">
-                                            <span class="pcq-clicked" title="<?php _e('Link clicked', 'pro-clean-quotation'); ?>">🔗</span>
-                                        </div>
+                                        <span class="pcq-engagement-icon" title="<?php _e('Email opened', 'pro-clean-quotation'); ?>">👁</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -257,58 +250,125 @@ if (!defined('ABSPATH')) {
 </div>
 
 <style>
+/* Container */
 .pcq-email-logs-container {
     margin-top: 20px;
 }
 
+/* Filters Section */
 .pcq-filters {
     background: #fff;
     border: 1px solid #ccd0d4;
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 4px;
+    padding: 15px;
     margin-bottom: 20px;
 }
 
 .pcq-filter-row {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
-.pcq-filter-row select,
-.pcq-filter-row input[type="text"] {
-    margin: 0;
+.pcq-filter-select {
+    padding: 8px 32px 8px 12px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    background: #fff url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L1 4h10z"/></svg>') no-repeat right 10px center;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 150px;
 }
 
+.pcq-filter-select:hover {
+    border-color: #2271b1;
+}
+
+.pcq-filter-select:focus {
+    border-color: #2271b1;
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.pcq-search-wrapper {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.pcq-search-input {
+    padding: 8px 12px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    min-width: 250px;
+}
+
+.pcq-search-input:focus {
+    border-color: #2271b1;
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* Table Container */
 .pcq-table-container {
     background: #fff;
     border: 1px solid #ccd0d4;
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
     margin-bottom: 20px;
 }
 
+/* Table Layout */
+.pcq-email-logs-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.pcq-col-id { width: 50px; }
+.pcq-col-datetime { width: 110px; }
+.pcq-col-type { width: 180px; }
+.pcq-col-recipient { width: 200px; }
+.pcq-col-subject { width: auto; }
+.pcq-col-reference { width: 120px; }
+.pcq-col-status { width: 100px; }
+.pcq-col-actions { width: 60px; }
+
+/* Table Cell Content */
 .pcq-datetime {
     font-size: 13px;
+    white-space: nowrap;
 }
 
 .pcq-date {
     font-weight: 500;
+    color: #2c3338;
 }
 
 .pcq-time {
-    color: #666;
+    color: #646970;
     font-size: 12px;
 }
 
+/* Email Type Badge */
 .pcq-email-type {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
     color: #fff;
+    white-space: nowrap;
+    text-transform: capitalize;
 }
 
 .pcq-type-quote_confirmation { background-color: #2196F3; }
@@ -318,49 +378,76 @@ if (!defined('ABSPATH')) {
 .pcq-type-appointment_rescheduled { background-color: #9C27B0; }
 .pcq-type-admin_notification { background-color: #607D8B; }
 
-.pcq-recipient {
-    font-size: 13px;
-    word-break: break-word;
+/* Recipient & Subject */
+.pcq-recipient-cell {
+    padding: 8px 10px !important;
 }
 
-.pcq-subject {
+.pcq-recipient {
     font-size: 13px;
+    color: #2c3338;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pcq-subject-cell {
+    padding: 8px 10px !important;
+}
+
+.pcq-subject-text {
+    font-size: 13px;
+    color: #2c3338;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
 }
 
 .pcq-error-preview {
-    margin-top: 5px;
+    margin-top: 2px;
 }
 
 .pcq-error-text {
     color: #d63638;
+    font-size: 11px;
     font-style: italic;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Reference */
+.pcq-reference-cell {
+    padding: 8px 10px !important;
 }
 
 .pcq-reference {
     font-size: 12px;
-}
-
-.pcq-ref-type {
-    color: #666;
-    text-transform: capitalize;
-}
-
-.pcq-ref-id {
-    font-weight: 500;
+    white-space: nowrap;
     color: #2271b1;
+    font-weight: 500;
 }
 
 .pcq-no-reference {
     color: #999;
 }
 
+/* Status Badge */
+.pcq-status-cell {
+    padding: 8px 10px !important;
+}
+
 .pcq-status {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 10px;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .pcq-status-sent {
@@ -378,13 +465,9 @@ if (!defined('ABSPATH')) {
     color: #856404;
 }
 
-.pcq-engagement {
-    margin-top: 2px;
+.pcq-engagement-icon {
+    margin-left: 5px;
     font-size: 12px;
-}
-
-.pcq-opened,
-.pcq-clicked {
     cursor: help;
 }
 
@@ -396,7 +479,7 @@ if (!defined('ABSPATH')) {
 
 .pcq-actions-toggle {
     background: #f6f7f7;
-    border: 1px solid #ddd;
+    border: 1px solid #dcdcde;
     border-radius: 4px;
     padding: 6px 10px;
     cursor: pointer;
@@ -407,7 +490,7 @@ if (!defined('ABSPATH')) {
 
 .pcq-actions-toggle:hover {
     background: #e8e9ea;
-    border-color: #999;
+    border-color: #8c8f94;
 }
 
 .pcq-actions-toggle:focus {
@@ -418,7 +501,7 @@ if (!defined('ABSPATH')) {
 .pcq-dots {
     display: inline-block;
     font-weight: bold;
-    color: #666;
+    color: #50575e;
 }
 
 .pcq-actions-menu {
@@ -426,13 +509,14 @@ if (!defined('ABSPATH')) {
     top: 100%;
     right: 0;
     background: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid #c3c4c7;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     min-width: 180px;
     z-index: 1000;
     display: none;
     padding: 4px 0;
+    margin-top: 4px;
 }
 
 .pcq-actions-dropdown.active .pcq-actions-menu {
@@ -445,23 +529,24 @@ if (!defined('ABSPATH')) {
     gap: 8px;
     padding: 8px 12px;
     text-decoration: none;
-    color: #2c3e50;
+    color: #2c3338;
     font-size: 13px;
     transition: background-color 0.2s ease;
     border: none;
     background: none;
     text-align: left;
     cursor: pointer;
+    width: 100%;
 }
 
 .pcq-action-item:hover {
     background-color: #f0f0f1;
-    color: #2c3e50;
+    color: #2c3338;
 }
 
 .pcq-action-item:focus {
     background-color: #f0f0f1;
-    color: #2c3e50;
+    color: #2c3338;
     outline: none;
     box-shadow: inset 0 0 0 1px #2271b1;
 }
@@ -473,7 +558,7 @@ if (!defined('ABSPATH')) {
 }
 
 .pcq-action-approve:hover {
-    background-color: #f0f6ff;
+    background-color: #e7f5ec;
     color: #00a32a;
 }
 
@@ -484,54 +569,46 @@ if (!defined('ABSPATH')) {
 
 .pcq-action-divider {
     height: 1px;
-    background-color: #e0e0e0;
+    background-color: #dcdcde;
     margin: 4px 0;
 }
 
-.pcq-actions {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-}
-
-.pcq-resend-btn {
-    background-color: #FF9800 !important;
-    color: #fff !important;
-    border-color: #FF9800 !important;
-}
-
-.pcq-delete-btn {
-    background-color: #f44336 !important;
-    color: #fff !important;
-    border-color: #f44336 !important;
-}
-
+/* No Data State */
 .pcq-no-data {
     text-align: center;
     padding: 60px 20px;
-    color: #666;
+    color: #646970;
 }
 
 .pcq-no-data-icon {
     font-size: 48px;
     margin-bottom: 20px;
+    opacity: 0.5;
 }
 
 .pcq-no-data h3 {
     margin: 0 0 10px 0;
-    color: #444;
+    color: #2c3338;
+    font-size: 18px;
 }
 
+.pcq-no-data p {
+    color: #646970;
+    margin-bottom: 20px;
+}
+
+/* Pagination */
 .pcq-pagination {
     padding: 20px;
     text-align: center;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #dcdcde;
 }
 
+/* Email Stats */
 .pcq-email-stats {
     background: #fff;
     border: 1px solid #ccd0d4;
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 20px;
 }
 
@@ -544,41 +621,61 @@ if (!defined('ABSPATH')) {
 .pcq-stat-item {
     text-align: center;
     padding: 15px;
-    border-radius: 8px;
-    background: #f8f9fa;
+    border-radius: 4px;
+    background: #f6f7f7;
 }
 
-.pcq-stat-success { border-left: 4px solid #4CAF50; }
-.pcq-stat-error { border-left: 4px solid #f44336; }
-.pcq-stat-info { border-left: 4px solid #2196F3; }
-.pcq-stat-rate { border-left: 4px solid #9C27B0; }
+.pcq-stat-success { border-left: 4px solid #00a32a; }
+.pcq-stat-error { border-left: 4px solid #d63638; }
+.pcq-stat-info { border-left: 4px solid #2271b1; }
+.pcq-stat-rate { border-left: 4px solid #8c27b0; }
 
 .pcq-stat-number {
-    font-size: 24px;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 5px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #1d2327;
+    margin-bottom: 8px;
+    line-height: 1;
 }
 
 .pcq-stat-label {
-    font-size: 13px;
-    color: #666;
+    font-size: 12px;
+    color: #646970;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-weight: 500;
 }
 
-@media (max-width: 768px) {
+/* Responsive */
+@media (max-width: 1200px) {
+    .pcq-col-reference { width: 100px; }
+    .pcq-col-type { width: 140px; }
+}
+
+@media (max-width: 782px) {
     .pcq-filter-row {
         flex-direction: column;
         align-items: stretch;
     }
     
-    .pcq-actions {
-        flex-direction: column;
+    .pcq-filter-select,
+    .pcq-search-input {
+        width: 100%;
+        min-width: unset;
+    }
+    
+    .pcq-search-wrapper {
+        margin-left: 0;
+        width: 100%;
     }
     
     .pcq-stats-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .pcq-col-datetime,
+    .pcq-col-reference {
+        display: none;
     }
 }
 </style>
