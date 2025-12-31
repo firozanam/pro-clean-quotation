@@ -428,7 +428,6 @@ button.pcq-btn-primary:hover {
 /* Large Button Variant */
 .pcq-btn-large,
 .pcq-btn-primary.pcq-btn-large {
-    padding: 0.875rem 2.75rem !important;
     font-size: 1.0625rem !important;
 }
 
