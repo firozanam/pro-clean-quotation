@@ -32,11 +32,13 @@ cp pro-clean-quotation.php "${BUILD_DIR}/${PACKAGE_NAME}/"
 cp USER_MANUAL.md "${BUILD_DIR}/${PACKAGE_NAME}/"
 cp composer.json "${BUILD_DIR}/${PACKAGE_NAME}/"
 
-# Copy directories
+# Copy only production directories (excluding dev dependencies)
 cp -r assets "${BUILD_DIR}/${PACKAGE_NAME}/"
 cp -r includes "${BUILD_DIR}/${PACKAGE_NAME}/"
 cp -r languages "${BUILD_DIR}/${PACKAGE_NAME}/"
 cp -r templates "${BUILD_DIR}/${PACKAGE_NAME}/"
+
+echo "  ✓ Excluded: node_modules, vendor, tests, docs, build files"
 
 # Step 3: Install production Composer dependencies
 echo "[3/6] Installing Composer dependencies..."
@@ -48,8 +50,21 @@ cd ../..
 echo "[4/6] Removing development files..."
 cd "${BUILD_DIR}/${PACKAGE_NAME}"
 
-# Remove development documentation
-rm -rf docs/
+# Remove development documentation and test files
+rm -rf docs/ tests/ node_modules/
+
+# Remove all markdown documentation except USER_MANUAL.md
+find . -maxdepth 1 -type f -name "*.md" ! -name "USER_MANUAL.md" -delete
+find . -maxdepth 1 -type f -name "*.txt" -delete
+
+# Remove development scripts
+rm -f build-production.sh
+rm -f setup-smtp.sh
+rm -f create-confirmation-page.php
+rm -f generate-dummy-data.php
+rm -f verify-fix.php
+rm -f pcq-smtp-config.php
+rm -f wp-config-smtp.php
 
 # Remove test files
 find . -type f -name "*.test.js" -delete
@@ -70,6 +85,31 @@ rm -f .editorconfig
 rm -f package.json
 rm -f package-lock.json
 rm -f composer.lock
+rm -f phpunit.xml
+
+# Optimize mPDF vendor directory
+if [ -d "vendor/mpdf/mpdf" ]; then
+    echo "  Optimizing mPDF library..."
+    
+    # Remove mPDF development files
+    cd vendor/mpdf/mpdf
+    rm -f phpstan-baseline.neon ruleset.xml CHANGELOG.md CREDITS.txt README.md
+    rm -rf tmp/
+    
+    # Keep only essential DejaVu fonts, remove all others
+    cd ttfonts
+    # Move DejaVu fonts to temp directory
+    mkdir -p ../temp_fonts
+    mv DejaVu*.ttf ../temp_fonts/ 2>/dev/null || true
+    # Remove all fonts
+    rm -f *.ttf *.otf
+    # Restore DejaVu fonts
+    mv ../temp_fonts/*.ttf . 2>/dev/null || true
+    rmdir ../temp_fonts
+    
+    cd ../../../..
+    echo "  ✓ Reduced mPDF fonts from 83 to $(ls -1 vendor/mpdf/mpdf/ttfonts/*.ttf 2>/dev/null | wc -l | tr -d ' ') essential fonts"
+fi
 
 cd ../..
 
