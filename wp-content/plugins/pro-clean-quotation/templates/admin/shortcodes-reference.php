@@ -292,11 +292,12 @@ if (!defined('ABSPATH')) {
     background: #f6f7f7;
     border: 2px solid #dcdcde;
     border-radius: 6px;
-    padding: 15px;
+    padding: 12px 15px;
     margin: 15px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
     font-family: 'Courier New', monospace;
 }
 
@@ -306,20 +307,46 @@ if (!defined('ABSPATH')) {
     background: transparent;
     padding: 0;
     flex: 1;
+    line-height: 1.5;
 }
 
 .copy-shortcode {
-    margin-left: 10px;
+    margin: 0;
+    padding: 6px 12px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     white-space: nowrap;
+    height: 32px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 4px;
+    border: 1px solid #2271b1;
+    background: #2271b1;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.copy-shortcode:hover {
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
+}
+
+.copy-shortcode:focus {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #2271b1;
+    outline: none;
 }
 
 .copy-shortcode .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;
+    line-height: 16px;
+    vertical-align: middle;
+    margin-top: -2px;
 }
 
 .copy-shortcode.copied {
