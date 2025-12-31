@@ -201,6 +201,29 @@ class Appointment {
     }
     
     /**
+     * Find appointments by customer email
+     * 
+     * @param string $email Customer email
+     * @return array Array of Appointment objects
+     */
+    public static function findByEmail(string $email): array {
+        global $wpdb;
+        
+        $table = $wpdb->prefix . 'pq_appointments';
+        $appointments = $wpdb->get_results(
+            $wpdb->prepare("SELECT * FROM $table WHERE customer_email = %s ORDER BY service_date DESC", $email),
+            ARRAY_A
+        );
+        
+        $result = [];
+        foreach ($appointments as $appointment_data) {
+            $result[] = new self($appointment_data);
+        }
+        
+        return $result;
+    }
+    
+    /**
      * Get appointments for date range
      * 
      * @param string $start_date Start date

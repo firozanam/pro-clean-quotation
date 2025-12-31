@@ -92,6 +92,16 @@ class AdminMenu {
             [$this, 'renderCalendar']
         );
         
+        // Customers management
+        add_submenu_page(
+            'pro-clean-quotation',
+            __('Customers', 'pro-clean-quotation'),
+            __('Customers', 'pro-clean-quotation'),
+            'manage_options',
+            'pcq-customers',
+            [$this, 'renderCustomers']
+        );
+        
         // Services management
         add_submenu_page(
             'pro-clean-quotation',
@@ -487,6 +497,25 @@ class AdminMenu {
     public function renderCalendar(): void {
         $calendar_page = new CalendarPage();
         $calendar_page->render();
+    }
+    
+    /**
+     * Render customers page
+     */
+    public function renderCustomers(): void {
+        // Get filters
+        $status_filter = $_GET['status'] ?? '';
+        $search = $_GET['s'] ?? '';
+        $page = max(1, intval($_GET['paged'] ?? 1));
+        
+        $filters = array_filter([
+            'status' => $status_filter,
+            'search' => $search
+        ]);
+        
+        $customers_data = \ProClean\Quotation\Models\Customer::getAll($page, 20, $filters);
+        
+        include PCQ_PLUGIN_DIR . 'templates/admin/customers-list.php';
     }
     
     /**
