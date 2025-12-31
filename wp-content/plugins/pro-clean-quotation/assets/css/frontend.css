@@ -578,12 +578,14 @@
 .pcq-date-input {
     width: 100%;
     max-width: 400px;
-    padding: 1rem;
+    padding: 0.875rem 1rem;
     border: 2px solid #e1e5e9;
     border-radius: 8px;
     font-size: 1rem;
-    margin: 1rem auto;
-    display: block;
+    font-family: inherit;
+    background: #ffffff;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .pcq-date-input:focus {
@@ -592,14 +594,24 @@
     box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
 }
 
+.pcq-date-input:hover {
+    border-color: #2196F3;
+}
+
 .pcq-time-slots-container {
     margin-top: 2rem;
+    padding: 1.5rem;
+    background: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
 }
 
 .pcq-time-slots-container h5 {
     color: #2c3e50;
     font-size: 1.1rem;
-    margin-bottom: 1rem;
+    margin: 0 0 1.25rem 0;
+    font-weight: 600;
+    text-align: center;
 }
 
 .pcq-slots-grid {
@@ -609,36 +621,76 @@
     margin: 1rem 0;
 }
 
+/* Override grid for no-slots message */
+.pcq-time-slots-container .pcq-no-slots-container,
+.pcq-no-slots-container {
+    display: block !important;
+    grid-template-columns: none !important;
+}
+
 .pcq-time-slot {
-    padding: 1rem;
+    padding: 0.875rem 0.75rem;
     border: 2px solid #e1e5e9;
     border-radius: 8px;
     background: #ffffff;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-weight: 500;
+    font-weight: 600;
     text-align: center;
+    font-size: 0.875rem;
+    color: #2c3e50;
+    line-height: 1.3;
+    min-height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.pcq-slot-available {
+    border-color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+    font-weight: 600;
 }
 
 .pcq-slot-available:hover {
-    border-color: #2196F3;
-    background: #e3f2fd;
+    border-color: #764ba2;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    color: #764ba2;
 }
 
 .pcq-slot-unavailable {
     background: #f5f5f5;
     color: #999;
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.6;
+    border-color: #e0e0e0;
 }
 
+.pcq-time-slots-container .pcq-no-slots,
+.pcq-no-slots-container .pcq-no-slots,
 .pcq-no-slots {
     text-align: center;
     color: #7f8c8d;
     padding: 2rem;
     font-style: italic;
+    white-space: normal !important;
+    display: block !important;
+    width: 100% !important;
+    line-height: 1.6;
+    word-wrap: break-word;
+    max-width: 100%;
+    /* Override any button-like styles */
+    border: none !important;
+    background: transparent !important;
+    cursor: default !important;
+    min-height: auto !important;
+    flex-direction: column !important;
 }
 
 .pcq-loading {
@@ -653,6 +705,31 @@
     padding: 1rem;
     border-radius: 6px;
     text-align: center;
+}
+
+.pcq-info {
+    background: #e3f2fd;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    color: #1976d2;
+    line-height: 1.6;
+}
+
+.pcq-info p {
+    margin: 0;
+}
+
+.pcq-info p + p {
+    margin-top: 0.75rem;
+    font-size: 0.9em;
+    color: #1565c0;
+}
+
+.pcq-info strong {
+    font-weight: 600;
+    color: #0d47a1;
 }
 
 .pcq-booking-confirmation {
@@ -734,6 +811,22 @@
     .pcq-booking-form-container {
         padding: 1rem;
     }
+    
+    .pcq-quote-summary {
+        padding: 1rem !important;
+    }
+    
+    .pcq-booking-calendar-wrapper {
+        padding: 1rem !important;
+    }
+    
+    .pcq-date-input {
+        max-width: 100%;
+    }
+    
+    .pcq-time-slots-container {
+        padding: 1rem;
+    }
 
     .pcq-slots-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -741,8 +834,10 @@
     }
 
     .pcq-time-slot {
-        padding: 0.75rem;
-        font-size: 0.9rem;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+        min-height: 50px;
+        line-height: 1.2;
     }
 
     .pcq-form-actions {

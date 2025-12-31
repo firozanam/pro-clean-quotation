@@ -210,8 +210,11 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
                         id="<?php echo esc_attr($form_id); ?>_customer_phone" 
                         name="customer_phone" 
                         required
-                        placeholder="<?php esc_attr_e('+31 6 12345678', 'pro-clean-quotation'); ?>"
+                        pattern="^((\+34|0034)[6-9][0-9]{8}|[6-9][0-9]{8})$"
+                        placeholder="<?php esc_attr_e('+34 612 345 678', 'pro-clean-quotation'); ?>"
+                        title="<?php esc_attr_e('Enter a valid Spanish phone number (e.g., +34 612 345 678 or 612345678)', 'pro-clean-quotation'); ?>"
                     >
+                    <small class="pcq-field-help"><?php _e('Format: +34 612 345 678 or 612345678', 'pro-clean-quotation'); ?></small>
                 </div>
                 <div class="pcq-form-field">
                     <label for="<?php echo esc_attr($form_id); ?>_postal_code">
@@ -222,10 +225,12 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
                         id="<?php echo esc_attr($form_id); ?>_postal_code" 
                         name="postal_code" 
                         required
-                        pattern="[1-9][0-9]{3}\s?[A-Z]{2}"
-                        placeholder="<?php esc_attr_e('1234 AB', 'pro-clean-quotation'); ?>"
+                        pattern="^(0[1-9]|[1-4][0-9]|5[0-2])[0-9]{3}$"
+                        placeholder="<?php esc_attr_e('29600', 'pro-clean-quotation'); ?>"
+                        maxlength="5"
+                        title="<?php esc_attr_e('Enter a valid Spanish postal code (5 digits, e.g., 29600)', 'pro-clean-quotation'); ?>"
                     >
-                    <small class="pcq-field-help"><?php _e('Format: 1234 AB', 'pro-clean-quotation'); ?></small>
+                    <small class="pcq-field-help"><?php _e('Format: 29600 (5-digit Spanish postal code)', 'pro-clean-quotation'); ?></small>
                 </div>
             </div>
             <div class="pcq-form-field">

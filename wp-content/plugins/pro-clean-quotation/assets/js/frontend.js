@@ -210,16 +210,13 @@
          */
         formatPhoneNumber(e) {
             const input = $(e.target);
-            let value = input.val().replace(/\D/g, '');
+            let value = input.val();
             
-            // Basic Dutch phone number formatting
-            if (value.startsWith('31')) {
-                value = '+' + value;
-            } else if (value.startsWith('0')) {
-                // Keep as is for local format
-            } else if (value.length > 0) {
-                value = '0' + value;
-            }
+            // Allow: digits, spaces, plus sign for Spanish format
+            value = value.replace(/[^0-9+\s]/g, '');
+            
+            // Trim excessive spaces
+            value = value.replace(/\s+/g, ' ');
             
             input.val(value);
         }
@@ -229,11 +226,11 @@
          */
         formatPostalCode(e) {
             const input = $(e.target);
-            let value = input.val().toUpperCase().replace(/[^0-9A-Z]/g, '');
+            let value = input.val().replace(/[^0-9]/g, '');
             
-            // Dutch postal code format: 1234AB
-            if (value.length > 4) {
-                value = value.substring(0, 4) + ' ' + value.substring(4, 6);
+            // Spanish postal code: 5 digits only
+            if (value.length > 5) {
+                value = value.substring(0, 5);
             }
             
             input.val(value);
@@ -278,7 +275,7 @@
             // Postal code validation
             const postalCode = this.form.find('input[name="postal_code"]').val();
             if (postalCode && !this.isValidPostalCode(postalCode)) {
-                errors.postal_code = 'Please enter a valid Dutch postal code (e.g., 1234 AB)';
+                errors.postal_code = 'Please enter a valid Spanish postal code (5 digits, e.g., 28001, 29600). Valid range: 01001-52999';
                 isValid = false;
             }
 
@@ -574,13 +571,24 @@
         }
 
         isValidPhone(phone) {
-            const phoneRegex = /^(\+31|0)[1-9][0-9]{8}$/;
-            return phoneRegex.test(phone.replace(/\s/g, ''));
+            // Remove all spaces for validation
+            const cleanPhone = phone.replace(/\s/g, '');
+            
+            // Accept Spanish phone formats:
+            // +34612345678, 0034612345678, 612345678
+            // Mobile: starts with 6, 7, 8, or 9 (after country code)
+            // Also accept with spaces: +34 612 345 678, 612 345 678, etc.
+            const phoneRegex = /^(\+34|0034)?[6-9][0-9]{8}$/;
+            return phoneRegex.test(cleanPhone);
         }
 
         isValidPostalCode(postalCode) {
-            const postalRegex = /^[1-9][0-9]{3}\s?[A-Z]{2}$/i;
-            return postalRegex.test(postalCode);
+            // Spanish postal code format: 5 digits (01001-52999)
+            // Province codes: 01-52, Locality: 000-999
+            // Remove any spaces and validate
+            const cleanPostal = postalCode.replace(/\s/g, '');
+            const postalRegex = /^(0[1-9]|[1-4][0-9]|5[0-2])[0-9]{3}$/;
+            return postalRegex.test(cleanPostal);
         }
 
         /**

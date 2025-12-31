@@ -87,8 +87,12 @@ class Settings {
             'call_out_fee' => 0.00,
             
             // Tax Configuration
-            'tax_rate' => 21.0, // 21% VAT for Netherlands
+            'tax_rate' => 21.0, // 21% VAT (IVA) for Spain
             'tax_inclusive' => false,
+            
+            // Country Configuration
+            'phone_country_code' => 'ES',
+            'postal_code_country' => 'ES',
             
             // Business Hours
             'business_hours' => [
@@ -107,8 +111,10 @@ class Settings {
             'min_lead_time_days' => 1,
             'quote_validity_days' => 30,
             
-            // Service Area (Postal Codes)
-            'service_area_postcodes' => ['1000', '2000', '3000'], // Example Dutch postal codes
+            // Service Area (Postal Codes) - All Spain (empty array = accept all)
+            // To restrict to specific areas, add postal codes or ranges here
+            // Examples: ['29600-29604', '28001-28099', '08001-08099']
+            'service_area_postcodes' => [],
             
             // Email Settings
             'email_notifications_enabled' => true,

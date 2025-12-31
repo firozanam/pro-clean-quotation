@@ -312,6 +312,8 @@ class Installer {
         // Check if data already exists
         $existing_services = $wpdb->get_var("SELECT COUNT(*) FROM $services_table");
         if ($existing_services > 0) {
+            // Create required pages even if services exist
+            self::createRequiredPages();
             return; // Data already exists
         }
         
@@ -397,6 +399,52 @@ class Installer {
                 'service_id' => $service_id,
                 'created_at' => $current_time
             ]);
+        }
+        
+        // Create required WordPress pages
+        self::createRequiredPages();
+    }
+    
+    /**
+     * Create required WordPress pages
+     */
+    public static function createRequiredPages(): void {
+        // Create booking page
+        $booking_page_id = get_option('pcq_booking_page_id');
+        
+        // Check if page still exists
+        if ($booking_page_id && get_post_status($booking_page_id) !== false) {
+            return; // Page already exists and is valid
+        }
+        
+        // Check if a page with 'book-service' slug already exists
+        $existing_page = get_page_by_path('book-service');
+        if ($existing_page) {
+            // Use existing page
+            update_option('pcq_booking_page_id', $existing_page->ID);
+            return;
+        }
+        
+        // Create new booking page
+        $booking_page = [
+            'post_title'    => __('Book Service', 'pro-clean-quotation'),
+            'post_content'  => '[pcq_booking_form]',
+            'post_status'   => 'publish',
+            'post_type'     => 'page',
+            'post_name'     => 'book-service',
+            'post_author'   => get_current_user_id() ?: 1,
+            'comment_status' => 'closed',
+            'ping_status'   => 'closed'
+        ];
+        
+        $page_id = wp_insert_post($booking_page);
+        
+        if ($page_id && !is_wp_error($page_id)) {
+            // Save the page ID in options
+            update_option('pcq_booking_page_id', $page_id);
+            
+            // Flush rewrite rules to ensure the page is accessible
+            flush_rewrite_rules();
         }
     }
     

@@ -451,18 +451,102 @@ class DummyDataGenerator {
         ];
         
         $statuses = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'];
-        $status_weights = [30, 40, 5, 15, 8, 2]; // Weighted distribution
+        $appointments_created = 0;
         
-        for ($i = 0; $i < 30; $i++) {
+        // Generate appointments for January 2026 (weekdays only, with available slots)
+        $start_date = strtotime('2026-01-02'); // First weekday of January 2026
+        $end_date = strtotime('2026-01-31');
+        
+        $time_slots = [
+            ['start' => '09:00:00', 'duration' => 120],
+            ['start' => '11:30:00', 'duration' => 120],
+            ['start' => '14:00:00', 'duration' => 120]
+        ];
+        
+        $current_date = $start_date;
+        while ($current_date <= $end_date) {
+            $day_of_week = date('N', $current_date); // 1 (Monday) - 7 (Sunday)
+            
+            // Skip Sundays (7) and some Saturdays for realism
+            if ($day_of_week == 7 || ($day_of_week == 6 && rand(0, 1))) {
+                $current_date = strtotime('+1 day', $current_date);
+                continue;
+            }
+            
+            $service_date = date('Y-m-d', $current_date);
+            
+            // Create 1-2 appointments per day (leaving slots available for testing)
+            $appointments_per_day = rand(1, 2);
+            $used_slots = [];
+            
+            for ($i = 0; $i < $appointments_per_day; $i++) {
+                // Select a time slot that hasn't been used today
+                $available_slots = array_diff(array_keys($time_slots), $used_slots);
+                if (empty($available_slots)) break;
+                
+                $slot_index = array_rand(array_flip($available_slots));
+                $used_slots[] = $slot_index;
+                
+                $time_slot = $time_slots[$slot_index];
+                $service = $services[array_rand($services)];
+                $employee = $employees[array_rand($employees)];
+                $customer = $customers[array_rand($customers)];
+                
+                $service_time_start = $time_slot['start'];
+                $duration_minutes = $service->duration;
+                $end_time = strtotime($service_time_start) + ($duration_minutes * 60);
+                $service_time_end = date('H:i:s', $end_time);
+                
+                // Determine status based on date
+                $days_from_now = round(($current_date - time()) / 86400);
+                if ($days_from_now < -7) {
+                    $status = ['completed', 'cancelled'][rand(0, 1)];
+                } elseif ($days_from_now < 0) {
+                    $status = 'completed';
+                } elseif ($days_from_now <= 7) {
+                    $status = ['confirmed', 'pending'][rand(0, 1)];
+                } else {
+                    $status = 'pending';
+                }
+                
+                $price_variation = rand(-20, 50);
+                $final_price = $service->price + $price_variation;
+                
+                $appointment_data = [
+                    'service_id' => $service->id,
+                    'employee_id' => $employee->id,
+                    'quote_id' => rand(0, 1) && !empty($quotes) ? $quotes[array_rand($quotes)]->id : null,
+                    'customer_name' => $customer[0],
+                    'customer_email' => $customer[1],
+                    'customer_phone' => $customer[2],
+                    'service_date' => $service_date,
+                    'service_time_start' => $service_time_start,
+                    'service_time_end' => $service_time_end,
+                    'duration' => $duration_minutes,
+                    'price' => round($final_price, 2),
+                    'status' => $status,
+                    'notes' => rand(0, 1) ? 'Customer requested early morning appointment. Property has easy access.' : null,
+                    'internal_notes' => rand(0, 1) ? 'Check equipment before arrival. Customer is repeat client.' : null,
+                    'created_at' => date('Y-m-d H:i:s', strtotime("-" . rand(1, 30) . " days")),
+                    'updated_at' => rand(0, 1) ? $current_time : null
+                ];
+                
+                $wpdb->insert($appointments_table, $appointment_data);
+                $appointments_created++;
+            }
+            
+            $current_date = strtotime('+1 day', $current_date);
+        }
+        
+        // Generate some additional historical appointments (past 2 months)
+        for ($i = 0; $i < 15; $i++) {
             $service = $services[array_rand($services)];
             $employee = $employees[array_rand($employees)];
             $customer = $customers[array_rand($customers)];
             
-            // Generate appointment date (past, present, future)
-            $days_offset = rand(-60, 60);
+            $days_offset = rand(-60, -1);
             $service_date = date('Y-m-d', strtotime("+$days_offset days"));
             
-            // Generate time slots
             $start_hour = rand(8, 16);
             $start_minute = [0, 15, 30, 45][rand(0, 3)];
             $service_time_start = sprintf('%02d:%02d:00', $start_hour, $start_minute);
@@ -471,16 +555,7 @@ class DummyDataGenerator {
             $end_time = strtotime($service_time_start) + ($duration_minutes * 60);
             $service_time_end = date('H:i:s', $end_time);
             
-            // Select status based on appointment date
-            if ($days_offset < -7) {
-                $status = ['completed', 'cancelled', 'no_show'][rand(0, 2)];
-            } elseif ($days_offset < 0) {
-                $status = ['completed', 'in_progress'][rand(0, 1)];
-            } elseif ($days_offset <= 7) {
-                $status = ['confirmed', 'pending'][rand(0, 1)];
-            } else {
-                $status = 'pending';
-            }
+            $status = ['completed', 'cancelled', 'no_show'][rand(0, 2)];
             
             $price_variation = rand(-20, 50);
             $final_price = $service->price + $price_variation;
@@ -498,16 +573,17 @@ class DummyDataGenerator {
                 'duration' => $duration_minutes,
                 'price' => round($final_price, 2),
                 'status' => $status,
-                'notes' => rand(0, 1) ? 'Customer requested early morning appointment. Property has easy access.' : null,
-                'internal_notes' => rand(0, 1) ? 'Check equipment before arrival. Customer is repeat client.' : null,
-                'created_at' => date('Y-m-d H:i:s', strtotime("-" . rand(1, 30) . " days")),
+                'notes' => rand(0, 1) ? 'Customer requested early morning appointment.' : null,
+                'internal_notes' => rand(0, 1) ? 'Check equipment before arrival.' : null,
+                'created_at' => date('Y-m-d H:i:s', strtotime("+$days_offset days")),
                 'updated_at' => rand(0, 1) ? $current_time : null
             ];
             
             $wpdb->insert($appointments_table, $appointment_data);
+            $appointments_created++;
         }
         
-        echo "Generated 30 appointments\n";
+        echo "Generated $appointments_created appointments (January 2026 + historical)\n";
     }
     
     /**

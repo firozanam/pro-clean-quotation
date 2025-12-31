@@ -106,6 +106,9 @@ function pcq_activate_plugin() {
     // Migrate existing employee assignments to team system
     ProClean\Quotation\Database\Installer::migrateEmployeeAssignments();
     
+    // Create required pages (booking page)
+    ProClean\Quotation\Database\Installer::createRequiredPages();
+    
     // Set default options
     ProClean\Quotation\Admin\Settings::setDefaults();
     

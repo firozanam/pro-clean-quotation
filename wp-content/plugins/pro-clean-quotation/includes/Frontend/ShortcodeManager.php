@@ -254,11 +254,13 @@ class ShortcodeManager {
         $html .= '<div class="pcq-form-row">';
         $html .= '<div class="pcq-form-field">';
         $html .= '<label for="customer_phone">' . __('Phone Number', 'pro-clean-quotation') . ' <span class="required">*</span></label>';
-        $html .= '<input type="tel" id="customer_phone" name="customer_phone" required>';
+        $html .= '<input type="tel" id="customer_phone" name="customer_phone" required pattern="^((\\+34|0034)[6-9][0-9]{8}|[6-9][0-9]{8})$" placeholder="+34 612 345 678" title="' . __('Enter a valid Spanish phone number (e.g., +34 612 345 678 or 612345678)', 'pro-clean-quotation') . '">';
+        $html .= '<small class="pcq-field-help">' . __('Format: +34 612 345 678 or 612345678', 'pro-clean-quotation') . '</small>';
         $html .= '</div>';
         $html .= '<div class="pcq-form-field">';
         $html .= '<label for="postal_code">' . __('Postal Code', 'pro-clean-quotation') . ' <span class="required">*</span></label>';
-        $html .= '<input type="text" id="postal_code" name="postal_code" pattern="[1-9][0-9]{3}\s?[A-Z]{2}" placeholder="1234 AB" required>';
+        $html .= '<input type="text" id="postal_code" name="postal_code" pattern="^(0[1-9]|[1-4][0-9]|5[0-2])[0-9]{3}$" placeholder="28001" maxlength="5" title="' . __('Enter a valid Spanish postal code (5 digits, e.g., 28001, 29600). Valid range: 01001-52999', 'pro-clean-quotation') . '" required>';
+        $html .= '<small class="pcq-field-help">' . __('Format: 5-digit code (e.g., 28001 for Madrid, 29600 for Marbella)', 'pro-clean-quotation') . '</small>';
         $html .= '</div>';
         $html .= '</div>';
         $html .= '<div class="pcq-form-field">';

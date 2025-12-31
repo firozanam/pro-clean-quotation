@@ -46,7 +46,7 @@ class BookingManager {
      * @param string $date Date in Y-m-d format
      * @param int $service_duration Duration in hours
      * @param string $service_type Service type
-     * @return array Available time slots
+     * @return array Available time slots with availability status
      */
     public function getAvailableSlots(string $date, int $service_duration, string $service_type): array {
         // Get business hours for the date
@@ -66,12 +66,17 @@ class BookingManager {
         // Generate time slots
         $slots = $this->generateTimeSlots($start_time, $end_time, $service_duration);
         
-        // Filter out unavailable slots
+        // Map slots with availability status
         $available_slots = [];
         foreach ($slots as $slot) {
-            if ($this->isSlotAvailable($slot, $existing_bookings, $service_duration)) {
-                $available_slots[] = $slot;
-            }
+            $is_available = $this->isSlotAvailable($slot, $existing_bookings, $service_duration);
+            
+            $available_slots[] = [
+                'start_time' => $slot['start'],
+                'end_time' => $slot['end'],
+                'available' => $is_available,
+                'reason' => $is_available ? null : __('Already booked', 'pro-clean-quotation')
+            ];
         }
         
         return $available_slots;

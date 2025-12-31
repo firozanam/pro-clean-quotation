@@ -162,6 +162,16 @@ class AdminMenu {
             [$this, 'renderShortcodes']
         );
         
+        // Booking Page Setup (Utility)
+        add_submenu_page(
+            'pro-clean-quotation',
+            __('Setup Booking Page', 'pro-clean-quotation'),
+            __('Setup Booking Page', 'pro-clean-quotation'),
+            'manage_options',
+            'pcq-setup-booking',
+            [$this, 'renderBookingSetup']
+        );
+        
         // Dummy Data (only in development)
         if (defined('WP_DEBUG') && WP_DEBUG) {
             add_submenu_page(
@@ -418,7 +428,7 @@ class AdminMenu {
         }
         
         // Handle settings save
-        if ($page === 'pcq-settings' && $action === 'save' && $_POST) {
+        if ($page === 'pcq-settings' && $_POST && isset($_POST['action']) && $_POST['action'] === 'save') {
             if (wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pcq_save_settings')) {
                 $this->saveSettings($_POST);
             }
@@ -708,6 +718,14 @@ class AdminMenu {
      * Render settings page
      */
     public function renderSettings(): void {
+        // Check for success message from redirect
+        if (get_transient('pcq_settings_saved')) {
+            delete_transient('pcq_settings_saved');
+            add_action('admin_notices', function() {
+                echo '<div class="notice notice-success is-dismissible"><p>' . __('Settings saved successfully.', 'pro-clean-quotation') . '</p></div>';
+            });
+        }
+        
         $settings_page = new SettingsPage();
         $settings_page->render();
     }
@@ -1071,13 +1089,25 @@ class AdminMenu {
     /**
      * Save settings
      */
+    /**
+     * Save settings
+     */
     private function saveSettings(array $data): void {
-        $settings_page = new SettingsPage();
-        $settings_page->save($data);
-        
-        add_action('admin_notices', function() {
-            echo '<div class="notice notice-success is-dismissible"><p>' . __('Settings saved successfully.', 'pro-clean-quotation') . '</p></div>';
-        });
+        try {
+            $settings_page = new SettingsPage();
+            $settings_page->save($data);
+            
+            // Set transient for success message
+            set_transient('pcq_settings_saved', true, 30);
+            
+            // Redirect to avoid form resubmission
+            wp_redirect(admin_url('admin.php?page=pcq-settings'));
+            exit;
+        } catch (\Exception $e) {
+            add_action('admin_notices', function() use ($e) {
+                echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($e->getMessage()) . '</p></div>';
+            });
+        }
     }
     
     /**
@@ -1984,5 +2014,117 @@ class AdminMenu {
      */
     public function renderShortcodes(): void {
         include PCQ_PLUGIN_DIR . 'templates/admin/shortcodes-reference.php';
+    }
+    
+    /**
+     * Render booking page setup utility
+     */
+    public function renderBookingSetup(): void {
+        // Create the booking page if action is triggered
+        if (isset($_GET['action']) && $_GET['action'] === 'create_page' && wp_verify_nonce($_GET['_wpnonce'] ?? '', 'create_booking_page')) {
+            \ProClean\Quotation\Database\Installer::createRequiredPages();
+            flush_rewrite_rules();
+        }
+        
+        // Get booking page info
+        $booking_page_id = get_option('pcq_booking_page_id');
+        $page_exists = $booking_page_id && get_post_status($booking_page_id) !== false;
+        
+        if ($page_exists) {
+            $page = get_post($booking_page_id);
+            $page_url = get_permalink($booking_page_id);
+        }
+        
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Booking Page Setup', 'pro-clean-quotation'); ?></h1>
+            
+            <?php if ($page_exists): ?>
+                <div class="notice notice-success" style="padding: 20px; margin: 20px 0;">
+                    <h2 style="margin-top: 0;"><?php _e('✓ Booking Page is Active', 'pro-clean-quotation'); ?></h2>
+                    <table class="widefat" style="max-width: 800px;">
+                        <tr>
+                            <th style="width: 200px;"><?php _e('Page ID:', 'pro-clean-quotation'); ?></th>
+                            <td><?php echo esc_html($booking_page_id); ?></td>
+                        </tr>
+                        <tr>
+                            <th><?php _e('Page Title:', 'pro-clean-quotation'); ?></th>
+                            <td><?php echo esc_html($page->post_title); ?></td>
+                        </tr>
+                        <tr>
+                            <th><?php _e('Page Slug:', 'pro-clean-quotation'); ?></th>
+                            <td><?php echo esc_html($page->post_name); ?></td>
+                        </tr>
+                        <tr>
+                            <th><?php _e('Status:', 'pro-clean-quotation'); ?></th>
+                            <td><?php echo esc_html(ucfirst($page->post_status)); ?></td>
+                        </tr>
+                        <tr>
+                            <th><?php _e('URL:', 'pro-clean-quotation'); ?></th>
+                            <td><a href="<?php echo esc_url($page_url); ?>" target="_blank"><?php echo esc_html($page_url); ?></a></td>
+                        </tr>
+                    </table>
+                    
+                    <h3><?php _e('Test Links:', 'pro-clean-quotation'); ?></h3>
+                    <ul>
+                        <li>
+                            <a href="<?php echo esc_url($page_url); ?>" target="_blank" class="button">
+                                <?php _e('View Booking Page', 'pro-clean-quotation'); ?>
+                            </a>
+                        </li>
+                        <li style="margin-top: 10px;">
+                            <a href="<?php echo esc_url($page_url . '?quote_id=30&token=019bb22981646f9d28141fe14ef4096c'); ?>" target="_blank" class="button">
+                                <?php _e('Test with Sample Quote ID', 'pro-clean-quotation'); ?>
+                            </a>
+                            <span style="color: #666; margin-left: 10px;"><?php _e('(Will show error if quote doesn\'t exist)', 'pro-clean-quotation'); ?></span>
+                        </li>
+                        <li style="margin-top: 10px;">
+                            <a href="<?php echo esc_url(home_url('/book-service/?quote_id=30&token=019bb22981646f9d28141fe14ef4096c')); ?>" target="_blank" class="button">
+                                <?php _e('Test Old URL Redirect', 'pro-clean-quotation'); ?>
+                            </a>
+                            <span style="color: #666; margin-left: 10px;"><?php _e('(Should redirect to booking page)', 'pro-clean-quotation'); ?></span>
+                        </li>
+                    </ul>
+                    
+                    <h3><?php _e('Quick Actions:', 'pro-clean-quotation'); ?></h3>
+                    <p>
+                        <a href="<?php echo admin_url('post.php?post=' . $booking_page_id . '&action=edit'); ?>" class="button button-primary">
+                            <?php _e('Edit Booking Page', 'pro-clean-quotation'); ?>
+                        </a>
+                        <a href="<?php echo admin_url('admin.php?page=pcq-quotes'); ?>" class="button">
+                            <?php _e('View All Quotes', 'pro-clean-quotation'); ?>
+                        </a>
+                    </p>
+                </div>
+            <?php else: ?>
+                <div class="notice notice-warning" style="padding: 20px; margin: 20px 0;">
+                    <h2 style="margin-top: 0;"><?php _e('⚠ Booking Page Not Found', 'pro-clean-quotation'); ?></h2>
+                    <p><?php _e('The booking page is missing or was deleted. Click the button below to create it.', 'pro-clean-quotation'); ?></p>
+                    <p>
+                        <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=pcq-setup-booking&action=create_page'), 'create_booking_page'); ?>" class="button button-primary button-large">
+                            <?php _e('Create Booking Page Now', 'pro-clean-quotation'); ?>
+                        </a>
+                    </p>
+                </div>
+            <?php endif; ?>
+            
+            <div class="card" style="max-width: 800px; margin-top: 20px;">
+                <h2><?php _e('How Booking URLs Work', 'pro-clean-quotation'); ?></h2>
+                <ol>
+                    <li><?php _e('When a customer submits a quote request, the system generates a unique quote ID and security token.', 'pro-clean-quotation'); ?></li>
+                    <li><?php _e('The quote confirmation email includes a "Book This Service" link with these parameters.', 'pro-clean-quotation'); ?></li>
+                    <li><?php _e('Clicking the link takes the customer to the booking page where they can schedule their service.', 'pro-clean-quotation'); ?></li>
+                    <li><?php _e('The token is validated for security to prevent unauthorized bookings.', 'pro-clean-quotation'); ?></li>
+                </ol>
+                
+                <h3><?php _e('Troubleshooting:', 'pro-clean-quotation'); ?></h3>
+                <ul>
+                    <li><strong><?php _e('404 Page Not Found:', 'pro-clean-quotation'); ?></strong> <?php _e('Go to Settings → Permalinks and click "Save Changes" to flush rewrite rules.', 'pro-clean-quotation'); ?></li>
+                    <li><strong><?php _e('Invalid Booking Link:', 'pro-clean-quotation'); ?></strong> <?php _e('Check that the quote ID exists and the token matches in the database.', 'pro-clean-quotation'); ?></li>
+                    <li><strong><?php _e('Old Emails Not Working:', 'pro-clean-quotation'); ?></strong> <?php _e('The redirect handler should catch old /book-service/ URLs and redirect them.', 'pro-clean-quotation'); ?></li>
+                </ul>
+            </div>
+        </div>
+        <?php
     }
 }

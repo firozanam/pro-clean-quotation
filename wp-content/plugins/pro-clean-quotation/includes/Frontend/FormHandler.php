@@ -209,7 +209,7 @@ class FormHandler {
         if (!empty($data['customer_phone'])) {
             $phone_check = $validator->validatePhone(
                 $data['customer_phone'],
-                Settings::get('phone_country_code', 'NL')
+                Settings::get('phone_country_code', 'ES')
             );
             
             if (!$phone_check['valid']) {
@@ -221,7 +221,7 @@ class FormHandler {
         if (!empty($data['postal_code'])) {
             $postal_check = $validator->validatePostalCode(
                 $data['postal_code'],
-                Settings::get('postal_code_country', 'NL')
+                Settings::get('postal_code_country', 'ES')
             );
             
             if (!$postal_check['valid']) {

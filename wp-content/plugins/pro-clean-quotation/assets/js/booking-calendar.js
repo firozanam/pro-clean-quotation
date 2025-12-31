@@ -171,11 +171,12 @@
          */
         renderTimeSlots: function(slots, date) {
             const self = this;
-            let html = '<div class="pcq-slots-grid">';
+            let html = '';
 
             if (!slots || slots.length === 0) {
-                html += '<p class="pcq-no-slots">No available slots for this date. Please select another date.</p>';
+                html = '<div class="pcq-slots-grid pcq-no-slots-container"><p class="pcq-no-slots">No available slots for this date. Please select another date.</p></div>';
             } else {
+                html = '<div class="pcq-slots-grid">';
                 slots.forEach(function(slot) {
                     const isAvailable = slot.available;
                     const slotClass = isAvailable ? 'pcq-slot-available' : 'pcq-slot-unavailable';
@@ -193,9 +194,9 @@
                     
                     html += '>' + timeRange + '</button>';
                 });
+                html += '</div>';
             }
 
-            html += '</div>';
             this.$availableSlots.html(html);
 
             // Bind click events to available slots

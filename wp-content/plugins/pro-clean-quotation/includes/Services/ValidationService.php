@@ -156,14 +156,18 @@ class ValidationService {
      * Validate postal code format
      * 
      * @param string $postal_code Postal code to validate
-     * @param string $country Country code (default: NL for Netherlands)
+     * @param string $country Country code (default: ES for Spain)
      * @return array Validation result
      */
-    public function validatePostalCode(string $postal_code, string $country = 'NL'): array {
+    public function validatePostalCode(string $postal_code, string $country = 'ES'): array {
         $postal_code = trim($postal_code);
         
         // Country-specific validation patterns
         $patterns = [
+            // Spain: 5 digits, range 01001-52999 (province 01-52, locality 000-999)
+            // First 2 digits: province code (01=Álava to 52=Melilla)
+            // Last 3 digits: locality code within province
+            'ES' => '/^(0[1-9]|[1-4][0-9]|5[0-2])[0-9]{3}$/',
             'NL' => '/^[1-9][0-9]{3}\s?[A-Z]{2}$/i',  // Netherlands: 1234 AB or 1234AB
             'BE' => '/^[1-9][0-9]{3}$/i',              // Belgium: 1234
             'DE' => '/^[0-9]{5}$/i',                   // Germany: 12345
@@ -171,19 +175,30 @@ class ValidationService {
             'UK' => '/^[A-Z]{1,2}[0-9]{1,2}[A-Z]?\s?[0-9][A-Z]{2}$/i', // UK: SW1A 1AA
         ];
         
-        $pattern = $patterns[$country] ?? $patterns['NL'];
+        $pattern = $patterns[$country] ?? $patterns['ES'];
         
         if (!preg_match($pattern, $postal_code)) {
+            $error_message = __('Invalid postal code format.', 'pro-clean-quotation');
+            
+            // Provide country-specific error messages
+            if ($country === 'ES') {
+                $error_message = __('Please enter a valid Spanish postal code (5 digits, e.g., 28001, 29600). Valid range: 01001-52999.', 'pro-clean-quotation');
+            }
+            
             return [
                 'valid' => false,
-                'message' => __('Invalid postal code format.', 'pro-clean-quotation'),
+                'message' => $error_message,
                 'formatted' => ''
             ];
         }
         
-        // Format postal code (add space for NL format if missing)
+        // Format postal code (Spanish postal codes don't need special formatting)
         $formatted = $postal_code;
-        if ($country === 'NL' && !preg_match('/\s/', $postal_code)) {
+        if ($country === 'ES') {
+            // Remove any spaces for Spanish postal codes
+            $formatted = str_replace(' ', '', $postal_code);
+        } elseif ($country === 'NL' && !preg_match('/\s/', $postal_code)) {
+            // Add space for NL format if missing
             $formatted = substr($postal_code, 0, 4) . ' ' . strtoupper(substr($postal_code, 4, 2));
         }
         
@@ -203,6 +218,24 @@ class ValidationService {
     public function checkServiceArea(string $postal_code): array {
         $service_areas = Settings::get('service_area_postcodes', []);
         
+        // Ensure we have an array and filter out empty values
+        if (!is_array($service_areas)) {
+            $service_areas = [];
+        }
+        
+        // Filter out empty values, trim whitespace, and reindex array
+        $service_areas = array_values(array_filter(array_map('trim', $service_areas), function($area) {
+            return $area !== '' && $area !== null;
+        }));
+        
+        // Log for debugging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PCQ: Service area check - Areas configured: ' . count($service_areas) . ' - Postal code: ' . $postal_code);
+            if (!empty($service_areas)) {
+                error_log('PCQ: Service areas: ' . json_encode($service_areas));
+            }
+        }
+        
         // If no service areas configured, allow all
         if (empty($service_areas)) {
             return [
@@ -211,18 +244,32 @@ class ValidationService {
             ];
         }
         
-        // Extract numeric part of postal code (first 4 digits for NL)
-        $numeric_part = substr(preg_replace('/[^0-9]/', '', $postal_code), 0, 4);
+        // Clean the postal code (remove spaces)
+        $clean_postal = str_replace(' ', '', $postal_code);
         
         foreach ($service_areas as $area) {
             $area = trim($area);
             
-            // Support range format: 1000-2000
-            if (strpos($area, '-') !== false) {
+            // Support wildcard patterns (e.g., 296** for 29600-29699)
+            if (strpos($area, '*') !== false) {
+                // Convert wildcard pattern to regex
+                // 296** becomes /^296\d{2}$/
+                $pattern = '/^' . str_replace('*', '\d', preg_quote($area, '/')) . '$/';
+                if (preg_match($pattern, $clean_postal)) {
+                    return [
+                        'available' => true,
+                        'message' => '',
+                        'area' => $area,
+                        'match_type' => 'wildcard'
+                    ];
+                }
+            }
+            // Support range format: 29600-29604
+            elseif (strpos($area, '-') !== false) {
                 list($start, $end) = explode('-', $area);
                 $start = intval(trim($start));
                 $end = intval(trim($end));
-                $postal_num = intval($numeric_part);
+                $postal_num = intval($clean_postal);
                 
                 if ($postal_num >= $start && $postal_num <= $end) {
                     return [
@@ -232,8 +279,9 @@ class ValidationService {
                     ];
                 }
             } else {
-                // Prefix match
-                if (strpos($numeric_part, $area) === 0) {
+                // Exact match or prefix match
+                $area_clean = str_replace(' ', '', $area);
+                if ($clean_postal === $area_clean || strpos($clean_postal, $area_clean) === 0) {
                     return [
                         'available' => true,
                         'message' => '',
@@ -246,8 +294,9 @@ class ValidationService {
         return [
             'available' => false,
             'message' => sprintf(
-                __('Sorry, we currently do not service postal code %s. Please contact us for more information.', 'pro-clean-quotation'),
-                $postal_code
+                __('Sorry, we currently do not service postal code %s. Please contact us at %s for more information about our service areas.', 'pro-clean-quotation'),
+                '<strong>' . esc_html($postal_code) . '</strong>',
+                Settings::get('company_email', get_option('admin_email'))
             ),
             'postal_code' => $postal_code
         ];
@@ -260,37 +309,39 @@ class ValidationService {
      * @param string $country Country code
      * @return array Validation result
      */
-    public function validatePhone(string $phone, string $country = 'NL'): array {
+    public function validatePhone(string $phone, string $country = 'ES'): array {
         // Remove all whitespace and special characters except +
         $cleaned = preg_replace('/[^0-9+]/', '', $phone);
         
-        // Country-specific patterns
+        // Country-specific patterns - now more flexible to accept spaces
         $patterns = [
-            'NL' => '/^(\+31|0031|0)[1-9][0-9]{8}$/',  // Netherlands: +31612345678 or 0612345678
+            'ES' => '/^(\+34|0034)?[6-9][0-9]{8}$/',  // Spain: +34612345678 or 612345678 (mobile starts with 6-9)
+            'NL' => '/^(\+31|0031|0)[1-9][0-9]{8}$/',  // Netherlands: +31612345678 or 0612345678 or 0031612345678
             'BE' => '/^(\+32|0032|0)[1-9][0-9]{8}$/',  // Belgium
             'DE' => '/^(\+49|0049|0)[1-9][0-9]{9,10}$/', // Germany
             'FR' => '/^(\+33|0033|0)[1-9][0-9]{8}$/',  // France
             'UK' => '/^(\+44|0044|0)[1-9][0-9]{9,10}$/', // UK
         ];
         
-        $pattern = $patterns[$country] ?? $patterns['NL'];
+        $pattern = $patterns[$country] ?? $patterns['ES'];
         
         if (!preg_match($pattern, $cleaned)) {
             return [
                 'valid' => false,
-                'message' => __('Invalid phone number format.', 'pro-clean-quotation'),
+                'message' => __('Please enter a valid phone number (e.g., +34 612 345 678 or 612345678).', 'pro-clean-quotation'),
                 'formatted' => ''
             ];
         }
         
-        // Format phone number for NL
-        if ($country === 'NL') {
-            if (substr($cleaned, 0, 1) === '0') {
-                // Convert 0612345678 to +31612345678
-                $cleaned = '+31' . substr($cleaned, 1);
-            } elseif (substr($cleaned, 0, 4) === '0031') {
-                // Convert 0031612345678 to +31612345678
-                $cleaned = '+31' . substr($cleaned, 4);
+        // Format phone number for ES
+        if ($country === 'ES') {
+            // Always ensure it starts with +34
+            if (substr($cleaned, 0, 4) === '0034') {
+                // Convert 0034612345678 to +34612345678
+                $cleaned = '+34' . substr($cleaned, 4);
+            } elseif (substr($cleaned, 0, 3) !== '+34') {
+                // Convert 612345678 to +34612345678
+                $cleaned = '+34' . $cleaned;
             }
         }
         

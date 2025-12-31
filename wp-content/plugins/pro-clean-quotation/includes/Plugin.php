@@ -68,8 +68,10 @@ class Plugin {
      */
     private function initHooks(): void {
         add_action('init', [$this, 'loadTextDomain']);
+        add_action('template_redirect', [$this, 'handleBookingRedirect']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
+        add_action('wp_head', [$this, 'addAjaxUrlToFrontend'], 1);
         add_action('rest_api_init', [$this, 'initRestAPI']);
         add_action('wp_ajax_pcq_calculate_quote', [$this, 'handleAjaxCalculateQuote']);
         add_action('wp_ajax_nopriv_pcq_calculate_quote', [$this, 'handleAjaxCalculateQuote']);
@@ -83,6 +85,7 @@ class Plugin {
         add_action('wp_ajax_pcq_get_appointment', [$this, 'handleAjaxGetAppointment']);
         add_action('wp_ajax_pcq_save_appointment', [$this, 'handleAjaxSaveAppointment']);
         add_action('wp_ajax_pcq_delete_appointment', [$this, 'handleAjaxDeleteAppointment']);
+        add_action('wp_ajax_pcq_test_smtp', [$this, 'handleAjaxTestSMTP']);
         
         // Database health checks
         add_action('admin_notices', [Admin\DatabaseFixer::class, 'showMissingTablesNotice']);
@@ -113,6 +116,7 @@ class Plugin {
         
         // Initialize email system
         Email\EmailManager::getInstance();
+        Email\SMTPConfig::getInstance();
         
         // Initialize services
         Services\QuoteCalculator::getInstance();
@@ -139,6 +143,40 @@ class Plugin {
             false,
             dirname(PCQ_PLUGIN_BASENAME) . '/languages'
         );
+    }
+    
+    /**
+     * Handle booking page redirect for old URLs
+     * Redirects /book-service/ to the proper booking page
+     * 
+     * NOTE: This is disabled because the booking page itself uses the /book-service/ slug.
+     * Old emails should work directly now that the page exists.
+     */
+    public function handleBookingRedirect(): void {
+        // Redirect functionality disabled to prevent loops
+        // The booking page with slug 'book-service' handles all requests directly
+        return;
+    }
+    
+    /**
+     * Add ajaxurl to frontend for Elementor and other plugins
+     */
+    public function addAjaxUrlToFrontend(): void {
+        // Skip if in admin, Elementor editor, or ajaxurl already defined
+        if (is_admin() || (isset($_GET['elementor-preview']) || isset($_GET['action']) && $_GET['action'] === 'elementor')) {
+            return;
+        }
+        
+        // Only add if not already defined by another plugin
+        if (!wp_script_is('pcq-ajaxurl-inline', 'done')) {
+            ?>
+            <script type="text/javascript" id="pcq-ajaxurl-inline">
+                if (typeof ajaxurl === 'undefined') {
+                    var ajaxurl = <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>;
+                }
+            </script>
+            <?php
+        }
     }
     
     /**
@@ -507,6 +545,25 @@ class Plugin {
             wp_send_json_success($result['data']);
         } else {
             wp_send_json_error($result['message']);
+        }
+    }
+    
+    /**
+     * Handle AJAX test SMTP connection
+     */
+    public function handleAjaxTestSMTP(): void {
+        // Verify nonce and permissions
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_test_smtp') || !current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Security check failed.', 'pro-clean-quotation')]);
+        }
+        
+        $smtp_config = Email\SMTPConfig::getInstance();
+        $result = $smtp_config->testConnection();
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
         }
     }
 }
