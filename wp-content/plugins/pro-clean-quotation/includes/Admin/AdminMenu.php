@@ -571,7 +571,34 @@ class AdminMenu {
      * Render services list
      */
     private function renderServicesList(): void {
-        $services = \ProClean\Quotation\Models\Service::getAll(false);
+        global $wpdb;
+        
+        // Get search parameter
+        $search = $_GET['s'] ?? '';
+        
+        $table = $wpdb->prefix . 'pq_services';
+        
+        if (!empty($search)) {
+            // Search services by name or description
+            $search_term = '%' . $wpdb->esc_like($search) . '%';
+            $services_data = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM $table WHERE name LIKE %s OR description LIKE %s ORDER BY sort_order ASC, name ASC",
+                    $search_term,
+                    $search_term
+                ),
+                ARRAY_A
+            );
+            
+            $services = [];
+            foreach ($services_data as $service_data) {
+                $services[] = new \ProClean\Quotation\Models\Service($service_data);
+            }
+        } else {
+            // Get all services
+            $services = \ProClean\Quotation\Models\Service::getAll(false);
+        }
+        
         include PCQ_PLUGIN_DIR . 'templates/admin/services-list.php';
     }
     

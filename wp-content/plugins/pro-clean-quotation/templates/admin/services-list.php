@@ -17,12 +17,30 @@ if (!defined('ABSPATH')) {
         <?php _e('Add New Service', 'pro-clean-quotation'); ?>
     </a>
     
-    <div class="pcq-table-container">
+    <!-- Search -->
+    <div class="pcq-filters">
+        <form method="get" action="">
+            <input type="hidden" name="page" value="pcq-services">
+            
+            <div class="pcq-filter-row">
+                <input type="search" name="s" value="<?php echo isset($_GET['s']) ? esc_attr($_GET['s']) : ''; ?>" placeholder="<?php _e('Search services...', 'pro-clean-quotation'); ?>" class="pcq-search-input">
+                <button type="submit" class="button"><?php _e('Filter', 'pro-clean-quotation'); ?></button>
+                
+                <?php if (isset($_GET['s']) && !empty($_GET['s'])): ?>
+                    <a href="<?php echo admin_url('admin.php?page=pcq-services'); ?>" class="button">
+                        <?php _e('Clear', 'pro-clean-quotation'); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+    
+    <div class="pcq-table-wrapper">
         <?php if (!empty($services)): ?>
-            <table class="wp-list-table widefat fixed striped">
+            <table class="wp-list-table widefat fixed striped pcq-services-table">
                 <thead>
                     <tr>
-                        <th style="width: 60px;"><?php _e('ID', 'pro-clean-quotation'); ?></th>
+                        <th><?php _e('ID', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Service Name', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Duration', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Price', 'pro-clean-quotation'); ?></th>
@@ -36,18 +54,9 @@ if (!defined('ABSPATH')) {
                     <?php foreach ($services as $service): ?>
                         <tr>
                             <td><?php echo $service->getId(); ?></td>
-                            <td>
-                                <div class="pcq-service-info">
-                                    <div class="pcq-service-name">
-                                        <span class="pcq-color-indicator" style="background-color: <?php echo esc_attr($service->getColor()); ?>"></span>
-                                        <strong><?php echo esc_html($service->getName()); ?></strong>
-                                    </div>
-                                    <?php if ($service->getDescription()): ?>
-                                        <div class="pcq-service-description">
-                                            <?php echo esc_html($service->getDescription()); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
+                            <td class="pcq-service-name-cell">
+                                <span class="pcq-color-indicator" style="background-color: <?php echo esc_attr($service->getColor()); ?>"></span>
+                                <span class="pcq-service-name-text"><?php echo esc_html($service->getName()); ?></span>
                             </td>
                             <td>
                                 <?php echo $service->getDuration(); ?> <?php _e('min', 'pro-clean-quotation'); ?>
@@ -59,7 +68,7 @@ if (!defined('ABSPATH')) {
                                 <?php echo $service->getCapacity(); ?> 
                                 <?php echo $service->getCapacity() == 1 ? __('person', 'pro-clean-quotation') : __('people', 'pro-clean-quotation'); ?>
                             </td>
-                            <td>
+                            <td class="pcq-buffer-cell">
                                 <?php 
                                 $buffer_before = $service->getBufferTimeBefore();
                                 $buffer_after = $service->getBufferTimeAfter();
@@ -116,6 +125,7 @@ if (!defined('ABSPATH')) {
                     <?php endforeach; ?>
                 </tbody>
             </table>
+        </div>
             
         <?php else: ?>
             <div class="pcq-no-results">
@@ -129,24 +139,117 @@ if (!defined('ABSPATH')) {
 </div>
 
 <style>
-.pcq-table-container {
+/* Filters */
+.pcq-filters {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.pcq-filter-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.pcq-filter-row .pcq-search-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.pcq-filter-row .pcq-search-input:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* Table Wrapper */
+.pcq-table-wrapper {
     background: #fff;
     border: 1px solid #ccd0d4;
     border-radius: 8px;
     overflow: hidden;
-    margin-top: 20px;
+    overflow-x: auto;
 }
 
-.pcq-service-info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+/* Table Layout */
+.pcq-services-table {
+    table-layout: fixed;
+    width: 100%;
+    margin: 0 !important;
 }
 
-.pcq-service-name {
+/* Column widths */
+.pcq-services-table thead th:nth-child(1),
+.pcq-services-table tbody td:nth-child(1) {
+    width: 50px;
+}
+
+.pcq-services-table thead th:nth-child(2),
+.pcq-services-table tbody td:nth-child(2) {
+    width: 250px;
+}
+
+.pcq-services-table thead th:nth-child(3),
+.pcq-services-table tbody td:nth-child(3) {
+    width: 90px;
+}
+
+.pcq-services-table thead th:nth-child(4),
+.pcq-services-table tbody td:nth-child(4) {
+    width: 100px;
+}
+
+.pcq-services-table thead th:nth-child(5),
+.pcq-services-table tbody td:nth-child(5) {
+    width: 100px;
+}
+
+.pcq-services-table thead th:nth-child(6),
+.pcq-services-table tbody td:nth-child(6) {
+    width: 180px;
+}
+
+.pcq-services-table thead th:nth-child(7),
+.pcq-services-table tbody td:nth-child(7) {
+    width: 90px;
+}
+
+.pcq-services-table thead th:nth-child(8),
+.pcq-services-table tbody td:nth-child(8) {
+    width: 60px;
+}
+
+/* Table headers */
+.pcq-services-table thead th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 12px 10px;
+}
+
+/* Service Name Cell */
+.pcq-service-name-cell {
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 8px 10px !important;
+}
+
+.pcq-service-name-text {
+    font-weight: 600;
+    color: #2c3e50;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
 }
 
 .pcq-color-indicator {
@@ -154,21 +257,30 @@ if (!defined('ABSPATH')) {
     height: 16px;
     border-radius: 3px;
     display: inline-block;
+    flex-shrink: 0;
 }
 
-.pcq-service-description {
+/* Buffer Cell */
+.pcq-buffer-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 13px;
-    color: #666;
-    line-height: 1.4;
+}
+
+.pcq-no-results {
+    text-align: center;
+    padding: 40px 20px;
 }
 
 .pcq-status-badge {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
     text-transform: capitalize;
+    white-space: nowrap;
 }
 
 .pcq-status-active { 
@@ -281,30 +393,16 @@ if (!defined('ABSPATH')) {
     margin: 4px 0;
 }
 
-.pcq-actions {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-}
-
-.pcq-delete-btn {
-    background-color: #f44336 !important;
-    color: #fff !important;
-    border-color: #f44336 !important;
-}
-
-.pcq-no-results {
-    text-align: center;
-    padding: 40px 20px;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-    .pcq-actions {
+    .pcq-filter-row {
         flex-direction: column;
+        align-items: stretch;
     }
     
-    .pcq-service-name {
-        flex-wrap: wrap;
+    .pcq-filter-row .pcq-search-input {
+        width: 100%;
+        min-width: auto;
     }
 }
 </style>
