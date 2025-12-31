@@ -15,12 +15,12 @@ if (!defined('ABSPATH')) {
     <h1 class="wp-heading-inline"><?php _e('Quotes', 'pro-clean-quotation'); ?></h1>
     
     <!-- Filters -->
-    <div class="tablenav top">
-        <div class="alignleft actions">
-            <form method="get" action="">
-                <input type="hidden" name="page" value="pcq-quotes">
-                
-                <select name="status">
+    <div class="pcq-filters-container">
+        <form method="get" action="" class="pcq-filters-form">
+            <input type="hidden" name="page" value="pcq-quotes">
+            
+            <div class="pcq-filters-row">
+                <select name="status" class="pcq-filter-select">
                     <option value=""><?php _e('All Statuses', 'pro-clean-quotation'); ?></option>
                     <option value="new" <?php selected($status_filter, 'new'); ?>><?php _e('New', 'pro-clean-quotation'); ?></option>
                     <option value="viewed" <?php selected($status_filter, 'viewed'); ?>><?php _e('Viewed', 'pro-clean-quotation'); ?></option>
@@ -29,105 +29,87 @@ if (!defined('ABSPATH')) {
                     <option value="declined" <?php selected($status_filter, 'declined'); ?>><?php _e('Declined', 'pro-clean-quotation'); ?></option>
                 </select>
                 
-                <select name="service_type">
+                <select name="service_type" class="pcq-filter-select">
                     <option value=""><?php _e('All Services', 'pro-clean-quotation'); ?></option>
                     <option value="facade" <?php selected($service_filter, 'facade'); ?>><?php _e('Façade Cleaning', 'pro-clean-quotation'); ?></option>
                     <option value="roof" <?php selected($service_filter, 'roof'); ?>><?php _e('Roof Cleaning', 'pro-clean-quotation'); ?></option>
                     <option value="both" <?php selected($service_filter, 'both'); ?>><?php _e('Both Services', 'pro-clean-quotation'); ?></option>
                 </select>
                 
-                <input type="submit" class="button" value="<?php _e('Filter', 'pro-clean-quotation'); ?>">
-            </form>
-        </div>
-        
-        <div class="tablenav-pages">
-            <?php
-            if ($quotes_data['pages'] > 1) {
-                $pagination_args = [
-                    'base' => add_query_arg('paged', '%#%'),
-                    'format' => '',
-                    'prev_text' => __('&laquo;'),
-                    'next_text' => __('&raquo;'),
-                    'total' => $quotes_data['pages'],
-                    'current' => $quotes_data['current_page']
-                ];
-                echo paginate_links($pagination_args);
-            }
-            ?>
-        </div>
+                <button type="submit" class="button"><?php _e('Filter', 'pro-clean-quotation'); ?></button>
+                
+                <div class="pcq-search-wrapper">
+                    <input type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php _e('Search quotes...', 'pro-clean-quotation'); ?>" class="pcq-search-input">
+                    <button type="submit" class="button"><?php _e('Search', 'pro-clean-quotation'); ?></button>
+                </div>
+            </div>
+        </form>
     </div>
     
-    <!-- Search -->
-    <p class="search-box">
-        <form method="get" action="">
-            <input type="hidden" name="page" value="pcq-quotes">
-            <input type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php _e('Search quotes...', 'pro-clean-quotation'); ?>">
-            <input type="submit" class="button" value="<?php _e('Search', 'pro-clean-quotation'); ?>">
-        </form>
-    </p>
-    
     <!-- Quotes Table -->
-    <table class="wp-list-table widefat fixed striped">
-        <thead>
-            <tr>
-                <th scope="col" class="manage-column"><?php _e('Quote #', 'pro-clean-quotation'); ?></th>
-                <th scope="col" class="manage-column"><?php _e('Customer', 'pro-clean-quotation'); ?></th>
-                <th scope="col" class="manage-column"><?php _e('Service', 'pro-clean-quotation'); ?></th>
-                <th scope="col" class="manage-column"><?php _e('Property', 'pro-clean-quotation'); ?></th>
-                <th scope="col" class="manage-column"><?php _e('Amount', 'pro-clean-quotation'); ?></th>
-                <th scope="col" class="manage-column"><?php _e('Status', 'pro-clean-quotation'); ?></th>
-                <th scope="col" class="manage-column"><?php _e('Date', 'pro-clean-quotation'); ?></th>
-                <th scope="col" class="manage-column"><?php _e('Actions', 'pro-clean-quotation'); ?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($quotes_data['quotes'])): ?>
+    <div class="pcq-table-wrapper">
+        <table class="wp-list-table widefat fixed striped pcq-quotes-table">
+            <thead>
                 <tr>
-                    <td colspan="8" class="no-items"><?php _e('No quotes found.', 'pro-clean-quotation'); ?></td>
+                    <th scope="col" class="manage-column"><?php _e('Quote #', 'pro-clean-quotation'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Customer', 'pro-clean-quotation'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Service', 'pro-clean-quotation'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Property', 'pro-clean-quotation'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Amount', 'pro-clean-quotation'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Status', 'pro-clean-quotation'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Date', 'pro-clean-quotation'); ?></th>
+                    <th scope="col" class="manage-column"><?php _e('Actions', 'pro-clean-quotation'); ?></th>
                 </tr>
-            <?php else: ?>
-                <?php foreach ($quotes_data['quotes'] as $quote): ?>
+            </thead>
+            <tbody>
+                <?php if (empty($quotes_data['quotes'])): ?>
                     <tr>
-                        <td>
-                            <strong>
-                                <a href="<?php echo admin_url('admin.php?page=pcq-quotes&action=view&id=' . $quote->getId()); ?>">
-                                    <?php echo esc_html($quote->getQuoteNumber()); ?>
-                                </a>
-                            </strong>
-                        </td>
-                        <td>
-                            <strong><?php echo esc_html($quote->getCustomerName()); ?></strong><br>
-                            <a href="mailto:<?php echo esc_attr($quote->getCustomerEmail()); ?>">
-                                <?php echo esc_html($quote->getCustomerEmail()); ?>
-                            </a><br>
-                            <a href="tel:<?php echo esc_attr($quote->getCustomerPhone()); ?>">
-                                <?php echo esc_html($quote->getCustomerPhone()); ?>
-                            </a>
-                        </td>
-                        <td>
-                            <?php echo esc_html(ucfirst($quote->getServiceType())); ?><br>
-                            <small><?php echo number_format($quote->getSquareMeters(), 1); ?> sqm</small>
-                        </td>
-                        <td>
-                            <?php echo esc_html($quote->getPropertyType()); ?><br>
-                            <small><?php echo esc_html($quote->getPostalCode()); ?></small>
-                        </td>
-                        <td>
-                            <strong>€<?php echo number_format($quote->getTotalPrice(), 2); ?></strong>
-                        </td>
-                        <td>
-                            <span class="pcq-status pcq-status-<?php echo esc_attr($quote->getStatus()); ?>">
-                                <?php echo esc_html(ucfirst($quote->getStatus())); ?>
-                            </span>
-                            <?php if ($quote->isExpired()): ?>
-                                <br><small class="pcq-expired"><?php _e('Expired', 'pro-clean-quotation'); ?></small>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php echo date('M j, Y', strtotime($quote->getCreatedAt())); ?><br>
-                            <small><?php echo date('H:i', strtotime($quote->getCreatedAt())); ?></small>
-                        </td>
-                        <td>
+                        <td colspan="8" class="no-items"><?php _e('No quotes found.', 'pro-clean-quotation'); ?></td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($quotes_data['quotes'] as $quote): ?>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a href="<?php echo admin_url('admin.php?page=pcq-quotes&action=view&id=' . $quote->getId()); ?>">
+                                        <?php echo esc_html($quote->getQuoteNumber()); ?>
+                                    </a>
+                                </strong>
+                            </td>
+                            <td class="pcq-customer-cell">
+                                <div class="pcq-customer-name"><?php echo esc_html($quote->getCustomerName()); ?></div>
+                                <div class="pcq-customer-contact">
+                                    <a href="mailto:<?php echo esc_attr($quote->getCustomerEmail()); ?>" class="pcq-customer-email">
+                                        <?php echo esc_html($quote->getCustomerEmail()); ?>
+                                    </a>
+                                </div>
+                                <div class="pcq-customer-contact">
+                                    <a href="tel:<?php echo esc_attr($quote->getCustomerPhone()); ?>">
+                                        <?php echo esc_html($quote->getCustomerPhone()); ?>
+                                    </a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="pcq-service-type"><?php echo esc_html(ucfirst($quote->getServiceType())); ?></div>
+                                <small><?php echo number_format($quote->getSquareMeters(), 1); ?> sqm</small>
+                            </td>
+                            <td>
+                                <div><?php echo esc_html($quote->getPropertyType()); ?></div>
+                                <small><?php echo esc_html($quote->getPostalCode()); ?></small>
+                            </td>
+                            <td>
+                                <strong>€<?php echo number_format($quote->getTotalPrice(), 2); ?></strong>
+                            </td>
+                            <td>
+                                <span class="pcq-status pcq-status-<?php echo esc_attr($quote->getStatus()); ?>">
+                                    <?php echo esc_html(ucfirst($quote->getStatus())); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <div><?php echo date('M j, Y', strtotime($quote->getCreatedAt())); ?></div>
+                                <small><?php echo date('H:i', strtotime($quote->getCreatedAt())); ?></small>
+                            </td>
+                            <td>
                             <div class="pcq-actions-dropdown">
                                 <button type="button" class="pcq-actions-toggle" aria-label="<?php _e('Actions', 'pro-clean-quotation'); ?>">
                                     <span class="pcq-dots">⋯</span>
@@ -177,6 +159,7 @@ if (!defined('ABSPATH')) {
             <?php endif; ?>
         </tbody>
     </table>
+    </div>
     
     <!-- Bottom Pagination -->
     <div class="tablenav bottom">
@@ -191,12 +174,183 @@ if (!defined('ABSPATH')) {
 </div>
 
 <style>
-.pcq-status {
-    padding: 4px 8px;
+/* Filters Container */
+.pcq-filters-container {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.pcq-filters-form {
+    margin: 0;
+}
+
+.pcq-filters-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pcq-filter-select {
+    padding: 8px 32px 8px 12px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 12px;
+    min-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: #fff url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L1 4h10z"/></svg>') no-repeat right 10px center;
+    background-size: 12px;
+    font-size: 14px;
+}
+
+.pcq-filter-select:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.pcq-search-wrapper {
+    display: flex;
+    gap: 5px;
+    margin-left: auto;
+}
+
+.pcq-search-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 250px;
+    font-size: 14px;
+}
+
+.pcq-search-input:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* Table Wrapper */
+.pcq-table-wrapper {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+/* Table Layout */
+.pcq-quotes-table {
+    table-layout: fixed;
+    width: 100%;
+    margin: 0 !important;
+}
+
+/* Column widths */
+.pcq-quotes-table thead th:nth-child(1),
+.pcq-quotes-table tbody td:nth-child(1) {
+    width: 110px;
+}
+
+.pcq-quotes-table thead th:nth-child(2),
+.pcq-quotes-table tbody td:nth-child(2) {
+    width: 220px;
+}
+
+.pcq-quotes-table thead th:nth-child(3),
+.pcq-quotes-table tbody td:nth-child(3) {
+    width: 130px;
+}
+
+.pcq-quotes-table thead th:nth-child(4),
+.pcq-quotes-table tbody td:nth-child(4) {
+    width: 120px;
+}
+
+.pcq-quotes-table thead th:nth-child(5),
+.pcq-quotes-table tbody td:nth-child(5) {
+    width: 100px;
+}
+
+.pcq-quotes-table thead th:nth-child(6),
+.pcq-quotes-table tbody td:nth-child(6) {
+    width: 100px;
+}
+
+.pcq-quotes-table thead th:nth-child(7),
+.pcq-quotes-table tbody td:nth-child(7) {
+    width: 110px;
+}
+
+.pcq-quotes-table thead th:nth-child(8),
+.pcq-quotes-table tbody td:nth-child(8) {
+    width: 60px;
+}
+
+/* Table headers */
+.pcq-quotes-table thead th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Customer cell styling */
+.pcq-customer-cell {
+    padding: 8px 10px !important;
+}
+
+.pcq-customer-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pcq-customer-contact {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 2px;
+}
+
+.pcq-customer-email {
+    color: #2271b1;
+    text-decoration: none;
+    word-break: break-all;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.pcq-customer-email:hover {
+    text-decoration: underline;
+    color: #135e96;
+}
+
+.pcq-service-type {
     font-weight: 500;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Status badges */
+.pcq-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
 }
 
 .pcq-status-new {
@@ -388,13 +542,37 @@ if (!defined('ABSPATH')) {
     font-style: italic;
 }
 
-.search-box {
-    float: right;
-    margin: 0 0 10px 0;
+/* Responsive */
+@media (max-width: 1200px) {
+    .pcq-search-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .pcq-search-input {
+        flex: 1;
+    }
 }
 
-.search-box input[type="search"] {
-    width: 200px;
+@media (max-width: 768px) {
+    .pcq-filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pcq-filter-select,
+    .pcq-search-input {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .pcq-search-wrapper {
+        width: 100%;
+    }
+}
+
+.search-box {
+    display: none;
 }
 </style>
 
