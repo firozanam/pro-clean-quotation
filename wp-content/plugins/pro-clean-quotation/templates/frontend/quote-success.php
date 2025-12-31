@@ -180,65 +180,7 @@ $booking_url = isset($_GET['booking_url']) ? esc_url_raw($_GET['booking_url']) :
     border-top: 1px solid #f3f4f6;
 }
 
-.pcq-btn-primary,
-.pcq-btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 2.5rem;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.15s ease;
-    border: none;
-    margin-right: 0.75rem;
-    box-sizing: border-box;
-}
-
-.pcq-btn-primary:last-child,
-.pcq-btn-secondary:last-child {
-    margin-right: 0;
-}
-
-.pcq-btn-large {
-    padding: 0.75rem 2.5rem;
-    font-size: 1rem;
-}
-
-.pcq-btn-primary {
-    background: #5a8f3a !important;
-    background-color: #5a8f3a !important;
-    color: #ffffff !important;
-    box-shadow: 0 2px 4px rgba(90, 143, 58, 0.2) !important;
-}
-
-.pcq-btn-primary:hover {
-    background: #4a7a2e !important;
-    background-color: #4a7a2e !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(90, 143, 58, 0.3) !important;
-}
-
-.pcq-btn-primary svg {
-    display: none;
-}
-
-.pcq-btn-secondary {
-    background: #ffffff;
-    color: #374151;
-    border: 1px solid #d1d5db;
-}
-
-.pcq-btn-secondary:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
-}
-
-.pcq-btn-secondary svg {
-    display: none;
-}
+/* Button styles inherited from frontend.css unified button system */
 
 .pcq-additional-info {
     display: none;
@@ -291,7 +233,6 @@ $booking_url = isset($_GET['booking_url']) ? esc_url_raw($_GET['booking_url']) :
     .pcq-btn-primary,
     .pcq-btn-secondary {
         width: 100%;
-        margin-right: 0;
     }
 
     .pcq-detail-row {

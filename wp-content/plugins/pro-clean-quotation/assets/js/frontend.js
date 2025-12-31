@@ -554,7 +554,7 @@
                         <p><strong>Total Price:</strong> €${this.formatPrice(data.total_price)}</p>
                         <p><strong>Valid Until:</strong> ${this.formatDate(data.valid_until)}</p>
                     </div>
-                    ${data.booking_url ? `<a href="${data.booking_url}" class="pcq-book-now-btn">Book This Service</a>` : ''}
+                    ${data.booking_url ? `<a href="${data.booking_url}" class="pcq-btn-primary pcq-btn-large">Book This Service</a>` : ''}
                     <p><small>A confirmation email has been sent to your email address.</small></p>
                 </div>
             `;
