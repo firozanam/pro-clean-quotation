@@ -304,8 +304,15 @@ class AdminMenu {
             
             switch ($action) {
                 case 'view':
-                    $this->renderEmailLogView($log_id);
-                    return;
+                    // Don't render here - let renderEmailLogs() handle it
+                    // Just validate the log exists
+                    global $wpdb;
+                    $table = $wpdb->prefix . 'pq_email_logs';
+                    $log = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $log_id));
+                    if (!$log) {
+                        wp_die(__('Email log not found.', 'pro-clean-quotation'));
+                    }
+                    break;
                     
                 case 'resend':
                     if (wp_verify_nonce($_GET['_wpnonce'] ?? '', 'resend_email_' . $log_id)) {
@@ -849,7 +856,21 @@ class AdminMenu {
      * Render email logs page
      */
     public function renderEmailLogs(): void {
-        $this->renderEmailLogsList();
+        $action = $_GET['action'] ?? 'list';
+        
+        switch ($action) {
+            case 'view':
+                $log_id = intval($_GET['id'] ?? 0);
+                if ($log_id) {
+                    $this->renderEmailLogView($log_id);
+                } else {
+                    $this->renderEmailLogsList();
+                }
+                break;
+            default:
+                $this->renderEmailLogsList();
+                break;
+        }
     }
     
     /**

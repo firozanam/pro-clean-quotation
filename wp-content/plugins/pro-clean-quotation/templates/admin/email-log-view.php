@@ -18,6 +18,8 @@ if (!defined('ABSPATH')) {
         <?php _e('Back to Email Logs', 'pro-clean-quotation'); ?>
     </a>
     
+    <hr class="wp-header-end">
+    
     <div class="pcq-email-log-view">
         <!-- Header Info -->
         <div class="pcq-log-header">
