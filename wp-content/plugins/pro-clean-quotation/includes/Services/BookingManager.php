@@ -60,22 +60,26 @@ class BookingManager {
         $start_time = $business_hours[$day_of_week]['start'];
         $end_time = $business_hours[$day_of_week]['end'];
         
-        // Get existing bookings for the date
-        $existing_bookings = $this->getBookingsForDate($date);
-        
         // Generate time slots
         $slots = $this->generateTimeSlots($start_time, $end_time, $service_duration);
         
-        // Map slots with availability status
+        // Use AvailabilityService to check each slot
+        $availability_service = AvailabilityService::getInstance();
         $available_slots = [];
+        
         foreach ($slots as $slot) {
-            $is_available = $this->isSlotAvailable($slot, $existing_bookings, $service_duration);
+            // Check comprehensive availability
+            $check = $availability_service->checkSlotAvailability(
+                $date,
+                $slot['start'],
+                $slot['end']
+            );
             
             $available_slots[] = [
                 'start_time' => $slot['start'],
                 'end_time' => $slot['end'],
-                'available' => $is_available,
-                'reason' => $is_available ? null : __('Already booked', 'pro-clean-quotation')
+                'available' => $check['available'],
+                'reason' => $check['available'] ? null : $check['message']
             ];
         }
         
@@ -107,9 +111,37 @@ class BookingManager {
             }
             
             if (!$quote->canBeBooked()) {
+                $status = $quote->getStatus();
+                $message = __('This quote cannot be booked.', 'pro-clean-quotation');
+                
+                if ($quote->isExpired()) {
+                    $message = __('This quote has expired. Please request a new quote.', 'pro-clean-quotation');
+                } elseif (in_array($status, ['cancelled', 'rejected'])) {
+                    $message = sprintf(
+                        __('This quote has been %s and cannot be used for booking.', 'pro-clean-quotation'),
+                        $status
+                    );
+                }
+                
                 return [
                     'success' => false,
-                    'message' => __('This quote cannot be booked. It may be expired or already used.', 'pro-clean-quotation')
+                    'message' => $message
+                ];
+            }
+            
+            // Check for duplicate booking (same quote, date, and time)
+            $duplicate_check = $this->checkDuplicateBooking(
+                $data['quote_id'],
+                $data['service_date'],
+                $data['service_time_start'],
+                $data['service_time_end']
+            );
+            
+            if ($duplicate_check['is_duplicate']) {
+                return [
+                    'success' => false,
+                    'message' => __('You already have a booking for this date and time.', 'pro-clean-quotation'),
+                    'duplicate_booking' => $duplicate_check['booking']
                 ];
             }
             
@@ -147,9 +179,11 @@ class BookingManager {
                 }
             }
             
-            // Update quote status
-            $quote->setStatus('booked');
-            $quote->save();
+            // Update quote status (only if first booking)
+            if ($quote->getStatus() === 'new') {
+                $quote->setStatus('booked');
+                $quote->save();
+            }
             
             // Create booking record in our system
             $booking_data = $this->createBookingRecord($quote, $data, $appointment_id);
@@ -174,6 +208,7 @@ class BookingManager {
             
         } catch (\Exception $e) {
             error_log('PCQ Booking creation error: ' . $e->getMessage());
+            error_log('PCQ Booking trace: ' . $e->getTraceAsString());
             
             return [
                 'success' => false,
@@ -380,6 +415,44 @@ class BookingManager {
         );
         
         return $bookings ?: [];
+    }
+    
+    /**
+     * Check for duplicate booking
+     * 
+     * @param int $quote_id Quote ID
+     * @param string $date Service date
+     * @param string $time_start Start time
+     * @param string $time_end End time
+     * @return array Result with is_duplicate flag and booking data
+     */
+    private function checkDuplicateBooking(int $quote_id, string $date, string $time_start, string $time_end): array {
+        global $wpdb;
+        
+        $table = $wpdb->prefix . 'pq_bookings';
+        
+        // Check if exact same booking exists (same quote, date, and time)
+        $booking = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM $table 
+                 WHERE quote_id = %d 
+                 AND service_date = %s 
+                 AND service_time_start = %s 
+                 AND service_time_end = %s 
+                 AND booking_status NOT IN ('cancelled')
+                 LIMIT 1",
+                $quote_id,
+                $date,
+                $time_start,
+                $time_end
+            ),
+            ARRAY_A
+        );
+        
+        return [
+            'is_duplicate' => !empty($booking),
+            'booking' => $booking
+        ];
     }
     
     /**

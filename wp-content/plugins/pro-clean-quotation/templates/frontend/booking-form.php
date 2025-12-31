@@ -119,9 +119,10 @@ $title = isset($atts['title']) ? $atts['title'] : __('Book Your Service', 'pro-c
                 
                 <form id="pcq-booking-form" style="display: none;">
                     <input type="hidden" name="quote_id" value="<?php echo esc_attr($quote_id); ?>">
-                    <input type="hidden" name="selected_date" id="selected_date">
-                    <input type="hidden" name="selected_time_start" id="selected_time_start">
-                    <input type="hidden" name="selected_time_end" id="selected_time_end">
+                    <input type="hidden" name="quote_token" value="<?php echo esc_attr($token); ?>">
+                    <input type="hidden" name="service_date" id="selected_date">
+                    <input type="hidden" name="service_time_start" id="selected_time_start">
+                    <input type="hidden" name="service_time_end" id="selected_time_end">
                     
                     <div class="pcq-booking-confirmation">
                         <h5><?php _e('Confirm Your Booking', 'pro-clean-quotation'); ?></h5>
@@ -129,7 +130,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Book Your Service', 'pro-c
                         
                         <div class="pcq-form-field">
                             <label for="booking_notes"><?php _e('Additional Notes (Optional)', 'pro-clean-quotation'); ?></label>
-                            <textarea id="booking_notes" name="booking_notes" rows="3"></textarea>
+                            <textarea id="booking_notes" name="customer_notes" rows="3"></textarea>
                         </div>
                         
                         <div class="pcq-form-actions">

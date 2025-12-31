@@ -91,6 +91,10 @@ class Plugin {
         add_action('admin_notices', [Admin\DatabaseFixer::class, 'showMissingTablesNotice']);
         add_action('admin_init', [Admin\DatabaseFixer::class, 'handleFixAction']);
         
+        // Missing pages notice and handler
+        add_action('admin_notices', [$this, 'showMissingPagesNotice']);
+        add_action('wp_ajax_pcq_create_confirmation_page', [$this, 'handleAjaxCreateConfirmationPage']);
+        
         // Cron jobs
         add_action('pcq_cleanup_temp_pdfs', [$this, 'cleanupTempPDFs']);
     }
@@ -224,6 +228,7 @@ class Plugin {
         wp_localize_script('pcq-frontend-script', 'pcq_ajax', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pcq_nonce'),
+            'confirmation_url' => $this->getBookingConfirmationUrl(),
             'strings' => [
                 'calculating' => __('Calculating...', 'pro-clean-quotation'),
                 'error' => __('An error occurred. Please try again.', 'pro-clean-quotation'),
@@ -533,18 +538,48 @@ class Plugin {
      * Handle AJAX create booking
      */
     public function handleAjaxCreateBooking(): void {
-        // Verify nonce
-        if (!wp_verify_nonce($_POST['pcq_booking_nonce'] ?? '', 'pcq_create_booking')) {
-            wp_send_json_error(__('Security check failed.', 'pro-clean-quotation'));
-        }
-        
-        $booking_manager = Services\BookingManager::getInstance();
-        $result = $booking_manager->createBookingFromQuote($_POST);
-        
-        if ($result['success']) {
-            wp_send_json_success($result['data']);
-        } else {
-            wp_send_json_error($result['message']);
+        try {
+            // Verify nonce
+            if (!wp_verify_nonce($_POST['pcq_booking_nonce'] ?? '', 'pcq_create_booking')) {
+                error_log('PCQ Booking Error: Nonce verification failed');
+                error_log('PCQ Booking Data: ' . print_r($_POST, true));
+                wp_send_json_error(__('Security check failed.', 'pro-clean-quotation'));
+            }
+            
+            // Validate required fields
+            $required_fields = ['quote_id', 'quote_token', 'service_date', 'service_time_start', 'service_time_end'];
+            $missing_fields = [];
+            
+            foreach ($required_fields as $field) {
+                if (empty($_POST[$field])) {
+                    $missing_fields[] = $field;
+                }
+            }
+            
+            if (!empty($missing_fields)) {
+                error_log('PCQ Booking Error: Missing required fields: ' . implode(', ', $missing_fields));
+                error_log('PCQ Booking Data: ' . print_r($_POST, true));
+                wp_send_json_error(
+                    sprintf(
+                        __('Missing required fields: %s', 'pro-clean-quotation'),
+                        implode(', ', $missing_fields)
+                    )
+                );
+            }
+            
+            $booking_manager = Services\BookingManager::getInstance();
+            $result = $booking_manager->createBookingFromQuote($_POST);
+            
+            if ($result['success']) {
+                wp_send_json_success($result['data']);
+            } else {
+                error_log('PCQ Booking Error: ' . ($result['message'] ?? 'Unknown error'));
+                wp_send_json_error($result['message'] ?? __('Booking creation failed.', 'pro-clean-quotation'));
+            }
+        } catch (\Exception $e) {
+            error_log('PCQ Booking Exception: ' . $e->getMessage());
+            error_log('PCQ Booking Trace: ' . $e->getTraceAsString());
+            wp_send_json_error(__('An unexpected error occurred. Please try again.', 'pro-clean-quotation'));
         }
     }
     
@@ -564,6 +599,147 @@ class Plugin {
             wp_send_json_success($result);
         } else {
             wp_send_json_error($result);
+        }
+    }
+    
+    /**
+     * Get booking confirmation page URL
+     * 
+     * @return string Confirmation page URL
+     */
+    private function getBookingConfirmationUrl(): string {
+        // Try to find a page with the booking confirmation shortcode
+        $pages = get_posts([
+            'post_type' => 'page',
+            'post_status' => 'publish',
+            's' => '[pcq_booking_confirmation]',
+            'posts_per_page' => 1
+        ]);
+        
+        if (!empty($pages)) {
+            return get_permalink($pages[0]->ID);
+        }
+        
+        // Fallback: return home URL (the shortcode will handle the display)
+        return home_url('/');
+    }
+    
+    /**
+     * Show admin notice if confirmation page is missing
+     */
+    public function showMissingPagesNotice(): void {
+        // Only show to admins
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        
+        // Check if confirmation page exists
+        $confirmation_page = get_page_by_path('booking-confirmation');
+        
+        if (!$confirmation_page) {
+            ?>
+            <div class="notice notice-warning is-dismissible" id="pcq-missing-confirmation-page">
+                <p>
+                    <strong><?php _e('Pro Clean Quotation:', 'pro-clean-quotation'); ?></strong> 
+                    <?php _e('The booking confirmation page is missing. Customers will see a 404 error after booking.', 'pro-clean-quotation'); ?>
+                </p>
+                <p>
+                    <button type="button" class="button button-primary" id="pcq-create-confirmation-page-btn">
+                        <?php _e('Create Confirmation Page Now', 'pro-clean-quotation'); ?>
+                    </button>
+                    <span class="spinner" style="float: none; margin: 0 10px;"></span>
+                    <span id="pcq-create-page-message"></span>
+                </p>
+            </div>
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $('#pcq-create-confirmation-page-btn').on('click', function() {
+                    var $btn = $(this);
+                    var $spinner = $btn.next('.spinner');
+                    var $message = $('#pcq-create-page-message');
+                    
+                    $btn.prop('disabled', true);
+                    $spinner.addClass('is-active');
+                    $message.html('');
+                    
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'pcq_create_confirmation_page',
+                            nonce: '<?php echo wp_create_nonce('pcq_create_confirmation_page'); ?>'
+                        },
+                        success: function(response) {
+                            $spinner.removeClass('is-active');
+                            if (response.success) {
+                                $message.html('<span style="color: #46b450;">✓ ' + response.data.message + '</span>');
+                                setTimeout(function() {
+                                    $('#pcq-missing-confirmation-page').fadeOut();
+                                }, 3000);
+                            } else {
+                                $message.html('<span style="color: #dc3232;">✗ ' + response.data.message + '</span>');
+                                $btn.prop('disabled', false);
+                            }
+                        },
+                        error: function() {
+                            $spinner.removeClass('is-active');
+                            $message.html('<span style="color: #dc3232;">✗ An error occurred. Please try again.</span>');
+                            $btn.prop('disabled', false);
+                        }
+                    });
+                });
+            });
+            </script>
+            <?php
+        }
+    }
+    
+    /**
+     * Handle AJAX request to create confirmation page
+     */
+    public function handleAjaxCreateConfirmationPage(): void {
+        // Verify nonce and permissions
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_create_confirmation_page') || !current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Security check failed.', 'pro-clean-quotation')]);
+        }
+        
+        // Check if page already exists
+        $existing_page = get_page_by_path('booking-confirmation');
+        
+        if ($existing_page) {
+            update_option('pcq_confirmation_page_id', $existing_page->ID);
+            wp_send_json_success([
+                'message' => __('Confirmation page already exists and has been configured.', 'pro-clean-quotation'),
+                'page_url' => get_permalink($existing_page->ID)
+            ]);
+        }
+        
+        // Create new confirmation page
+        $confirmation_page = [
+            'post_title'    => __('Booking Confirmation', 'pro-clean-quotation'),
+            'post_content'  => '[pcq_booking_confirmation]',
+            'post_status'   => 'publish',
+            'post_type'     => 'page',
+            'post_name'     => 'booking-confirmation',
+            'post_author'   => get_current_user_id(),
+            'comment_status' => 'closed',
+            'ping_status'   => 'closed'
+        ];
+        
+        $page_id = wp_insert_post($confirmation_page);
+        
+        if ($page_id && !is_wp_error($page_id)) {
+            update_option('pcq_confirmation_page_id', $page_id);
+            flush_rewrite_rules();
+            
+            wp_send_json_success([
+                'message' => __('Confirmation page created successfully!', 'pro-clean-quotation'),
+                'page_url' => get_permalink($page_id),
+                'page_id' => $page_id
+            ]);
+        } else {
+            $error_message = is_wp_error($page_id) ? $page_id->get_error_message() : __('Failed to create page.', 'pro-clean-quotation');
+            wp_send_json_error(['message' => $error_message]);
         }
     }
 }

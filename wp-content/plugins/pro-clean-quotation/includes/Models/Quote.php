@@ -453,7 +453,10 @@ class Quote {
     }
     
     public function canBeBooked(): bool {
-        return $this->getStatus() === 'new' && !$this->isExpired();
+        // Allow booking if quote is not expired and not explicitly cancelled/rejected
+        // This allows multiple bookings from the same quote (different dates/times)
+        $blocked_statuses = ['cancelled', 'rejected', 'expired'];
+        return !in_array($this->getStatus(), $blocked_statuses) && !$this->isExpired();
     }
     
     public function getToken(): string {

@@ -428,12 +428,13 @@ button.pcq-submit-btn:hover {
 }
 
 .pcq-message {
-    padding: 0.875rem 1.25rem;
+    padding: 0;
     border-radius: 4px;
-    margin-bottom: 0.75rem;
-    font-weight: 500;
+    margin-bottom: 0;
+    font-weight: 400;
     font-size: 0.9375rem;
-    border-left: 3px solid;
+    border: none;
+    background: none;
 }
 
 .pcq-message:last-child {
@@ -441,21 +442,88 @@ button.pcq-submit-btn:hover {
 }
 
 .pcq-message.success {
-    background: #f0fdf4;
-    color: #166534;
-    border-color: #22c55e;
+    background: #ffffff;
+    color: #111827;
+    border: none;
+}
+
+.pcq-message.success h3,
+.pcq-message.success h4 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    text-align: left;
+}
+
+.pcq-message.success .pcq-success-content {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.pcq-message.success .pcq-success-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 0.9375rem;
+}
+
+.pcq-message.success .pcq-success-row:last-child {
+    border-bottom: none;
+}
+
+.pcq-message.success .pcq-success-label {
+    font-weight: 600;
+    color: #111827;
+}
+
+.pcq-message.success .pcq-success-value {
+    font-weight: 600;
+    color: #374151;
+}
+
+.pcq-message.success .pcq-booking-link {
+    display: inline-block;
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.pcq-message.success .pcq-booking-link:hover {
+    text-decoration: underline;
+    color: #3b82f6;
+}
+
+.pcq-message.success .pcq-confirmation-note {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    line-height: 1.5;
 }
 
 .pcq-message.error {
     background: #fef2f2;
     color: #991b1b;
-    border-color: #ef4444;
+    border: 1px solid #fecaca;
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid #ef4444;
 }
 
 .pcq-message.info {
     background: #eff6ff;
     color: #1e40af;
-    border-color: #60a5fa;
+    border: 1px solid #dbeafe;
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid #60a5fa;
 }
 
 /* ==========================================================================

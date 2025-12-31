@@ -278,11 +278,13 @@
                         const confirmUrl = self.buildConfirmationUrl(response.data);
                         window.location.href = confirmUrl;
                     } else {
-                        alert('Error: ' + response.message);
+                        alert('Error: ' + (response.data || response.message || 'Unknown error'));
                         $submitBtn.prop('disabled', false).text(originalText);
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('Booking AJAX Error:', error);
+                    console.error('Response:', xhr.responseText);
                     alert('Failed to create booking. Please try again.');
                     $submitBtn.prop('disabled', false).text(originalText);
                 }
@@ -293,18 +295,31 @@
          * Build confirmation page URL
          */
         buildConfirmationUrl: function(data) {
-            const baseUrl = window.location.origin + '/booking-confirmation/';
-            const params = new URLSearchParams({
-                booking_id: data.booking_id || '',
-                booking_number: data.booking_number || '',
-                service_date: this.$selectedDate.val(),
-                service_time: this.$selectedTimeStart.val() + ' - ' + this.$selectedTimeEnd.val(),
-                total_amount: data.total_amount || 0,
-                deposit_required: data.deposit_required || false,
-                deposit_amount: data.deposit_amount || 0
-            });
+            try {
+                // Use the confirmation page URL from localized script data, fallback to current page with query params
+                const baseUrl = pcq_ajax.confirmation_url || (window.location.origin + window.location.pathname);
+                
+                // Get values from hidden fields
+                const serviceDate = $('#selected_date').val() || '';
+                const timeStart = $('#selected_time_start').val() || '';
+                const timeEnd = $('#selected_time_end').val() || '';
+                
+                const params = new URLSearchParams({
+                    booking_id: data.booking_id || '',
+                    booking_number: data.booking_number || '',
+                    service_date: serviceDate,
+                    service_time: timeStart + ' - ' + timeEnd,
+                    total_amount: data.total_amount || 0,
+                    deposit_required: data.deposit_required || false,
+                    deposit_amount: data.deposit_amount || 0
+                });
 
-            return baseUrl + '?' + params.toString();
+                return baseUrl + '?' + params.toString();
+            } catch (error) {
+                console.error('Error building confirmation URL:', error);
+                // Fallback to home page
+                return window.location.origin;
+            }
         },
 
         /**

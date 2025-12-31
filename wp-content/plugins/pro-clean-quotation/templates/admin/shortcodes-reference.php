@@ -210,6 +210,61 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
         
+        <!-- Booking Confirmation Shortcode -->
+        <div class="pcq-shortcode-card">
+            <div class="shortcode-header">
+                <h2><?php _e('Booking Confirmation Page', 'pro-clean-quotation'); ?></h2>
+                <span class="shortcode-badge" style="background: #7c3aed;">Confirmation</span>
+            </div>
+            
+            <div class="shortcode-content">
+                <p class="shortcode-description">
+                    <?php _e('Display booking confirmation details after successful booking. Typically used on a dedicated confirmation page.', 'pro-clean-quotation'); ?>
+                </p>
+                
+                <div class="shortcode-box">
+                    <code>[pcq_booking_confirmation]</code>
+                    <button class="button button-small copy-shortcode" data-shortcode="[pcq_booking_confirmation]">
+                        <span class="dashicons dashicons-clipboard"></span> <?php _e('Copy', 'pro-clean-quotation'); ?>
+                    </button>
+                </div>
+                
+                <h4><?php _e('Available Parameters:', 'pro-clean-quotation'); ?></h4>
+                <table class="widefat">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Parameter', 'pro-clean-quotation'); ?></th>
+                            <th><?php _e('Default', 'pro-clean-quotation'); ?></th>
+                            <th><?php _e('Description', 'pro-clean-quotation'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>title</code></td>
+                            <td>"Booking Confirmed"</td>
+                            <td><?php _e('Confirmation page title', 'pro-clean-quotation'); ?></td>
+                        </tr>
+                        <tr>
+                            <td><code>show_title</code></td>
+                            <td>true</td>
+                            <td><?php _e('Show/hide confirmation title (true/false)', 'pro-clean-quotation'); ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="notice notice-info inline" style="margin: 15px 0;">
+                    <p><strong><?php _e('Note:', 'pro-clean-quotation'); ?></strong> <?php _e('This shortcode displays booking details passed via URL parameters. It should be placed on a dedicated page where customers are redirected after completing a booking.', 'pro-clean-quotation'); ?></p>
+                </div>
+                
+                <h4><?php _e('Setup Instructions:', 'pro-clean-quotation'); ?></h4>
+                <ol style="padding-left: 20px; line-height: 1.8;">
+                    <li><?php _e('Create a new page called "Booking Confirmation"', 'pro-clean-quotation'); ?></li>
+                    <li><?php _e('Add the shortcode <code>[pcq_booking_confirmation]</code> to the page content', 'pro-clean-quotation'); ?></li>
+                    <li><?php _e('Publish the page - the system will automatically detect and use it', 'pro-clean-quotation'); ?></li>
+                </ol>
+            </div>
+        </div>
+        
     </div>
     
     <!-- Quick Tips Section -->

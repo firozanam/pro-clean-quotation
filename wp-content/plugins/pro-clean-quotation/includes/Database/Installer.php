@@ -413,39 +413,68 @@ class Installer {
         $booking_page_id = get_option('pcq_booking_page_id');
         
         // Check if page still exists
-        if ($booking_page_id && get_post_status($booking_page_id) !== false) {
-            return; // Page already exists and is valid
+        if (!$booking_page_id || get_post_status($booking_page_id) === false) {
+            // Check if a page with 'book-service' slug already exists
+            $existing_page = get_page_by_path('book-service');
+            if ($existing_page) {
+                // Use existing page
+                update_option('pcq_booking_page_id', $existing_page->ID);
+            } else {
+                // Create new booking page
+                $booking_page = [
+                    'post_title'    => __('Book Service', 'pro-clean-quotation'),
+                    'post_content'  => '[pcq_booking_form]',
+                    'post_status'   => 'publish',
+                    'post_type'     => 'page',
+                    'post_name'     => 'book-service',
+                    'post_author'   => get_current_user_id() ?: 1,
+                    'comment_status' => 'closed',
+                    'ping_status'   => 'closed'
+                ];
+                
+                $page_id = wp_insert_post($booking_page);
+                
+                if ($page_id && !is_wp_error($page_id)) {
+                    // Save the page ID in options
+                    update_option('pcq_booking_page_id', $page_id);
+                }
+            }
         }
         
-        // Check if a page with 'book-service' slug already exists
-        $existing_page = get_page_by_path('book-service');
-        if ($existing_page) {
-            // Use existing page
-            update_option('pcq_booking_page_id', $existing_page->ID);
-            return;
+        // Create booking confirmation page
+        $confirmation_page_id = get_option('pcq_confirmation_page_id');
+        
+        // Check if page still exists
+        if (!$confirmation_page_id || get_post_status($confirmation_page_id) === false) {
+            // Check if a page with 'booking-confirmation' slug already exists
+            $existing_confirmation = get_page_by_path('booking-confirmation');
+            if ($existing_confirmation) {
+                // Use existing page
+                update_option('pcq_confirmation_page_id', $existing_confirmation->ID);
+            } else {
+                // Create new confirmation page
+                $confirmation_page = [
+                    'post_title'    => __('Booking Confirmation', 'pro-clean-quotation'),
+                    'post_content'  => '[pcq_booking_confirmation]',
+                    'post_status'   => 'publish',
+                    'post_type'     => 'page',
+                    'post_name'     => 'booking-confirmation',
+                    'post_author'   => get_current_user_id() ?: 1,
+                    'comment_status' => 'closed',
+                    'ping_status'   => 'closed'
+                ];
+                
+                $page_id = wp_insert_post($confirmation_page);
+                
+                if ($page_id && !is_wp_error($page_id)) {
+                    // Save the page ID in options
+                    update_option('pcq_confirmation_page_id', $page_id);
+                }
+            }
         }
         
-        // Create new booking page
-        $booking_page = [
-            'post_title'    => __('Book Service', 'pro-clean-quotation'),
-            'post_content'  => '[pcq_booking_form]',
-            'post_status'   => 'publish',
-            'post_type'     => 'page',
-            'post_name'     => 'book-service',
-            'post_author'   => get_current_user_id() ?: 1,
-            'comment_status' => 'closed',
-            'ping_status'   => 'closed'
-        ];
-        
-        $page_id = wp_insert_post($booking_page);
-        
-        if ($page_id && !is_wp_error($page_id)) {
-            // Save the page ID in options
-            update_option('pcq_booking_page_id', $page_id);
-            
-            // Flush rewrite rules to ensure the page is accessible
-            flush_rewrite_rules();
-        }
+        // Flush rewrite rules to ensure pages are accessible
+        flush_rewrite_rules();
     }
     
     /**

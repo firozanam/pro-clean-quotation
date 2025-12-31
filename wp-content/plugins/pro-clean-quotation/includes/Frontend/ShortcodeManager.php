@@ -44,6 +44,7 @@ class ShortcodeManager {
     private function registerShortcodes(): void {
         add_shortcode('pcq_quote_form', [$this, 'renderQuoteForm']);
         add_shortcode('pcq_booking_form', [$this, 'renderBookingForm']);
+        add_shortcode('pcq_booking_confirmation', [$this, 'renderBookingConfirmation']);
         add_shortcode('pcq_quote_calculator', [$this, 'renderQuoteCalculator']);
     }
     
@@ -94,6 +95,27 @@ class ShortcodeManager {
         
         // Load template - now using physical template file
         $template_path = $this->getTemplatePath('booking-form.php');
+        include $template_path;
+        
+        return ob_get_clean();
+    }
+    
+    /**
+     * Render booking confirmation shortcode
+     * 
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    public function renderBookingConfirmation(array $atts = []): string {
+        $atts = shortcode_atts([
+            'title' => __('Booking Confirmed', 'pro-clean-quotation'),
+            'show_title' => 'true'
+        ], $atts);
+        
+        ob_start();
+        
+        // Load template - now using physical template file
+        $template_path = $this->getTemplatePath('booking-confirmation.php');
         include $template_path;
         
         return ob_get_clean();

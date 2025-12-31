@@ -72,6 +72,16 @@ class AdminMenu {
             [$this, 'renderQuotes']
         );
         
+        // Bookings management
+        add_submenu_page(
+            'pro-clean-quotation',
+            __('Bookings', 'pro-clean-quotation'),
+            __('Bookings', 'pro-clean-quotation'),
+            'manage_options',
+            'pcq-bookings',
+            [$this, 'renderBookings']
+        );
+        
         // Appointments management
         add_submenu_page(
             'pro-clean-quotation',
@@ -458,6 +468,22 @@ class AdminMenu {
                 break;
             default:
                 $this->renderQuotesList();
+                break;
+        }
+    }
+    
+    /**
+     * Render bookings page
+     */
+    public function renderBookings(): void {
+        $action = $_GET['action'] ?? 'list';
+        
+        switch ($action) {
+            case 'view':
+                $this->renderBookingView();
+                break;
+            default:
+                $this->renderBookingsList();
                 break;
         }
     }
@@ -977,6 +1003,107 @@ class AdminMenu {
         }
         
         include PCQ_PLUGIN_DIR . 'templates/admin/quote-edit.php';
+    }
+    
+    /**
+     * Render bookings list
+     */
+    private function renderBookingsList(): void {
+        global $wpdb;
+        
+        // Get filters
+        $status_filter = $_GET['status'] ?? '';
+        $search = $_GET['s'] ?? '';
+        $page = max(1, intval($_GET['paged'] ?? 1));
+        $per_page = 20;
+        $offset = ($page - 1) * $per_page;
+        
+        $table = $wpdb->prefix . 'pq_bookings';
+        
+        // Build WHERE clause
+        $where_conditions = [];
+        $where_values = [];
+        
+        if (!empty($status_filter)) {
+            $where_conditions[] = "booking_status = %s";
+            $where_values[] = $status_filter;
+        }
+        
+        if (!empty($search)) {
+            $search_term = '%' . $wpdb->esc_like($search) . '%';
+            $where_conditions[] = "(customer_name LIKE %s OR customer_email LIKE %s OR booking_number LIKE %s)";
+            $where_values[] = $search_term;
+            $where_values[] = $search_term;
+            $where_values[] = $search_term;
+        }
+        
+        $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
+        
+        // Get total count
+        $count_query = "SELECT COUNT(*) FROM $table $where_clause";
+        if (!empty($where_values)) {
+            $total = $wpdb->get_var($wpdb->prepare($count_query, $where_values));
+        } else {
+            $total = $wpdb->get_var($count_query);
+        }
+        
+        // Get bookings
+        $bookings_query = "SELECT * FROM $table $where_clause ORDER BY created_at DESC LIMIT %d OFFSET %d";
+        $query_values = array_merge($where_values, [$per_page, $offset]);
+        
+        if (!empty($where_values)) {
+            $bookings = $wpdb->get_results($wpdb->prepare($bookings_query, $query_values));
+        } else {
+            $bookings = $wpdb->get_results($wpdb->prepare(
+                "SELECT * FROM $table ORDER BY created_at DESC LIMIT %d OFFSET %d",
+                $per_page,
+                $offset
+            ));
+        }
+        
+        $total_pages = ceil($total / $per_page);
+        
+        // Prepare pagination arguments
+        $pagination_args = [
+            'base' => add_query_arg('paged', '%#%'),
+            'format' => '',
+            'prev_text' => __('&laquo; Previous', 'pro-clean-quotation'),
+            'next_text' => __('Next &raquo;', 'pro-clean-quotation'),
+            'total' => $total_pages,
+            'current' => $page
+        ];
+        
+        include PCQ_PLUGIN_DIR . 'templates/admin/bookings-list.php';
+    }
+    
+    /**
+     * Render booking view
+     */
+    private function renderBookingView(): void {
+        global $wpdb;
+        
+        $booking_id = intval($_GET['id'] ?? 0);
+        $table = $wpdb->prefix . 'pq_bookings';
+        
+        $booking = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $table WHERE id = %d",
+            $booking_id
+        ));
+        
+        if (!$booking) {
+            wp_die(__('Booking not found.', 'pro-clean-quotation'));
+        }
+        
+        // Get related quote if exists
+        $quote = null;
+        if ($booking->quote_id) {
+            $quote = new \ProClean\Quotation\Models\Quote($booking->quote_id);
+            if (!$quote->getId()) {
+                $quote = null;
+            }
+        }
+        
+        include PCQ_PLUGIN_DIR . 'templates/admin/booking-view.php';
     }
     
     /**

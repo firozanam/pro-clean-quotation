@@ -138,6 +138,10 @@ class EmailManager {
             return false;
         }
         
+        $customer_sent = false;
+        $admin_sent = false;
+        
+        // Send customer confirmation email
         $to = $booking_data['customer_email'];
         $subject = sprintf(
             __('Booking Confirmed #%s - %s', 'pro-clean-quotation'),
@@ -155,12 +159,32 @@ class EmailManager {
         $message = $this->renderTemplate('booking-confirmation', $template_data);
         $headers = $this->getEmailHeaders();
         
-        $sent = wp_mail($to, $subject, $message, $headers);
+        $customer_sent = wp_mail($to, $subject, $message, $headers);
         
-        // Log email
-        $this->logEmail('booking', $booking_data['id'] ?? 0, 'booking_confirmation', $to, $subject, $sent);
+        // Log customer email
+        $this->logEmail('booking', $booking_data['id'] ?? 0, 'booking_confirmation', $to, $subject, $customer_sent);
         
-        return $sent;
+        // Send admin notification email
+        $admin_email = Settings::get('admin_notification_email', get_option('admin_email'));
+        $admin_subject = sprintf(
+            __('New Booking #%s - %s', 'pro-clean-quotation'),
+            $booking_data['booking_number'],
+            $booking_data['customer_name']
+        );
+        
+        $admin_template_data = [
+            'booking' => $booking_data,
+            'admin_url' => admin_url('admin.php?page=pcq-bookings&action=view&id=' . ($booking_data['id'] ?? 0))
+        ];
+        
+        $admin_message = $this->renderTemplate('booking-admin-notification', $admin_template_data);
+        $admin_sent = wp_mail($admin_email, $admin_subject, $admin_message, $headers);
+        
+        // Log admin email
+        $this->logEmail('booking', $booking_data['id'] ?? 0, 'booking_admin_notification', $admin_email, $admin_subject, $admin_sent);
+        
+        // Return true if at least customer email was sent
+        return $customer_sent;
     }
     
     /**
@@ -372,6 +396,8 @@ class EmailManager {
                 return $this->getAdminNotificationTemplate($data);
             case 'booking-confirmation':
                 return $this->getBookingConfirmationTemplate($data);
+            case 'booking-admin-notification':
+                return $this->getBookingAdminNotificationTemplate($data);
             case 'booking-reminder':
                 return $this->getBookingReminderTemplate($data);
             case 'appointment-confirmation':
@@ -525,6 +551,64 @@ class EmailManager {
         $html .= '<p>Need to reschedule or have questions? Contact us at <a href="tel:' . esc_attr($data['company_phone']) . '">' . esc_html($data['company_phone']) . '</a></p>';
         
         $html .= '<p>See you soon!<br>' . esc_html($data['company_name']) . '</p>';
+        
+        $html .= $this->getEmailFooter();
+        
+        return $html;
+    }
+    
+    /**
+     * Get booking admin notification email template
+     * 
+     * @param array $data Template data
+     * @return string HTML content
+     */
+    private function getBookingAdminNotificationTemplate(array $data): string {
+        $booking = $data['booking'];
+        
+        $html = $this->getEmailHeader('Admin Notification');
+        
+        $html .= '<h2 style="color: #27ae60;">New Booking Received!</h2>';
+        
+        $html .= '<p>A new cleaning service has been booked. Details below:</p>';
+        
+        // Booking details table
+        $html .= '<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Booking Number:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($booking['booking_number']) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Customer:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($booking['customer_name']) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Email:</strong></td><td style="padding: 8px; border: 1px solid #ddd;"><a href="mailto:' . esc_attr($booking['customer_email']) . '">' . esc_html($booking['customer_email']) . '</a></td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Phone:</strong></td><td style="padding: 8px; border: 1px solid #ddd;"><a href="tel:' . esc_attr($booking['customer_phone']) . '">' . esc_html($booking['customer_phone']) . '</a></td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Service:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html(ucfirst($booking['service_type'])) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Date:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . date('l, F j, Y', strtotime($booking['service_date'])) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Time:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . date('H:i', strtotime($booking['service_time_start'])) . ' - ' . date('H:i', strtotime($booking['service_time_end'])) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Duration:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . ($booking['estimated_duration'] ?? 'N/A') . ' hours</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Address:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($booking['property_address']) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Postal Code:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($booking['postal_code']) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>City:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . esc_html($booking['city']) . '</td></tr>';
+        $html .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Total Amount:</strong></td><td style="padding: 8px; border: 1px solid #ddd;"><strong>€' . number_format($booking['total_amount'], 2) . '</strong></td></tr>';
+        $html .= '</table>';
+        
+        // Customer notes if available
+        if (!empty($booking['customer_notes'])) {
+            $html .= '<h3>Customer Notes:</h3>';
+            $html .= '<p style="background: #f8f9fa; padding: 15px; border-left: 4px solid #27ae60;">' . esc_html($booking['customer_notes']) . '</p>';
+        }
+        
+        // Special requirements if available
+        if (!empty($booking['special_requirements'])) {
+            $html .= '<h3>Special Requirements:</h3>';
+            $html .= '<p style="background: #fff3cd; padding: 15px; border-left: 4px solid #f39c12;">' . esc_html($booking['special_requirements']) . '</p>';
+        }
+        
+        $html .= '<p style="background: #d4edda; padding: 15px; border-left: 4px solid #27ae60; margin: 20px 0;">';
+        $html .= '<strong>Action Required:</strong><br>';
+        $html .= '• Review booking details<br>';
+        $html .= '• Assign team members<br>';
+        $html .= '• Prepare equipment<br>';
+        $html .= '• Contact customer if needed';
+        $html .= '</p>';
+        
+        $html .= '<p><a href="' . esc_url($data['admin_url']) . '" style="background: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">View Booking in Admin</a></p>';
         
         $html .= $this->getEmailFooter();
         

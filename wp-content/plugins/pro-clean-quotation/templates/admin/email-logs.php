@@ -24,6 +24,8 @@ if (!defined('ABSPATH')) {
                     <select name="email_type" id="email_type" class="pcq-filter-select">
                         <option value=""><?php _e('All Email Types', 'pro-clean-quotation'); ?></option>
                         <option value="quote_confirmation" <?php selected($_GET['email_type'] ?? '', 'quote_confirmation'); ?>><?php _e('Quote Confirmation', 'pro-clean-quotation'); ?></option>
+                        <option value="booking_confirmation" <?php selected($_GET['email_type'] ?? '', 'booking_confirmation'); ?>><?php _e('Booking Confirmed', 'pro-clean-quotation'); ?></option>
+                        <option value="booking_admin_notification" <?php selected($_GET['email_type'] ?? '', 'booking_admin_notification'); ?>><?php _e('Booking Admin Notification', 'pro-clean-quotation'); ?></option>
                         <option value="appointment_confirmation" <?php selected($_GET['email_type'] ?? '', 'appointment_confirmation'); ?>><?php _e('Appointment Confirmation', 'pro-clean-quotation'); ?></option>
                         <option value="appointment_reminder" <?php selected($_GET['email_type'] ?? '', 'appointment_reminder'); ?>><?php _e('Appointment Reminder', 'pro-clean-quotation'); ?></option>
                         <option value="appointment_cancelled" <?php selected($_GET['email_type'] ?? '', 'appointment_cancelled'); ?>><?php _e('Appointment Cancelled', 'pro-clean-quotation'); ?></option>
@@ -85,6 +87,8 @@ if (!defined('ABSPATH')) {
                                         <?php 
                                         $type_labels = [
                                             'quote_confirmation' => __('Quote Confirmation', 'pro-clean-quotation'),
+                                            'booking_confirmation' => __('Booking Confirmed', 'pro-clean-quotation'),
+                                            'booking_admin_notification' => __('Booking Admin Notification', 'pro-clean-quotation'),
                                             'appointment_confirmation' => __('Appointment Confirmation', 'pro-clean-quotation'),
                                             'appointment_reminder' => __('Reminder', 'pro-clean-quotation'),
                                             'appointment_cancelled' => __('Cancellation', 'pro-clean-quotation'),
@@ -371,6 +375,8 @@ if (!defined('ABSPATH')) {
 }
 
 .pcq-type-quote_confirmation { background-color: #2196F3; }
+.pcq-type-booking_confirmation { background-color: #10b981; }
+.pcq-type-booking_admin_notification { background-color: #8b5cf6; }
 .pcq-type-appointment_confirmation { background-color: #4CAF50; }
 .pcq-type-appointment_reminder { background-color: #FF9800; }
 .pcq-type-appointment_cancelled { background-color: #f44336; }
