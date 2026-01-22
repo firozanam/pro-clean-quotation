@@ -18,6 +18,8 @@
             this.isSubmitting = false;
             this.calculationTimeout = null;
             
+            console.log('[DEBUG] PCQQuoteForm initialized for form:', this.form.attr('id'));
+            
             this.init();
         }
 
@@ -67,9 +69,14 @@
          * Setup real-time calculation
          */
         setupRealTimeCalculation() {
+            console.log('[DEBUG] setupRealTimeCalculation called');
+            
             // Initial calculation if form has values
             if (this.hasRequiredCalculationFields()) {
+                console.log('[DEBUG] Form has required fields, triggering initial calculation');
                 this.triggerCalculation();
+            } else {
+                console.log('[DEBUG] Form does not have required fields for initial calculation');
             }
         }
 
@@ -203,10 +210,18 @@
          * Trigger price calculation with debouncing
          */
         triggerCalculation() {
-            if (!this.hasRequiredCalculationFields()) {
+            console.log('[DEBUG] triggerCalculation called');
+            
+            const hasRequired = this.hasRequiredCalculationFields();
+            console.log('[DEBUG] hasRequiredCalculationFields:', hasRequired);
+            
+            if (!hasRequired) {
+                console.log('[DEBUG] Missing required fields, hiding price display');
                 this.hidePriceDisplay();
                 return;
             }
+
+            console.log('[DEBUG] Required fields present, scheduling calculation');
 
             // Clear existing timeout
             if (this.calculationTimeout) {
@@ -215,6 +230,7 @@
 
             // Set new timeout for debounced calculation
             this.calculationTimeout = setTimeout(() => {
+                console.log('[DEBUG] Debounce timeout completed, calling calculatePrice');
                 this.calculatePrice();
             }, 500);
         }
@@ -223,29 +239,39 @@
          * Calculate price
          */
         async calculatePrice() {
+            console.log('[DEBUG] calculatePrice called, isCalculating:', this.isCalculating);
+            
             if (this.isCalculating) {
+                console.log('[DEBUG] Already calculating, skipping');
                 return;
             }
 
             this.isCalculating = true;
             this.showCalculatingState();
+            console.log('[DEBUG] Showing calculating state');
 
             try {
                 const formData = this.getCalculationData();
+                console.log('[DEBUG] Calculation data:', formData);
+                
+                console.log('[DEBUG] Sending AJAX request to:', pcq_ajax.ajax_url);
                 const response = await this.requestCalculation(formData);
+                console.log('[DEBUG] AJAX response:', response);
                 
                 if (response.success) {
+                    console.log('[DEBUG] Calculation successful, displaying price');
                     this.displayPrice(response.data);
                 } else {
+                    console.warn('[DEBUG] Calculation failed:', response.message);
                     this.hidePriceDisplay();
-                    console.warn('Calculation error:', response.message);
                 }
             } catch (error) {
-                console.error('Price calculation error:', error);
+                console.error('[DEBUG] Price calculation error:', error);
                 this.hidePriceDisplay();
             } finally {
                 this.isCalculating = false;
                 this.hideCalculatingState();
+                console.log('[DEBUG] Calculation complete, isCalculating:', this.isCalculating);
             }
         }
 
@@ -256,6 +282,7 @@
             const serviceType = this.form.find('input[name="service_type"]:checked').val();
             const roofTypeSection = this.form.find('.pcq-roof-type');
             
+            // Legacy roof_type handling (backward compatibility)
             if (serviceType === 'roof' || serviceType === 'both') {
                 roofTypeSection.show();
             } else {
@@ -263,7 +290,118 @@
                 this.form.find('select[name="roof_type"]').val('');
             }
             
+            // Handle dynamic custom fields
+            this.renderCustomFields(serviceType);
+            
             this.triggerCalculation();
+        }
+
+        /**
+         * Render custom fields for selected service
+         */
+        renderCustomFields(serviceId) {
+            // Find the Surface Details form row
+            const surfaceDetailsRow = this.form.find('.pcq-surface-details .pcq-form-row');
+            
+            // Remove any previously added custom fields
+            surfaceDetailsRow.find('.pcq-custom-field-wrapper').remove();
+            
+            if (!serviceId || !window.pcqServicesData || !window.pcqServicesData[serviceId]) {
+                return;
+            }
+            
+            const customFields = window.pcqServicesData[serviceId];
+            
+            if (!customFields || customFields.length === 0) {
+                return;
+            }
+            
+            // Add each custom field as a form field in the row
+            customFields.forEach(field => {
+                const fieldHtml = this.generateCustomFieldHtml(field);
+                surfaceDetailsRow.append(fieldHtml);
+            });
+            
+            // Trigger validation setup for new fields
+            this.setupCustomFieldValidation();
+        }
+
+        /**
+         * Generate HTML for a custom field
+         */
+        generateCustomFieldHtml(field) {
+            const fieldId = `custom_field_${field.id}`;
+            const isRequired = field.required ? 'required' : '';
+            const requiredMark = field.required ? '<span class="required">*</span>' : '';
+            
+            let optionsHtml = '';
+            
+            if (field.type === 'select') {
+                optionsHtml = `<select name="custom_fields[${field.id}]" id="${fieldId}" class="pcq-calc-trigger" ${isRequired}>
+                    <option value="">${pcq_ajax.strings.select_option || 'Select an option'}</option>`;
+                
+                field.options.forEach(option => {
+                    const priceText = option.price_modifier && parseFloat(option.price_modifier) !== 0 
+                        ? ` (+€${parseFloat(option.price_modifier).toFixed(2)})` 
+                        : '';
+                    optionsHtml += `<option value="${this.escapeHtml(option.value)}" data-price-modifier="${option.price_modifier || 0}">${this.escapeHtml(option.label)}${priceText}</option>`;
+                });
+                
+                optionsHtml += `</select>`;
+            } else if (field.type === 'radio') {
+                optionsHtml = '<div class="pcq-radio-options">';
+                
+                field.options.forEach((option, index) => {
+                    const optionId = `${fieldId}_${index}`;
+                    const priceText = option.price_modifier && parseFloat(option.price_modifier) !== 0 
+                        ? ` <span class="price-modifier">(+€${parseFloat(option.price_modifier).toFixed(2)})</span>` 
+                        : '';
+                    
+                    optionsHtml += `
+                        <label class="pcq-radio-label">
+                            <input type="radio" 
+                                   name="custom_fields[${field.id}]" 
+                                   id="${optionId}"
+                                   value="${this.escapeHtml(option.value)}" 
+                                   data-price-modifier="${option.price_modifier || 0}"
+                                   class="pcq-calc-trigger"
+                                   ${isRequired}>
+                            <span class="pcq-radio-text">${this.escapeHtml(option.label)}${priceText}</span>
+                        </label>`;
+                });
+                
+                optionsHtml += '</div>';
+            }
+            
+            return `
+                <div class="pcq-form-field pcq-custom-field-wrapper" data-field-id="${field.id}">
+                    <label for="${fieldId}">${this.escapeHtml(field.label)} ${requiredMark}</label>
+                    ${optionsHtml}
+                </div>`;
+        }
+
+        /**
+         * Setup validation for custom fields
+         */
+        setupCustomFieldValidation() {
+            // Add change event listeners to custom fields for live calculation
+            this.form.find('.pcq-custom-field-wrapper select, .pcq-custom-field-wrapper input[type="radio"]').off('change.customfields').on('change.customfields', () => {
+                this.triggerCalculation();
+            });
+        }
+
+        /**
+         * Escape HTML to prevent XSS
+         */
+        escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
         }
 
         /**
@@ -390,6 +528,11 @@
             const serviceType = this.form.find('input[name="service_type"]:checked').val();
             const squareMeters = this.form.find('input[name="square_meters"]').val();
             
+            console.log('[DEBUG] hasRequiredCalculationFields check:');
+            console.log('  - serviceType:', serviceType);
+            console.log('  - squareMeters:', squareMeters);
+            console.log('  - squareMeters >= 10:', squareMeters && parseFloat(squareMeters) >= 10);
+            
             return serviceType && squareMeters && parseFloat(squareMeters) >= 10;
         }
 
@@ -426,7 +569,7 @@
          * Get calculation data
          */
         getCalculationData() {
-            return {
+            const data = {
                 action: 'pcq_calculate_quote',
                 nonce: pcq_ajax.nonce,
                 service_type: this.form.find('input[name="service_type"]:checked').val(),
@@ -437,6 +580,46 @@
                 surface_material: this.form.find('select[name="surface_material"]').val(),
                 roof_type: this.form.find('select[name="roof_type"]').val()
             };
+            
+            // Include custom field data
+            data.custom_fields = this.getCustomFieldData();
+            
+            return data;
+        }
+
+        /**
+         * Get custom field data
+         */
+        getCustomFieldData() {
+            const customFieldData = {};
+            
+            this.form.find('.pcq-custom-field-wrapper').each((index, element) => {
+                const fieldElement = $(element);
+                const fieldId = fieldElement.data('field-id');
+                
+                // Get value from select or radio
+                const selectValue = fieldElement.find('select').val();
+                const radioValue = fieldElement.find('input[type="radio"]:checked').val();
+                
+                const value = selectValue || radioValue || '';
+                
+                if (value) {
+                    // Get price modifier from selected option
+                    let priceModifier = 0;
+                    if (selectValue) {
+                        priceModifier = fieldElement.find('select option:selected').data('price-modifier') || 0;
+                    } else if (radioValue) {
+                        priceModifier = fieldElement.find('input[type="radio"]:checked').data('price-modifier') || 0;
+                    }
+                    
+                    customFieldData[fieldId] = {
+                        value: value,
+                        price_modifier: parseFloat(priceModifier) || 0
+                    };
+                }
+            });
+            
+            return customFieldData;
         }
 
         /**
@@ -481,8 +664,13 @@
          * Display calculated price
          */
         displayPrice(data) {
+            console.log('[DEBUG] displayPrice called with data:', data);
+            
             const priceDisplay = this.form.find('.pcq-price-display');
+            console.log('[DEBUG] priceDisplay element found:', priceDisplay.length);
+            
             const breakdown = priceDisplay.find('.pcq-price-breakdown');
+            console.log('[DEBUG] breakdown element found:', breakdown.length);
             
             let html = '';
             
@@ -506,8 +694,11 @@
                 </div>
             `;
             
+            console.log('[DEBUG] Generated HTML length:', html.length);
             breakdown.html(html);
+            console.log('[DEBUG] Calling priceDisplay.show()');
             priceDisplay.show();
+            console.log('[DEBUG] priceDisplay visibility:', priceDisplay.is(':visible'));
         }
 
         /**
@@ -699,6 +890,20 @@
      * Initialize when document is ready
      */
     $(document).ready(function() {
+        // Load services custom fields data from JSON
+        const servicesDataElement = document.getElementById('pcq-services-custom-fields');
+        if (servicesDataElement) {
+            try {
+                window.pcqServicesData = JSON.parse(servicesDataElement.textContent);
+                console.log('Loaded services custom fields data:', window.pcqServicesData);
+            } catch (e) {
+                console.error('Failed to parse services custom fields data:', e);
+                window.pcqServicesData = {};
+            }
+        } else {
+            window.pcqServicesData = {};
+        }
+        
         // Initialize quote forms
         $('.pcq-quote-form').each(function() {
             new PCQQuoteForm(this);

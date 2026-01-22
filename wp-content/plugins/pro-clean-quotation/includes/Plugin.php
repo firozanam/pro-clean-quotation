@@ -322,19 +322,34 @@ class Plugin {
      * Handle AJAX quote calculation
      */
     public function handleAjaxCalculateQuote(): void {
-        // Verify nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_nonce')) {
-            wp_die(__('Security check failed.', 'pro-clean-quotation'));
+        try {
+            // Verify nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_nonce')) {
+                error_log('PCQ: Calculate quote nonce verification failed');
+                wp_die(__('Security check failed.', 'pro-clean-quotation'));
+            }
+            
+            error_log('PCQ: Calculate quote request data: ' . print_r($_POST, true));
+            
+            $calculator = Services\QuoteCalculator::getInstance();
+            $result = $calculator->calculateQuote($_POST);
+            
+            error_log('PCQ: Calculate quote result: ' . print_r($result, true));
+            
+            // Add language information to response
+            $lang_manager = I18n\LanguageManager::getInstance();
+            $result = apply_filters('pcq_ajax_response', $result, 'calculate_quote');
+            
+            wp_send_json($result);
+        } catch (\Throwable $e) {
+            error_log('PCQ: Fatal error in handleAjaxCalculateQuote: ' . $e->getMessage());
+            error_log('PCQ: Stack trace: ' . $e->getTraceAsString());
+            
+            wp_send_json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ]);
         }
-        
-        $calculator = Services\QuoteCalculator::getInstance();
-        $result = $calculator->calculateQuote($_POST);
-        
-        // Add language information to response
-        $lang_manager = I18n\LanguageManager::getInstance();
-        $result = apply_filters('pcq_ajax_response', $result, 'calculate_quote');
-        
-        wp_send_json($result);
     }
     
     /**

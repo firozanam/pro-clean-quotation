@@ -337,6 +337,16 @@ class FormHandler {
      * @return array Quote data
      */
     private function prepareQuoteData(array $form_data, array $calculation_data): array {
+        // Process custom fields data
+        $custom_field_data = [];
+        if (!empty($form_data['custom_fields']) && is_array($form_data['custom_fields'])) {
+            foreach ($form_data['custom_fields'] as $field_id => $value) {
+                if (!empty($value)) {
+                    $custom_field_data[sanitize_key($field_id)] = sanitize_text_field($value);
+                }
+            }
+        }
+        
         return [
             'quote_number' => $this->generateQuoteNumber(),
             'customer_name' => sanitize_text_field($form_data['customer_name']),
@@ -353,6 +363,7 @@ class FormHandler {
             'roof_type' => sanitize_text_field($form_data['roof_type'] ?? ''),
             'last_cleaning_date' => !empty($form_data['last_cleaning_date']) ? sanitize_text_field($form_data['last_cleaning_date']) : null,
             'special_requirements' => sanitize_textarea_field($form_data['special_requirements'] ?? ''),
+            'custom_field_data' => !empty($custom_field_data) ? json_encode($custom_field_data) : null,
             'base_price' => $calculation_data['base_price'],
             'adjustments' => $calculation_data['adjustments'],
             'subtotal' => $calculation_data['subtotal'],

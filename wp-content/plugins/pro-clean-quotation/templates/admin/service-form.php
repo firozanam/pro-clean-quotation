@@ -35,6 +35,9 @@ $service_data = [
     'min_advance_time' => $is_edit ? $service->getMinAdvanceTime() : 0,
     'max_advance_time' => $is_edit ? $service->getMaxAdvanceTime() : 0
 ];
+
+// Get custom fields
+$custom_fields = $is_edit ? $service->getCustomFields() : [];
 ?>
 
 <div class="wrap">
@@ -200,6 +203,92 @@ $service_data = [
                             </td>
                         </tr>
                     </table>
+                </div>
+                
+                <!-- Custom Fields -->
+                <div class="pcq-form-section">
+                    <h2><?php _e('Custom Fields', 'pro-clean-quotation'); ?></h2>
+                    <p class="description">
+                        <?php _e('Define service-specific fields that customers need to fill when requesting this service. Each field can have price modifiers.', 'pro-clean-quotation'); ?>
+                    </p>
+                    
+                    <div id="pcq-custom-fields-container">
+                        <?php if (!empty($custom_fields)): ?>
+                            <?php foreach ($custom_fields as $index => $field): ?>
+                                <div class="pcq-custom-field-item" data-index="<?php echo $index; ?>">
+                                    <div class="pcq-custom-field-header">
+                                        <h4><?php echo esc_html($field['label'] ?? __('Custom Field', 'pro-clean-quotation')); ?></h4>
+                                        <button type="button" class="button pcq-remove-field"><?php _e('Remove', 'pro-clean-quotation'); ?></button>
+                                    </div>
+                                    
+                                    <input type="hidden" name="custom_fields[<?php echo $index; ?>][id]" value="<?php echo esc_attr($field['id'] ?? ''); ?>">
+                                    
+                                    <table class="form-table">
+                                        <tr>
+                                            <th><label><?php _e('Field Label', 'pro-clean-quotation'); ?> <span class="required">*</span></label></th>
+                                            <td>
+                                                <input type="text" name="custom_fields[<?php echo $index; ?>][label]" 
+                                                       value="<?php echo esc_attr($field['label'] ?? ''); ?>" 
+                                                       class="regular-text pcq-field-label" required>
+                                                <p class="description"><?php _e('Label shown to customers (e.g., "Roof Type")', 'pro-clean-quotation'); ?></p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th><label><?php _e('Field Type', 'pro-clean-quotation'); ?></label></th>
+                                            <td>
+                                                <select name="custom_fields[<?php echo $index; ?>][type]" class="regular-text">
+                                                    <option value="select" <?php selected($field['type'] ?? 'select', 'select'); ?>><?php _e('Dropdown (Select)', 'pro-clean-quotation'); ?></option>
+                                                    <option value="radio" <?php selected($field['type'] ?? '', 'radio'); ?>><?php _e('Radio Buttons', 'pro-clean-quotation'); ?></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th><label><?php _e('Required', 'pro-clean-quotation'); ?></label></th>
+                                            <td>
+                                                <label>
+                                                    <input type="checkbox" name="custom_fields[<?php echo $index; ?>][required]" 
+                                                           value="1" <?php checked($field['required'] ?? true, true); ?>>
+                                                    <?php _e('This field is required', 'pro-clean-quotation'); ?>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th><label><?php _e('Options', 'pro-clean-quotation'); ?></label></th>
+                                            <td>
+                                                <div class="pcq-field-options">
+                                                    <?php if (!empty($field['options'])): ?>
+                                                        <?php foreach ($field['options'] as $opt_index => $option): ?>
+                                                            <div class="pcq-option-row">
+                                                                <input type="text" name="custom_fields[<?php echo $index; ?>][options][<?php echo $opt_index; ?>][value]" 
+                                                                       value="<?php echo esc_attr($option['value'] ?? ''); ?>" 
+                                                                       placeholder="<?php _e('Value (e.g., flat)', 'pro-clean-quotation'); ?>" class="small-text">
+                                                                <input type="text" name="custom_fields[<?php echo $index; ?>][options][<?php echo $opt_index; ?>][label]" 
+                                                                       value="<?php echo esc_attr($option['label'] ?? ''); ?>" 
+                                                                       placeholder="<?php _e('Label (e.g., Flat Roof)', 'pro-clean-quotation'); ?>" class="regular-text">
+                                                                <input type="number" name="custom_fields[<?php echo $index; ?>][options][<?php echo $opt_index; ?>][price_modifier]" 
+                                                                       value="<?php echo esc_attr($option['price_modifier'] ?? 0); ?>" 
+                                                                       placeholder="0" class="small-text" step="0.01">
+                                                                <span class="description">€</span>
+                                                                <button type="button" class="button pcq-remove-option">×</button>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <button type="button" class="button pcq-add-option" data-field-index="<?php echo $index; ?>">
+                                                    <?php _e('+ Add Option', 'pro-clean-quotation'); ?>
+                                                </button>
+                                                <p class="description"><?php _e('Define available options with price modifiers (positive or negative amounts in euros)', 'pro-clean-quotation'); ?></p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <button type="button" id="pcq-add-custom-field" class="button button-secondary">
+                        <?php _e('+ Add Custom Field', 'pro-clean-quotation'); ?>
+                    </button>
                 </div>
                 
                 <!-- Advanced Settings -->
@@ -432,9 +521,96 @@ $service_data = [
     color: #d63638;
 }
 
+.pcq-custom-field-item {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.pcq-custom-field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.pcq-custom-field-header h4 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.pcq-field-options {
+    margin-bottom: 10px;
+}
+
+.pcq-option-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.pcq-option-row input[type="text"]:nth-of-type(1) {
+    flex: 0 0 150px;
+}
+
+.pcq-option-row input[type="text"]:nth-of-type(2) {
+    flex: 1;
+}
+
+.pcq-option-row input[type="number"] {
+    flex: 0 0 100px;
+}
+
+.pcq-remove-option {
+    flex: 0 0 auto;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.pcq-remove-option:hover {
+    background: #c82333;
+}
+
+.pcq-remove-field {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.pcq-remove-field:hover {
+    background: #c82333;
+    border-color: #c82333;
+}
+
 @media (max-width: 768px) {
     .pcq-form-container {
         grid-template-columns: 1fr;
+    }
+    
+    .pcq-option-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pcq-option-row input {
+        width: 100% !important;
+        flex: 1 1 auto !important;
     }
 }
 </style>
@@ -490,6 +666,106 @@ jQuery(document).ready(function($) {
             e.preventDefault();
             alert('<?php _e('Please fill in all required fields.', 'pro-clean-quotation'); ?>');
         }
+    });
+    
+    // ===== Custom Fields Management =====
+    
+    var fieldIndex = <?php echo !empty($custom_fields) ? count($custom_fields) : 0; ?>;
+    
+    // Add new custom field
+    $('#pcq-add-custom-field').on('click', function() {
+        var fieldHtml = `
+            <div class="pcq-custom-field-item" data-index="${fieldIndex}">
+                <div class="pcq-custom-field-header">
+                    <h4><?php _e('New Custom Field', 'pro-clean-quotation'); ?></h4>
+                    <button type="button" class="button pcq-remove-field"><?php _e('Remove', 'pro-clean-quotation'); ?></button>
+                </div>
+                
+                <input type="hidden" name="custom_fields[${fieldIndex}][id]" value="">
+                
+                <table class="form-table">
+                    <tr>
+                        <th><label><?php _e('Field Label', 'pro-clean-quotation'); ?> <span class="required">*</span></label></th>
+                        <td>
+                            <input type="text" name="custom_fields[${fieldIndex}][label]" 
+                                   value="" class="regular-text pcq-field-label" required>
+                            <p class="description"><?php _e('Label shown to customers (e.g., "Roof Type")', 'pro-clean-quotation'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label><?php _e('Field Type', 'pro-clean-quotation'); ?></label></th>
+                        <td>
+                            <select name="custom_fields[${fieldIndex}][type]" class="regular-text">
+                                <option value="select"><?php _e('Dropdown (Select)', 'pro-clean-quotation'); ?></option>
+                                <option value="radio"><?php _e('Radio Buttons', 'pro-clean-quotation'); ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label><?php _e('Required', 'pro-clean-quotation'); ?></label></th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="custom_fields[${fieldIndex}][required]" value="1" checked>
+                                <?php _e('This field is required', 'pro-clean-quotation'); ?>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label><?php _e('Options', 'pro-clean-quotation'); ?></label></th>
+                        <td>
+                            <div class="pcq-field-options"></div>
+                            <button type="button" class="button pcq-add-option" data-field-index="${fieldIndex}">
+                                <?php _e('+ Add Option', 'pro-clean-quotation'); ?>
+                            </button>
+                            <p class="description"><?php _e('Define available options with price modifiers (positive or negative amounts in euros)', 'pro-clean-quotation'); ?></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        `;
+        
+        $('#pcq-custom-fields-container').append(fieldHtml);
+        fieldIndex++;
+    });
+    
+    // Remove custom field
+    $(document).on('click', '.pcq-remove-field', function() {
+        if (confirm('<?php _e('Are you sure you want to remove this custom field?', 'pro-clean-quotation'); ?>')) {
+            $(this).closest('.pcq-custom-field-item').remove();
+        }
+    });
+    
+    // Add option to custom field
+    $(document).on('click', '.pcq-add-option', function() {
+        var fieldIndex = $(this).data('field-index');
+        var optionsContainer = $(this).siblings('.pcq-field-options');
+        var optionIndex = optionsContainer.find('.pcq-option-row').length;
+        
+        var optionHtml = `
+            <div class="pcq-option-row">
+                <input type="text" name="custom_fields[${fieldIndex}][options][${optionIndex}][value]" 
+                       value="" placeholder="<?php _e('Value (e.g., flat)', 'pro-clean-quotation'); ?>" class="small-text">
+                <input type="text" name="custom_fields[${fieldIndex}][options][${optionIndex}][label]" 
+                       value="" placeholder="<?php _e('Label (e.g., Flat Roof)', 'pro-clean-quotation'); ?>" class="regular-text">
+                <input type="number" name="custom_fields[${fieldIndex}][options][${optionIndex}][price_modifier]" 
+                       value="0" placeholder="0" class="small-text" step="0.01">
+                <span class="description">€</span>
+                <button type="button" class="button pcq-remove-option">×</button>
+            </div>
+        `;
+        
+        optionsContainer.append(optionHtml);
+    });
+    
+    // Remove option
+    $(document).on('click', '.pcq-remove-option', function() {
+        $(this).closest('.pcq-option-row').remove();
+    });
+    
+    // Update field header label when field label changes
+    $(document).on('input', '.pcq-field-label', function() {
+        var label = $(this).val() || '<?php _e('Custom Field', 'pro-clean-quotation'); ?>';
+        $(this).closest('.pcq-custom-field-item').find('.pcq-custom-field-header h4').text(label);
     });
 });
 </script>

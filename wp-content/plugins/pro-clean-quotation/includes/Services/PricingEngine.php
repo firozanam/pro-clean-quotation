@@ -254,6 +254,10 @@ class PricingEngine {
         
         $subtotal = $base_price + $size_cost + $complexity_adjustments;
         
+        // Apply custom field price modifiers
+        $custom_field_adjustments = $this->applyCustomFieldModifiers($params);
+        $subtotal += $custom_field_adjustments;
+        
         // Apply minimum charge
         $subtotal = max($subtotal, $base_pricing['minimum_quote_value']);
         
@@ -303,6 +307,7 @@ class PricingEngine {
                 'base_price' => $base_price,
                 'size_cost' => $size_cost,
                 'complexity_adjustments' => $complexity_adjustments,
+                'custom_field_adjustments' => $custom_field_adjustments,
                 'subtotal' => $subtotal
             ],
             'dynamic_adjustments' => $adjustments_breakdown,
@@ -313,6 +318,75 @@ class PricingEngine {
             'savings' => max(0, $subtotal - $adjusted_subtotal + $promo_discount),
             'multipliers_applied' => array_keys(array_filter($multipliers, fn($m) => $m != 1.0))
         ];
+    }
+
+    /**
+     * Apply custom field price modifiers
+     * 
+     * @param array $params Pricing parameters
+     * @return float Total custom field adjustments
+     */
+    private function applyCustomFieldModifiers(array $params): float {
+        $total_adjustment = 0;
+        
+        // Check if custom_fields parameter exists and is array
+        if (empty($params['custom_fields']) || !is_array($params['custom_fields'])) {
+            return $total_adjustment;
+        }
+        
+        // Load service to get custom field configurations
+        $service_id = $params['service_type'] ?? null;
+        if (empty($service_id)) {
+            return $total_adjustment;
+        }
+        
+        // Get service custom fields configuration
+        global $wpdb;
+        $service_meta_table = $wpdb->prefix . 'pq_service_meta';
+        
+        $custom_fields_json = $wpdb->get_var($wpdb->prepare(
+            "SELECT meta_value FROM $service_meta_table WHERE service_id = %d AND meta_key = %s",
+            $service_id,
+            'custom_fields'
+        ));
+        
+        if (empty($custom_fields_json)) {
+            return $total_adjustment;
+        }
+        
+        $custom_fields_config = json_decode($custom_fields_json, true);
+        if (!is_array($custom_fields_config)) {
+            return $total_adjustment;
+        }
+        
+        // Process each custom field
+        foreach ($custom_fields_config as $field_config) {
+            $field_id = $field_config['id'] ?? '';
+            
+            // Check if this field was submitted
+            if (empty($params['custom_fields'][$field_id])) {
+                continue;
+            }
+            
+            $selected_value = is_array($params['custom_fields'][$field_id]) 
+                ? ($params['custom_fields'][$field_id]['value'] ?? '') 
+                : $params['custom_fields'][$field_id];
+            
+            // Find the selected option's price modifier
+            if (!empty($field_config['options']) && is_array($field_config['options'])) {
+                foreach ($field_config['options'] as $option) {
+                    if ($option['value'] === $selected_value) {
+                        $price_modifier = floatval($option['price_modifier'] ?? 0);
+                        if ($price_modifier != 0) {
+                            $total_adjustment += $price_modifier;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return $total_adjustment;
     }
     
     /**

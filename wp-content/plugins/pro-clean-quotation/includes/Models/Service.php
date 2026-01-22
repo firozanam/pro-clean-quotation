@@ -273,4 +273,185 @@ class Service {
     public function toArray(): array {
         return $this->data;
     }
+    
+    // ===== Meta Methods =====
+    
+    /**
+     * Get meta value
+     * 
+     * @param string $meta_key Meta key
+     * @param mixed $default Default value if meta doesn't exist
+     * @return mixed Meta value or default
+     */
+    public function getMeta(string $meta_key, $default = null) {
+        if (!$this->id) {
+            return $default;
+        }
+        
+        global $wpdb;
+        $table = $wpdb->prefix . 'pq_service_meta';
+        
+        $meta_value = $wpdb->get_var($wpdb->prepare(
+            "SELECT meta_value FROM $table WHERE service_id = %d AND meta_key = %s",
+            $this->id,
+            $meta_key
+        ));
+        
+        if ($meta_value === null) {
+            return $default;
+        }
+        
+        // Try to decode as JSON
+        $decoded = json_decode($meta_value, true);
+        return (json_last_error() === JSON_ERROR_NONE) ? $decoded : $meta_value;
+    }
+    
+    /**
+     * Set meta value
+     * 
+     * @param string $meta_key Meta key
+     * @param mixed $meta_value Meta value (will be JSON encoded if array/object)
+     * @return bool Success status
+     */
+    public function setMeta(string $meta_key, $meta_value): bool {
+        if (!$this->id) {
+            return false;
+        }
+        
+        global $wpdb;
+        $table = $wpdb->prefix . 'pq_service_meta';
+        
+        // Encode arrays and objects as JSON
+        if (is_array($meta_value) || is_object($meta_value)) {
+            $meta_value = wp_json_encode($meta_value);
+        }
+        
+        // Check if meta already exists
+        $existing = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM $table WHERE service_id = %d AND meta_key = %s",
+            $this->id,
+            $meta_key
+        ));
+        
+        $current_time = current_time('mysql');
+        
+        if ($existing) {
+            // Update existing meta
+            $result = $wpdb->update(
+                $table,
+                [
+                    'meta_value' => $meta_value,
+                    'updated_at' => $current_time
+                ],
+                [
+                    'service_id' => $this->id,
+                    'meta_key' => $meta_key
+                ],
+                ['%s', '%s'],
+                ['%d', '%s']
+            );
+        } else {
+            // Insert new meta
+            $result = $wpdb->insert(
+                $table,
+                [
+                    'service_id' => $this->id,
+                    'meta_key' => $meta_key,
+                    'meta_value' => $meta_value,
+                    'created_at' => $current_time,
+                    'updated_at' => $current_time
+                ],
+                ['%d', '%s', '%s', '%s', '%s']
+            );
+        }
+        
+        return $result !== false;
+    }
+    
+    /**
+     * Delete meta
+     * 
+     * @param string $meta_key Meta key
+     * @return bool Success status
+     */
+    public function deleteMeta(string $meta_key): bool {
+        if (!$this->id) {
+            return false;
+        }
+        
+        global $wpdb;
+        $table = $wpdb->prefix . 'pq_service_meta';
+        
+        $result = $wpdb->delete(
+            $table,
+            [
+                'service_id' => $this->id,
+                'meta_key' => $meta_key
+            ],
+            ['%d', '%s']
+        );
+        
+        return $result !== false;
+    }
+    
+    /**
+     * Get all meta for this service
+     * 
+     * @return array Associative array of meta_key => meta_value
+     */
+    public function getAllMeta(): array {
+        if (!$this->id) {
+            return [];
+        }
+        
+        global $wpdb;
+        $table = $wpdb->prefix . 'pq_service_meta';
+        
+        $results = $wpdb->get_results($wpdb->prepare(
+            "SELECT meta_key, meta_value FROM $table WHERE service_id = %d",
+            $this->id
+        ), ARRAY_A);
+        
+        $meta = [];
+        foreach ($results as $row) {
+            $value = $row['meta_value'];
+            // Try to decode JSON
+            $decoded = json_decode($value, true);
+            $meta[$row['meta_key']] = (json_last_error() === JSON_ERROR_NONE) ? $decoded : $value;
+        }
+        
+        return $meta;
+    }
+    
+    // ===== Custom Fields Methods =====
+    
+    /**
+     * Get custom fields configuration
+     * 
+     * @return array Array of custom field definitions
+     */
+    public function getCustomFields(): array {
+        $fields = $this->getMeta('custom_fields', []);
+        return is_array($fields) ? $fields : [];
+    }
+    
+    /**
+     * Set custom fields configuration
+     * 
+     * @param array $fields Array of custom field definitions
+     * @return bool Success status
+     */
+    public function setCustomFields(array $fields): bool {
+        return $this->setMeta('custom_fields', $fields);
+    }
+    
+    /**
+     * Check if service has custom fields
+     * 
+     * @return bool True if service has custom fields configured
+     */
+    public function hasCustomFields(): bool {
+        $fields = $this->getCustomFields();
+        return !empty($fields);
+    }
 }

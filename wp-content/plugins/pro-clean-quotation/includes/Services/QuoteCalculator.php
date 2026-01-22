@@ -88,8 +88,11 @@ class QuoteCalculator {
                 $pricing
             );
             
+            // Apply custom field modifiers
+            $custom_field_adjustments = $this->applyCustomFieldModifiers($service_type, $data['custom_fields'] ?? []);
+            
             // Calculate subtotal
-            $subtotal = $base_price + $size_cost + $adjustments;
+            $subtotal = $base_price + $size_cost + $adjustments + $custom_field_adjustments;
             
             // Apply minimum charge
             $subtotal = max($subtotal, $pricing['minimum_quote_value']);
@@ -105,6 +108,7 @@ class QuoteCalculator {
                 'base_price' => $base_price,
                 'size_cost' => $size_cost,
                 'adjustments' => $adjustments,
+                'custom_field_adjustments' => $custom_field_adjustments,
                 'subtotal' => $subtotal,
                 'tax_amount' => $tax_amount,
                 'total' => $total,
@@ -205,21 +209,23 @@ class QuoteCalculator {
     /**
      * Calculate base price
      * 
-     * @param string $service_type Service type
+     * @param string $service_type Service ID
      * @param array $pricing Pricing settings
      * @return float Base price
      */
     private function calculateBasePrice(string $service_type, array $pricing): float {
-        switch ($service_type) {
-            case 'facade':
-                return $pricing['facade_base_rate'];
-            case 'roof':
-                return $pricing['roof_base_rate'];
-            case 'both':
-                return $pricing['facade_base_rate'] + $pricing['roof_base_rate'];
-            default:
-                return 0;
+        // Service type is now a service ID, get the actual service
+        $service = new \ProClean\Quotation\Models\Service(intval($service_type));
+        
+        if (!$service->getId()) {
+            return 0;
         }
+        
+        // Get base price from service record using getPrice() method
+        $base_price = $service->getPrice();
+        
+        // If no base price set, return 0
+        return floatval($base_price);
     }
     
     /**
@@ -232,23 +238,40 @@ class QuoteCalculator {
      * @return float Size cost
      */
     private function calculateSizeCost(string $service_type, float $square_meters, float $linear_meters, array $pricing): float {
-        $sqm_cost = 0;
-        $linear_cost = 0;
+        // Service type is now a service ID, get the service
+        $service = new \ProClean\Quotation\Models\Service(intval($service_type));
         
-        switch ($service_type) {
-            case 'facade':
-                $sqm_cost = $square_meters * $pricing['facade_per_sqm'];
-                $linear_cost = $linear_meters * $pricing['facade_per_linear_meter'];
-                break;
-            case 'roof':
-                $sqm_cost = $square_meters * $pricing['roof_per_sqm'];
-                $linear_cost = $linear_meters * $pricing['roof_per_linear_meter'];
-                break;
-            case 'both':
-                $sqm_cost = $square_meters * ($pricing['facade_per_sqm'] + $pricing['roof_per_sqm']);
-                $linear_cost = $linear_meters * ($pricing['facade_per_linear_meter'] + $pricing['roof_per_linear_meter']);
-                break;
+        if (!$service->getId()) {
+            return 0;
         }
+        
+        // Get pricing rates from service meta or use defaults based on service name
+        $service_name = strtolower($service->getName());
+        
+        // Determine which pricing rates to use based on service name
+        $sqm_rate = 0;
+        $linear_rate = 0;
+        
+        if (stripos($service_name, 'facade') !== false && stripos($service_name, 'roof') === false) {
+            // Facade only service
+            $sqm_rate = $pricing['facade_per_sqm'];
+            $linear_rate = $pricing['facade_per_linear_meter'];
+        } elseif (stripos($service_name, 'roof') !== false && stripos($service_name, 'facade') === false) {
+            // Roof only service
+            $sqm_rate = $pricing['roof_per_sqm'];
+            $linear_rate = $pricing['roof_per_linear_meter'];
+        } elseif (stripos($service_name, 'facade') !== false && stripos($service_name, 'roof') !== false) {
+            // Combined service
+            $sqm_rate = $pricing['facade_per_sqm'] + $pricing['roof_per_sqm'];
+            $linear_rate = $pricing['facade_per_linear_meter'] + $pricing['roof_per_linear_meter'];
+        } else {
+            // Default to facade rates for other services
+            $sqm_rate = $pricing['facade_per_sqm'];
+            $linear_rate = $pricing['facade_per_linear_meter'];
+        }
+        
+        $sqm_cost = $square_meters * $sqm_rate;
+        $linear_cost = $linear_meters * $linear_rate;
         
         return $sqm_cost + $linear_cost;
     }
@@ -309,15 +332,84 @@ class QuoteCalculator {
     }
     
     /**
+     * Apply custom field price modifiers
+     * 
+     * @param string $service_type Service ID
+     * @param array $custom_fields Custom field data from frontend
+     * @return float Total custom field adjustments
+     */
+    private function applyCustomFieldModifiers(string $service_type, array $custom_fields): float {
+        $total_adjustment = 0;
+        
+        // Check if custom_fields parameter exists and is array
+        if (empty($custom_fields) || !is_array($custom_fields)) {
+            return $total_adjustment;
+        }
+        
+        // Get service custom fields configuration
+        global $wpdb;
+        $service_meta_table = $wpdb->prefix . 'pq_service_meta';
+        
+        $custom_fields_json = $wpdb->get_var($wpdb->prepare(
+            "SELECT meta_value FROM $service_meta_table WHERE service_id = %d AND meta_key = %s",
+            intval($service_type),
+            'custom_fields'
+        ));
+        
+        if (empty($custom_fields_json)) {
+            return $total_adjustment;
+        }
+        
+        $custom_fields_config = json_decode($custom_fields_json, true);
+        if (!is_array($custom_fields_config)) {
+            return $total_adjustment;
+        }
+        
+        // Process each custom field
+        foreach ($custom_fields_config as $field_config) {
+            $field_id = $field_config['id'] ?? '';
+            
+            if (empty($custom_fields[$field_id])) {
+                continue;
+            }
+            
+            // Get selected value
+            $field_data = $custom_fields[$field_id];
+            $selected_value = is_array($field_data) 
+                ? ($field_data['value'] ?? '') 
+                : $field_data;
+            
+            // Find the selected option's price modifier
+            if (!empty($field_config['options']) && is_array($field_config['options'])) {
+                foreach ($field_config['options'] as $option) {
+                    if ($option['value'] === $selected_value) {
+                        $price_modifier = floatval($option['price_modifier'] ?? 0);
+                        if ($price_modifier != 0) {
+                            $total_adjustment += $price_modifier;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return $total_adjustment;
+    }
+    
+    /**
      * Create price breakdown
      * 
      * @param array $data Calculation data
      * @return array Price breakdown
      */
     private function createPriceBreakdown(array $data): array {
-        return [
+        // Get service name from service ID
+        $service = new \ProClean\Quotation\Models\Service(intval($data['service_type']));
+        $service_name = $service->getId() ? $service->getName() : 'Service';
+        
+        $breakdown = [
             'base_service' => [
-                'label' => sprintf(__('%s Base Rate', 'pro-clean-quotation'), ucfirst($data['service_type'])),
+                'label' => __('Base Rate', 'pro-clean-quotation'),
                 'amount' => $data['base_price']
             ],
             'size_calculation' => [
@@ -336,19 +428,32 @@ class QuoteCalculator {
                     'surface_material' => $data['surface_material'],
                     'building_height' => $data['building_height']
                 ]
-            ],
-            'subtotal' => [
-                'label' => __('Subtotal', 'pro-clean-quotation'),
-                'amount' => $data['subtotal']
-            ],
-            'tax' => [
-                'label' => sprintf(__('VAT (%s%%)', 'pro-clean-quotation'), $data['pricing']['tax_rate']),
-                'amount' => $data['tax_amount']
-            ],
-            'total' => [
-                'label' => __('Total Estimate', 'pro-clean-quotation'),
-                'amount' => $data['total']
             ]
         ];
+        
+        // Add custom field adjustments if they exist
+        if (!empty($data['custom_field_adjustments']) && $data['custom_field_adjustments'] != 0) {
+            $breakdown['custom_field_adjustments'] = [
+                'label' => __('Service Options', 'pro-clean-quotation'),
+                'amount' => $data['custom_field_adjustments']
+            ];
+        }
+        
+        $breakdown['subtotal'] = [
+            'label' => __('Subtotal', 'pro-clean-quotation'),
+            'amount' => $data['subtotal']
+        ];
+        
+        $breakdown['tax'] = [
+            'label' => sprintf(__('VAT (%s%%)', 'pro-clean-quotation'), $data['pricing']['tax_rate']),
+            'amount' => $data['tax_amount']
+        ];
+        
+        $breakdown['total'] = [
+            'label' => __('Total Estimate', 'pro-clean-quotation'),
+            'amount' => $data['total']
+        ];
+        
+        return $breakdown;
     }
 }

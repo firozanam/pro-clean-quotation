@@ -467,6 +467,80 @@ class Quote {
         return hash_equals($this->getToken(), $token);
     }
     
+    /**
+     * Get custom field data
+     * 
+     * @return array Custom field data as associative array
+     */
+    public function getCustomFieldData(): array {
+        $custom_field_json = $this->data['custom_field_data'] ?? '';
+        
+        if (empty($custom_field_json)) {
+            return [];
+        }
+        
+        $decoded = json_decode($custom_field_json, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+    
+    /**
+     * Get formatted custom field data with labels
+     * 
+     * @return array Array of custom fields with labels and values
+     */
+    public function getFormattedCustomFields(): array {
+        $custom_field_data = $this->getCustomFieldData();
+        
+        if (empty($custom_field_data)) {
+            return [];
+        }
+        
+        // Get service to load custom field configurations
+        $service_id = $this->getServiceType();
+        if (empty($service_id)) {
+            return [];
+        }
+        
+        $service = new Service($service_id);
+        if (!$service->getId()) {
+            return [];
+        }
+        
+        $custom_fields_config = $service->getCustomFields();
+        if (empty($custom_fields_config)) {
+            return [];
+        }
+        
+        $formatted = [];
+        
+        foreach ($custom_fields_config as $field_config) {
+            $field_id = $field_config['id'] ?? '';
+            
+            if (isset($custom_field_data[$field_id])) {
+                $field_value = $custom_field_data[$field_id];
+                
+                // Find the option label
+                $option_label = $field_value;
+                if (!empty($field_config['options']) && is_array($field_config['options'])) {
+                    foreach ($field_config['options'] as $option) {
+                        if ($option['value'] === $field_value) {
+                            $option_label = $option['label'] ?? $field_value;
+                            break;
+                        }
+                    }
+                }
+                
+                $formatted[] = [
+                    'label' => $field_config['label'] ?? $field_id,
+                    'value' => $field_value,
+                    'display' => $option_label
+                ];
+            }
+        }
+        
+        return $formatted;
+    }
+    
     public function toArray(): array {
         return $this->data;
     }

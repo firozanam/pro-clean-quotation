@@ -335,6 +335,25 @@ $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
             </div>
             <?php endif; ?>
             
+            <!-- Custom Fields -->
+            <?php 
+            $custom_fields = $quote->getFormattedCustomFields();
+            if (!empty($custom_fields)): 
+            ?>
+            <div class="pcq-custom-fields-section">
+                <h3><?php _e('Service Options', 'pro-clean-quotation'); ?></h3>
+                
+                <div class="pcq-custom-fields-grid">
+                    <?php foreach ($custom_fields as $field): ?>
+                    <div class="pcq-custom-field-item">
+                        <label><?php echo esc_html($field['label']); ?>:</label>
+                        <span><?php echo esc_html($field['display']); ?></span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+            
             <!-- Consent Information -->
             <div class="pcq-consent-section">
                 <h3><?php _e('Consent & Privacy', 'pro-clean-quotation'); ?></h3>
@@ -565,6 +584,7 @@ $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
 
 .pcq-requirements-section,
 .pcq-additional-section,
+.pcq-custom-fields-section,
 .pcq-consent-section {
     border-top: 1px solid #e0e0e0;
     padding-top: 20px;
@@ -573,11 +593,16 @@ $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
 
 .pcq-requirements-section h3,
 .pcq-additional-section h3,
+.pcq-custom-fields-section h3,
 .pcq-consent-section h3 {
     margin: 0 0 15px 0;
     color: #2c3e50;
     border-bottom: 2px solid #9C27B0;
     padding-bottom: 8px;
+}
+
+.pcq-custom-fields-section h3 {
+    border-bottom-color: #ff9800;
 }
 
 .pcq-requirements-content {
@@ -588,13 +613,22 @@ $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
 }
 
 .pcq-additional-grid,
+.pcq-custom-fields-grid,
 .pcq-consent-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
 }
 
+.pcq-custom-fields-grid {
+    background: #fff3e0;
+    border-radius: 4px;
+    padding: 15px;
+    border-left: 4px solid #ff9800;
+}
+
 .pcq-additional-item,
+.pcq-custom-field-item,
 .pcq-consent-item {
     display: flex;
     justify-content: space-between;
@@ -604,7 +638,12 @@ $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
     border: 1px solid #e0e0e0;
 }
 
+.pcq-custom-field-item {
+    background: #fff;
+}
+
 .pcq-additional-item label,
+.pcq-custom-field-item label,
 .pcq-consent-item label {
     font-weight: 500;
     color: #666;
@@ -642,6 +681,7 @@ $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
     
     .pcq-calculation-grid,
     .pcq-additional-grid,
+    .pcq-custom-fields-grid,
     .pcq-consent-grid {
         grid-template-columns: 1fr;
     }

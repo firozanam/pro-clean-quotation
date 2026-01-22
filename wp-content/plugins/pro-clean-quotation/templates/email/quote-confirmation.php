@@ -97,6 +97,20 @@ $breakdown = $quote->getPriceBreakdown();
                                                     <?php echo esc_html(number_format($quote->getSquareMeters(), 1)); ?> m²
                                                 </td>
                                             </tr>
+                                            <?php 
+                                            // Display custom fields if available
+                                            $custom_fields = $quote->getFormattedCustomFields();
+                                            foreach ($custom_fields as $field): 
+                                            ?>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #7f8c8d; font-size: 14px;">
+                                                    <?php echo esc_html($field['label']); ?>:
+                                                </td>
+                                                <td align="right" style="padding: 8px 0; color: #2c3e50; font-size: 14px;">
+                                                    <?php echo esc_html($field['display']); ?>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
                                             <tr>
                                                 <td style="padding: 8px 0; color: #7f8c8d; font-size: 14px;">
                                                     <?php echo esc_html__('Valid Until:', 'pro-clean-quotation'); ?>

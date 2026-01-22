@@ -60,11 +60,20 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
                     <?php endif; ?>
                     
                     <div class="pcq-radio-group <?php echo esc_attr($scrollable_class); ?>" data-service-count="<?php echo esc_attr($service_count); ?>">
-                        <?php foreach ($services as $service): ?>
+                        <?php 
+                        // Build services data array with custom fields
+                        $services_data = [];
+                        foreach ($services as $service): 
+                            $custom_fields = $service->getCustomFields();
+                            if (!empty($custom_fields)) {
+                                $services_data[$service->getId()] = $custom_fields;
+                            }
+                        ?>
                             <label class="pcq-radio-label">
                                 <input type="radio" 
                                        name="service_type" 
                                        value="<?php echo esc_attr($service->getId()); ?>" 
+                                       data-service-id="<?php echo esc_attr($service->getId()); ?>"
                                        required>
                                 <span class="pcq-radio-text">
                                     <strong><?php echo esc_html($service->getName()); ?></strong>
@@ -75,6 +84,11 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
                             </label>
                         <?php endforeach; ?>
                     </div>
+                    
+                    <!-- Store services custom fields data as JSON -->
+                    <script type="application/json" id="pcq-services-custom-fields">
+                        <?php echo wp_json_encode($services_data); ?>
+                    </script>
                     
                     <?php if ($service_count > 3): ?>
                         <div class="pcq-scroll-indicator pcq-scroll-right" aria-hidden="true">
@@ -182,6 +196,11 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
                     </select>
                 </div>
             </div>
+        </div>
+        
+        <!-- Dynamic Custom Fields (populated via JavaScript based on selected service) -->
+        <div id="pcq-custom-fields-container" class="pcq-form-section" style="display: none;">
+            <!-- Custom fields will be rendered here dynamically -->
         </div>
 
         <!-- Live Price Display -->

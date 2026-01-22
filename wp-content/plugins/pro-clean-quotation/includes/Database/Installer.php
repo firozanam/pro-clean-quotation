@@ -37,6 +37,7 @@ class Installer {
             roof_type VARCHAR(50),
             last_cleaning_date DATE,
             special_requirements TEXT,
+            custom_field_data TEXT,
             base_price DECIMAL(10,2) NOT NULL,
             adjustments DECIMAL(10,2) DEFAULT 0,
             subtotal DECIMAL(10,2) NOT NULL,
@@ -196,6 +197,7 @@ class Installer {
             status VARCHAR(20) DEFAULT 'pending',
             notes TEXT,
             internal_notes TEXT,
+            custom_field_data TEXT,
             created_at DATETIME NOT NULL,
             updated_at DATETIME,
             FOREIGN KEY (service_id) REFERENCES $services_table(id) ON DELETE RESTRICT,
@@ -272,6 +274,21 @@ class Installer {
             INDEX idx_date (override_date)
         ) $charset_collate;";
         
+        // Service Meta table (for custom fields and other service metadata)
+        $service_meta_table = $wpdb->prefix . 'pq_service_meta';
+        $service_meta_sql = "CREATE TABLE $service_meta_table (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            service_id BIGINT UNSIGNED NOT NULL,
+            meta_key VARCHAR(255) NOT NULL,
+            meta_value LONGTEXT,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME,
+            FOREIGN KEY (service_id) REFERENCES $services_table(id) ON DELETE CASCADE,
+            INDEX idx_service (service_id),
+            INDEX idx_meta_key (meta_key),
+            UNIQUE KEY unique_service_meta (service_id, meta_key)
+        ) $charset_collate;";
+        
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         
         dbDelta($quotes_sql);
@@ -279,6 +296,7 @@ class Installer {
         dbDelta($email_logs_sql);
         dbDelta($settings_sql);
         dbDelta($services_sql);
+        dbDelta($service_meta_sql);
         dbDelta($employees_sql);
         dbDelta($employee_services_sql);
         dbDelta($appointments_sql);
@@ -509,6 +527,7 @@ class Installer {
             $wpdb->prefix . 'pq_email_logs',
             $wpdb->prefix . 'pq_bookings',
             $wpdb->prefix . 'pq_employees',
+            $wpdb->prefix . 'pq_service_meta',
             $wpdb->prefix . 'pq_services',
             $wpdb->prefix . 'pq_service_categories',
             $wpdb->prefix . 'pq_webhook_logs',
