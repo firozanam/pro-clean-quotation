@@ -2,6 +2,7 @@
 
 # Pro Clean Quotation - Production Build Script
 # This script creates a distributable version of the plugin
+# Excludes development dependencies and unnecessary files
 
 set -e
 
@@ -40,7 +41,7 @@ echo "Copying plugin files..."
 # Copy main plugin file
 cp pro-clean-quotation.php "$BUILD_PLUGIN_DIR/"
 
-# Copy composer.json
+# Copy composer.json (production only)
 cp composer.json "$BUILD_PLUGIN_DIR/"
 
 # Copy directories
@@ -49,10 +50,24 @@ cp -r includes "$BUILD_PLUGIN_DIR/"
 cp -r languages "$BUILD_PLUGIN_DIR/"
 cp -r templates "$BUILD_PLUGIN_DIR/"
 
-# Copy vendor if exists (for Composer dependencies)
+# Copy vendor - PRODUCTION DEPENDENCIES ONLY
 if [ -d "vendor" ]; then
-    echo "Copying vendor directory..."
-    cp -r vendor "$BUILD_PLUGIN_DIR/"
+    echo "Copying production vendor dependencies..."
+    mkdir -p "$BUILD_PLUGIN_DIR/vendor"
+    
+    # Copy autoload files
+    cp vendor/autoload.php "$BUILD_PLUGIN_DIR/vendor/"
+    cp -r vendor/composer "$BUILD_PLUGIN_DIR/vendor/"
+    
+    # Production dependencies only (from composer.json require section)
+    # mpdf and its dependencies
+    [ -d "vendor/mpdf" ] && cp -r vendor/mpdf "$BUILD_PLUGIN_DIR/vendor/"
+    [ -d "vendor/setasign" ] && cp -r vendor/setasign "$BUILD_PLUGIN_DIR/vendor/"
+    [ -d "vendor/psr" ] && cp -r vendor/psr "$BUILD_PLUGIN_DIR/vendor/"
+    [ -d "vendor/paragonie" ] && cp -r vendor/paragonie "$BUILD_PLUGIN_DIR/vendor/"
+    [ -d "vendor/myclabs" ] && cp -r vendor/myclabs "$BUILD_PLUGIN_DIR/vendor/"
+    
+    echo "Skipping dev dependencies (phpunit, mockery, brain, sebastian, etc.)"
 fi
 
 # Copy additional files if they exist
@@ -74,8 +89,48 @@ find "$BUILD_PLUGIN_DIR" -name ".eslintrc*" -exec rm -f {} + 2>/dev/null || true
 find "$BUILD_PLUGIN_DIR" -name ".prettierrc*" -exec rm -f {} + 2>/dev/null || true
 find "$BUILD_PLUGIN_DIR" -name "phpunit.xml*" -exec rm -f {} + 2>/dev/null || true
 find "$BUILD_PLUGIN_DIR" -name "phpcs.xml*" -exec rm -f {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR" -name "*.md" -path "*/vendor/*" -exec rm -f {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR" -name "CHANGELOG*" -path "*/vendor/*" -exec rm -f {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR" -name "LICENSE*" -path "*/vendor/*" -exec rm -f {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR" -name "composer.json" -path "*/vendor/*" -exec rm -f {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR" -name ".travis.yml" -exec rm -f {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR" -name ".scrutinizer.yml" -exec rm -f {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR" -name "infection.json*" -exec rm -f {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR" -name ".psalm" -exec rm -rf {} + 2>/dev/null || true
 
-# Remove test directories if present
+# Remove test/doc directories from vendor
+echo "Removing tests and docs from vendor..."
+find "$BUILD_PLUGIN_DIR/vendor" -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR/vendor" -type d -name "test" -exec rm -rf {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR/vendor" -type d -name "Tests" -exec rm -rf {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR/vendor" -type d -name "docs" -exec rm -rf {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR/vendor" -type d -name "doc" -exec rm -rf {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR/vendor" -type d -name "examples" -exec rm -rf {} + 2>/dev/null || true
+find "$BUILD_PLUGIN_DIR/vendor" -type d -name "example" -exec rm -rf {} + 2>/dev/null || true
+
+# Clean up mPDF fonts - keep only essential Western European fonts
+echo "Optimizing mPDF fonts (removing unnecessary fonts)..."
+TTFONTS_DIR="$BUILD_PLUGIN_DIR/vendor/mpdf/mpdf/ttfonts"
+if [ -d "$TTFONTS_DIR" ]; then
+    # Create temp directory for fonts we want to keep
+    mkdir -p "$TTFONTS_DIR.keep"
+    
+    # Keep only DejaVu fonts (default) and FreeSans/FreeSerif for Western languages
+    cp "$TTFONTS_DIR"/DejaVu*.ttf "$TTFONTS_DIR.keep/" 2>/dev/null || true
+    cp "$TTFONTS_DIR"/DejaVuinfo.txt "$TTFONTS_DIR.keep/" 2>/dev/null || true
+    cp "$TTFONTS_DIR"/FreeSans*.ttf "$TTFONTS_DIR.keep/" 2>/dev/null || true
+    cp "$TTFONTS_DIR"/FreeSerif*.ttf "$TTFONTS_DIR.keep/" 2>/dev/null || true
+    cp "$TTFONTS_DIR"/FreeMono*.ttf "$TTFONTS_DIR.keep/" 2>/dev/null || true
+    
+    # Remove all fonts and restore only the ones we need
+    rm -rf "$TTFONTS_DIR"
+    mv "$TTFONTS_DIR.keep" "$TTFONTS_DIR"
+    
+    FONT_COUNT=$(ls -1 "$TTFONTS_DIR"/*.ttf 2>/dev/null | wc -l | tr -d ' ')
+    echo "  Kept $FONT_COUNT essential fonts (removed CJK, ancient scripts, etc.)"
+fi
+
+# Remove plugin test directories if present
 rm -rf "$BUILD_PLUGIN_DIR/tests" 2>/dev/null || true
 rm -rf "$BUILD_PLUGIN_DIR/node_modules" 2>/dev/null || true
 
@@ -83,7 +138,7 @@ rm -rf "$BUILD_PLUGIN_DIR/node_modules" 2>/dev/null || true
 echo "Creating zip archive..."
 cd "$BUILD_DIR"
 rm -f "$ZIP_FILE"
-zip -r "$ZIP_FILE" "$PLUGIN_NAME-$VERSION" -x "*.DS_Store" -x "*__MACOSX*"
+zip -rq "$ZIP_FILE" "$PLUGIN_NAME-$VERSION" -x "*.DS_Store" -x "*__MACOSX*"
 
 # Get file sizes
 ZIP_SIZE=$(du -h "$ZIP_FILE" | cut -f1)
@@ -100,6 +155,6 @@ echo ""
 echo "Zip file: $ZIP_FILE"
 echo "Zip size: $ZIP_SIZE"
 echo ""
-echo "Files included:"
-ls -la "$BUILD_PLUGIN_DIR"
+echo "Vendor packages included:"
+ls -la "$BUILD_PLUGIN_DIR/vendor/" 2>/dev/null || echo "  (no vendor directory)"
 echo ""
