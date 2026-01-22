@@ -229,9 +229,14 @@ class FormHandler {
             }
         }
         
-        // Service type validation
-        if (!empty($data['service_type']) && !in_array($data['service_type'], ['facade', 'roof', 'both'])) {
-            $errors['service_type'] = __('Invalid service type selected.', 'pro-clean-quotation');
+        // Service type validation - validate against database services
+        if (!empty($data['service_type'])) {
+            $service_id = intval($data['service_type']);
+            $service = new \ProClean\Quotation\Models\Service($service_id);
+            
+            if (!$service->getId() || !$service->isActive()) {
+                $errors['service_type'] = __('Invalid service type selected.', 'pro-clean-quotation');
+            }
         }
         
         // Measurements validation

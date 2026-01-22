@@ -28,6 +28,7 @@
             this.bindEvents();
             this.initConditionalFields();
             this.setupRealTimeCalculation();
+            this.initScrollIndicator();
         }
 
         /**
@@ -70,6 +71,89 @@
             if (this.hasRequiredCalculationFields()) {
                 this.triggerCalculation();
             }
+        }
+
+        /**
+         * Initialize scroll indicator for service cards
+         */
+        initScrollIndicator() {
+            const radioGroup = this.form.find('.pcq-radio-group.pcq-scrollable');
+            const scrollIndicatorLeft = this.form.find('.pcq-scroll-indicator.pcq-scroll-left');
+            const scrollIndicatorRight = this.form.find('.pcq-scroll-indicator.pcq-scroll-right');
+            
+            if (radioGroup.length === 0) {
+                return;
+            }
+
+            // Force animation restart by toggling class
+            const restartAnimation = (element) => {
+                if (element.length === 0) return;
+                
+                const svg = element.find('svg');
+                if (svg.length > 0) {
+                    // Force reflow to restart animation
+                    svg.css('animation', 'none');
+                    void svg[0].offsetHeight; // Trigger reflow
+                    svg.css('animation', '');
+                }
+            };
+
+            // Update scroll indicators based on scroll position
+            const updateScrollIndicators = () => {
+                const element = radioGroup[0];
+                const scrollLeft = element.scrollLeft;
+                const scrollWidth = element.scrollWidth;
+                const clientWidth = element.clientWidth;
+                const maxScroll = scrollWidth - clientWidth;
+                
+                // Show/hide left indicator
+                if (scrollIndicatorLeft.length > 0) {
+                    if (scrollLeft <= 10) {
+                        scrollIndicatorLeft.addClass('hidden');
+                    } else {
+                        const wasHidden = scrollIndicatorLeft.hasClass('hidden');
+                        scrollIndicatorLeft.removeClass('hidden');
+                        if (wasHidden) {
+                            restartAnimation(scrollIndicatorLeft);
+                        }
+                    }
+                }
+                
+                // Show/hide right indicator
+                if (scrollIndicatorRight.length > 0) {
+                    if (scrollLeft >= maxScroll - 10) {
+                        scrollIndicatorRight.addClass('hidden');
+                    } else {
+                        const wasHidden = scrollIndicatorRight.hasClass('hidden');
+                        scrollIndicatorRight.removeClass('hidden');
+                        if (wasHidden) {
+                            restartAnimation(scrollIndicatorRight);
+                        }
+                    }
+                }
+            };
+
+            // Bind scroll event
+            radioGroup.on('scroll', updateScrollIndicators);
+
+            // Bind resize event
+            $(window).on('resize', updateScrollIndicators);
+
+            // Initial check with animation restart
+            setTimeout(() => {
+                updateScrollIndicators();
+                restartAnimation(scrollIndicatorLeft);
+                restartAnimation(scrollIndicatorRight);
+            }, 100);
+
+            // Hide indicators temporarily on user interaction
+            radioGroup.on('mousedown touchstart', () => {
+                scrollIndicatorLeft.addClass('hidden');
+                scrollIndicatorRight.addClass('hidden');
+                
+                // Re-check after interaction
+                setTimeout(updateScrollIndicators, 1000);
+            });
         }
 
         /**

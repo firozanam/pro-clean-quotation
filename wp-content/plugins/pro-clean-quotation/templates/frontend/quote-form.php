@@ -34,29 +34,57 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
         <!-- Service Selection -->
         <div class="pcq-form-section pcq-service-selection">
             <h4><?php _e('Service Type', 'pro-clean-quotation'); ?> <span class="required">*</span></h4>
-            <div class="pcq-radio-group">
-                <label class="pcq-radio-label">
-                    <input type="radio" name="service_type" value="facade" required>
-                    <span class="pcq-radio-text">
-                        <strong><?php _e('Façade Cleaning', 'pro-clean-quotation'); ?></strong>
-                        <small><?php _e('Professional exterior wall cleaning', 'pro-clean-quotation'); ?></small>
-                    </span>
-                </label>
-                <label class="pcq-radio-label">
-                    <input type="radio" name="service_type" value="roof" required>
-                    <span class="pcq-radio-text">
-                        <strong><?php _e('Roof Cleaning', 'pro-clean-quotation'); ?></strong>
-                        <small><?php _e('Safe and thorough roof cleaning', 'pro-clean-quotation'); ?></small>
-                    </span>
-                </label>
-                <label class="pcq-radio-label">
-                    <input type="radio" name="service_type" value="both" required>
-                    <span class="pcq-radio-text">
-                        <strong><?php _e('Both Services', 'pro-clean-quotation'); ?></strong>
-                        <small><?php _e('Complete exterior cleaning package', 'pro-clean-quotation'); ?></small>
-                    </span>
-                </label>
-            </div>
+            <?php
+            // Load services dynamically from database
+            use ProClean\Quotation\Models\Service;
+            
+            $services = Service::getAll(true); // Get only active services
+            $service_count = count($services);
+            
+            // Determine scrollable class based on service count
+            $scrollable_class = $service_count > 3 ? 'pcq-scrollable' : '';
+            ?>
+            
+            <?php if (empty($services)): ?>
+                <div class="pcq-no-services">
+                    <p><?php _e('No services available at the moment. Please contact us directly.', 'pro-clean-quotation'); ?></p>
+                </div>
+            <?php else: ?>
+                <div class="pcq-radio-group-wrapper">
+                    <?php if ($service_count > 3): ?>
+                        <div class="pcq-scroll-indicator pcq-scroll-left hidden" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="pcq-radio-group <?php echo esc_attr($scrollable_class); ?>" data-service-count="<?php echo esc_attr($service_count); ?>">
+                        <?php foreach ($services as $service): ?>
+                            <label class="pcq-radio-label">
+                                <input type="radio" 
+                                       name="service_type" 
+                                       value="<?php echo esc_attr($service->getId()); ?>" 
+                                       required>
+                                <span class="pcq-radio-text">
+                                    <strong><?php echo esc_html($service->getName()); ?></strong>
+                                    <?php if ($service->getDescription()): ?>
+                                        <small><?php echo esc_html($service->getDescription()); ?></small>
+                                    <?php endif; ?>
+                                </span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    
+                    <?php if ($service_count > 3): ?>
+                        <div class="pcq-scroll-indicator pcq-scroll-right" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- Property Measurements -->

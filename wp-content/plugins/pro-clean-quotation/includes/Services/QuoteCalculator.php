@@ -152,11 +152,16 @@ class QuoteCalculator {
     private function validateCalculationData(array $data): array {
         $errors = [];
         
-        // Service type validation
+        // Service type validation - validate against database
         if (empty($data['service_type'])) {
             $errors['service_type'] = __('Service type is required.', 'pro-clean-quotation');
-        } elseif (!in_array($data['service_type'], ['facade', 'roof', 'both'])) {
-            $errors['service_type'] = __('Invalid service type.', 'pro-clean-quotation');
+        } else {
+            $service_id = intval($data['service_type']);
+            $service = new \ProClean\Quotation\Models\Service($service_id);
+            
+            if (!$service->getId() || !$service->isActive()) {
+                $errors['service_type'] = __('Invalid service type.', 'pro-clean-quotation');
+            }
         }
         
         // Square meters validation
