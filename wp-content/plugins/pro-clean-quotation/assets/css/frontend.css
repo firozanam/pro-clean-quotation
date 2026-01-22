@@ -87,7 +87,8 @@
     border-bottom: none;
 }
 
-.pcq-form-section h4 {
+.pcq-form-section h4,
+.pcq-form-section p[style*="font-weight: 600"] {
     color: #111827;
     font-size: 0.95rem;
     font-weight: 600;
@@ -99,7 +100,8 @@
     letter-spacing: 0;
 }
 
-.pcq-form-section h4::before {
+.pcq-form-section h4::before,
+.pcq-form-section p[style*="font-weight: 600"]::before {
     content: '•';
     color: #111827;
     font-size: 1.25rem;
@@ -437,7 +439,8 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.pcq-price-display h4 {
+.pcq-price-display h4,
+.pcq-price-display p[style*="font-weight: 600"] {
     color: #111827;
     text-align: center;
     font-size: 1.25rem;
@@ -970,7 +973,8 @@ button.pcq-btn-secondary:hover {
     margin-bottom: 2rem;
 }
 
-.pcq-quote-summary h4 {
+.pcq-quote-summary h4,
+.pcq-quote-summary p[style*="font-weight: 600"] {
     color: #2c3e50;
     font-size: 1.2rem;
     margin: 0 0 1rem 0;
@@ -1039,7 +1043,8 @@ button.pcq-btn-secondary:hover {
     border: 1px solid #e0e0e0;
 }
 
-.pcq-time-slots-container h5 {
+.pcq-time-slots-container h5,
+.pcq-time-slots-container p[style*="font-weight: 600"] {
     color: #2c3e50;
     font-size: 1.1rem;
     margin: 0 0 1.25rem 0;
@@ -1173,7 +1178,8 @@ button.pcq-btn-secondary:hover {
     margin-top: 2rem;
 }
 
-.pcq-booking-confirmation h5 {
+.pcq-booking-confirmation h5,
+.pcq-booking-confirmation p[style*="font-weight: 600"] {
     color: #2c3e50;
     font-size: 1.2rem;
     margin: 0 0 1rem 0;
@@ -1291,7 +1297,8 @@ button.pcq-btn-secondary:hover {
         margin: 1.5rem 0;
     }
 
-    .pcq-price-display h4 {
+    .pcq-price-display h4,
+    .pcq-price-display p[style*="font-weight: 600"] {
         font-size: 1.2rem;
         margin-bottom: 1rem;
     }

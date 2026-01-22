@@ -38,13 +38,13 @@ $title = isset($atts['title']) ? $atts['title'] : __('Book Your Service', 'pro-c
      data-service-type="<?php echo $quote ? esc_attr($quote->getServiceType()) : 'facade'; ?>">
     
     <?php if ($show_title): ?>
-        <h3 class="pcq-booking-title"><?php echo esc_html($title); ?></h3>
+        <p class="pcq-booking-title" style="font-size: 24px; font-weight: 700; margin-bottom: 12px;"><?php echo esc_html($title); ?></p>
     <?php endif; ?>
     
     <?php if ($quote_id && $token && !$quote): ?>
         <!-- Invalid Token/Quote Error -->
         <div class="pcq-error-notice" style="padding: 20px; background: #f8d7da; border-left: 4px solid #dc3545; margin: 20px 0; border-radius: 4px;">
-            <h4 style="color: #721c24; margin: 0 0 10px 0;"><?php _e('Invalid Booking Link', 'pro-clean-quotation'); ?></h4>
+            <p style="color: #721c24; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;"><?php _e('Invalid Booking Link', 'pro-clean-quotation'); ?></p>
             <p style="margin: 0;"><?php _e('The booking link you used is invalid or has expired. Please request a new quote or contact us for assistance.', 'pro-clean-quotation'); ?></p>
             <p style="margin: 15px 0 0 0;">
                 <a href="<?php echo esc_url(home_url('/get-quote/')); ?>" class="button" style="display: inline-block; padding: 10px 20px; background: #007bff; color: #fff; text-decoration: none; border-radius: 4px;">
@@ -57,7 +57,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Book Your Service', 'pro-c
     <?php if ($quote && $quote->getId()): ?>
         <!-- Quote Summary -->
         <div class="pcq-quote-summary" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
-            <h4 style="margin: 0 0 15px 0; color: #333; font-size: 18px;"><?php _e('Your Quote Summary', 'pro-clean-quotation'); ?></h4>
+            <p style="margin: 0 0 15px 0; color: #333; font-size: 18px; font-weight: 600;"><?php _e('Your Quote Summary', 'pro-clean-quotation'); ?></p>
             <table class="pcq-summary-table" style="width: 100%; border-collapse: collapse;">
                 <tr style="border-bottom: 1px solid #dee2e6;">
                     <td style="padding: 12px 8px; color: #666; width: 40%;"><?php _e('Quote Number:', 'pro-clean-quotation'); ?></td>
@@ -80,7 +80,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Book Your Service', 'pro-c
 
     <!-- Booking Calendar Integration -->
     <div class="pcq-booking-calendar-wrapper" style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <h4 style="margin: 0 0 20px 0; color: #333; font-size: 18px;"><?php _e('Select Date & Time', 'pro-clean-quotation'); ?></h4>
+        <p style="margin: 0 0 20px 0; color: #333; font-size: 18px; font-weight: 600;"><?php _e('Select Date & Time', 'pro-clean-quotation'); ?></p>
         
         <?php
         // Check if MotoPress Appointment is active
@@ -113,7 +113,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Book Your Service', 'pro-c
                 </div>
                 
                 <div class="pcq-time-slots-container" style="display: none;">
-                    <h5><?php _e('Available Time Slots', 'pro-clean-quotation'); ?></h5>
+                    <p style="font-size: 16px; font-weight: 600; margin-bottom: 12px;"><?php _e('Available Time Slots', 'pro-clean-quotation'); ?></p>
                     <div id="pcq-available-slots"></div>
                 </div>
                 
@@ -125,7 +125,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Book Your Service', 'pro-c
                     <input type="hidden" name="service_time_end" id="selected_time_end">
                     
                     <div class="pcq-booking-confirmation">
-                        <h5><?php _e('Confirm Your Booking', 'pro-clean-quotation'); ?></h5>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 12px;"><?php _e('Confirm Your Booking', 'pro-clean-quotation'); ?></p>
                         <p id="pcq-selected-datetime"></p>
                         
                         <div class="pcq-form-field">

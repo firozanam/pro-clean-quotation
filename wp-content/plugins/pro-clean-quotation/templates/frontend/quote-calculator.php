@@ -20,7 +20,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Quick Price Calculator', '
 <div class="pcq-calculator-container">
     
     <?php if ($show_title): ?>
-        <h3 class="pcq-calculator-title"><?php echo esc_html($title); ?></h3>
+        <p class="pcq-calculator-title" style="font-size: 24px; font-weight: 700; margin-bottom: 12px;"><?php echo esc_html($title); ?></p>
         <p class="pcq-calculator-subtitle"><?php _e('Get an instant price estimate in seconds', 'pro-clean-quotation'); ?></p>
     <?php endif; ?>
 

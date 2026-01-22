@@ -25,7 +25,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
 <div class="pcq-quote-form-container pcq-style-<?php echo esc_attr($style); ?>">
     
     <?php if ($show_title): ?>
-        <h3 class="pcq-form-title"><?php echo esc_html($title); ?></h3>
+        <p class="pcq-form-title" style="font-size: 24px; font-weight: 700; margin-bottom: 12px;"><?php echo esc_html($title); ?></p>
         <p class="pcq-form-subtitle"><?php _e('Fill out the form below to receive an instant price estimate for your cleaning service.', 'pro-clean-quotation'); ?></p>
     <?php endif; ?>
 
@@ -33,7 +33,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
         
         <!-- Service Selection -->
         <div class="pcq-form-section pcq-service-selection">
-            <h4><?php _e('Service Type', 'pro-clean-quotation'); ?> <span class="required">*</span></h4>
+            <p style="font-size: 18px; font-weight: 600; margin-bottom: 12px;"><?php _e('Service Type', 'pro-clean-quotation'); ?> <span class="required">*</span></p>
             <?php
             // Load services dynamically from database
             use ProClean\Quotation\Models\Service;
@@ -89,7 +89,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
 
         <!-- Property Measurements -->
         <div class="pcq-form-section pcq-measurements">
-            <h4><?php _e('Property Measurements', 'pro-clean-quotation'); ?></h4>
+            <p style="font-size: 18px; font-weight: 600; margin-bottom: 12px;"><?php _e('Property Measurements', 'pro-clean-quotation'); ?></p>
             <div class="pcq-form-row">
                 <div class="pcq-form-field">
                     <label for="<?php echo esc_attr($form_id); ?>_square_meters">
@@ -155,7 +155,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
 
         <!-- Surface Details -->
         <div class="pcq-form-section pcq-surface-details">
-            <h4><?php _e('Surface Details', 'pro-clean-quotation'); ?></h4>
+            <p style="font-size: 18px; font-weight: 600; margin-bottom: 12px;"><?php _e('Surface Details', 'pro-clean-quotation'); ?></p>
             <div class="pcq-form-row">
                 <div class="pcq-form-field">
                     <label for="<?php echo esc_attr($form_id); ?>_surface_material">
@@ -186,7 +186,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
 
         <!-- Live Price Display -->
         <div class="pcq-price-display" id="<?php echo esc_attr($form_id); ?>_price_display" style="display: none;">
-            <h4><?php _e('Estimated Quote', 'pro-clean-quotation'); ?></h4>
+            <p style="font-size: 18px; font-weight: 600; margin-bottom: 12px;"><?php _e('Estimated Quote', 'pro-clean-quotation'); ?></p>
             <div class="pcq-price-breakdown">
                 <div class="pcq-price-loading">
                     <span class="pcq-spinner"></span>
@@ -201,7 +201,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
 
         <!-- Contact Information -->
         <div class="pcq-form-section pcq-contact-info">
-            <h4><?php _e('Contact Information', 'pro-clean-quotation'); ?></h4>
+            <p style="font-size: 18px; font-weight: 600; margin-bottom: 12px;"><?php _e('Contact Information', 'pro-clean-quotation'); ?></p>
             <div class="pcq-form-row">
                 <div class="pcq-form-field">
                     <label for="<?php echo esc_attr($form_id); ?>_customer_name">
@@ -277,7 +277,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
 
         <!-- Additional Information -->
         <div class="pcq-form-section pcq-additional-info">
-            <h4><?php _e('Additional Information', 'pro-clean-quotation'); ?></h4>
+            <p style="font-size: 18px; font-weight: 600; margin-bottom: 12px;"><?php _e('Additional Information', 'pro-clean-quotation'); ?></p>
             <div class="pcq-form-field">
                 <label for="<?php echo esc_attr($form_id); ?>_special_requirements">
                     <?php _e('Special Requirements or Notes', 'pro-clean-quotation'); ?>

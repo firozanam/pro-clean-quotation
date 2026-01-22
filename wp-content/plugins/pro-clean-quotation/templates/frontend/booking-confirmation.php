@@ -22,7 +22,7 @@ $total_amount = isset($_GET['total_amount']) ? floatval($_GET['total_amount']) :
     
     <!-- Success Header -->
     <div class="pcq-success-header">
-        <h2 class="pcq-success-title"><?php _e('Booking Confirmed Successfully!', 'pro-clean-quotation'); ?></h2>
+        <p class="pcq-success-title" style="font-size: 28px; font-weight: 700; margin-bottom: 12px;"><?php _e('Booking Confirmed Successfully!', 'pro-clean-quotation'); ?></p>
         <p class="pcq-success-message">
             <?php _e('Your service has been scheduled. A confirmation email has been sent to your email address.', 'pro-clean-quotation'); ?>
         </p>
