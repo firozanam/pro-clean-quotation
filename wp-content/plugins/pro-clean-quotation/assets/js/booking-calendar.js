@@ -283,14 +283,12 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Booking AJAX Error:', error);
-                    console.error('Response:', xhr.responseText);
                     alert('Failed to create booking. Please try again.');
                     $submitBtn.prop('disabled', false).text(originalText);
                 }
             });
         },
-
+        
         /**
          * Build confirmation page URL
          */
@@ -298,12 +296,12 @@
             try {
                 // Use the confirmation page URL from localized script data, fallback to current page with query params
                 const baseUrl = pcq_ajax.confirmation_url || (window.location.origin + window.location.pathname);
-                
+                    
                 // Get values from hidden fields
                 const serviceDate = $('#selected_date').val() || '';
                 const timeStart = $('#selected_time_start').val() || '';
                 const timeEnd = $('#selected_time_end').val() || '';
-                
+                    
                 const params = new URLSearchParams({
                     booking_id: data.booking_id || '',
                     booking_number: data.booking_number || '',
@@ -313,10 +311,9 @@
                     deposit_required: data.deposit_required || false,
                     deposit_amount: data.deposit_amount || 0
                 });
-
+        
                 return baseUrl + '?' + params.toString();
             } catch (error) {
-                console.error('Error building confirmation URL:', error);
                 // Fallback to home page
                 return window.location.origin;
             }

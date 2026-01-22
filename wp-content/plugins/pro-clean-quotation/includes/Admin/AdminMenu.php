@@ -192,16 +192,6 @@ class AdminMenu {
                 'pcq-dummy-data',
                 [$this, 'renderDummyData']
             );
-            
-            // Custom Fields Migration (development only)
-            add_submenu_page(
-                'pro-clean-quotation',
-                __('Custom Fields Migration', 'pro-clean-quotation'),
-                __('Migration', 'pro-clean-quotation'),
-                'manage_options',
-                'pcq-migration',
-                [$this, 'renderMigration']
-            );
         }
     }
     
@@ -2314,102 +2304,6 @@ class AdminMenu {
                     <li><strong><?php _e('Old Emails Not Working:', 'pro-clean-quotation'); ?></strong> <?php _e('The redirect handler should catch old /book-service/ URLs and redirect them.', 'pro-clean-quotation'); ?></li>
                 </ul>
             </div>
-        </div>
-        <?php
-    }
-    
-    /**
-     * Render Custom Fields Migration page
-     */
-    public function renderMigration(): void {
-        // Handle migration action
-        if (isset($_POST['run_migration']) && check_admin_referer('pcq_run_migration', 'pcq_migration_nonce')) {
-            require_once PCQ_PLUGIN_DIR . 'includes/Database/CustomFieldsMigration.php';
-            
-            $result = \ProClean\Quotation\Database\CustomFieldsMigration::migrate();
-            
-            echo '<div class="notice notice-success is-dismissible"><p>';
-            echo '<strong>' . __('Migration Completed!', 'pro-clean-quotation') . '</strong><br>';
-            echo sprintf(__('Services migrated: %d', 'pro-clean-quotation'), $result['services_migrated']) . '<br>';
-            echo sprintf(__('Quotes migrated: %d', 'pro-clean-quotation'), $result['quotes_migrated']) . '<br>';
-            echo sprintf(__('Appointments migrated: %d', 'pro-clean-quotation'), $result['appointments_migrated']);
-            echo '</p></div>';
-            
-            if (!empty($result['errors'])) {
-                echo '<div class="notice notice-error"><p>';
-                echo '<strong>' . __('Errors:', 'pro-clean-quotation') . '</strong><br>';
-                foreach ($result['errors'] as $error) {
-                    echo esc_html($error) . '<br>';
-                }
-                echo '</p></div>';
-            }
-        }
-        
-        // Verify database schema first
-        global $wpdb;
-        $service_meta_table = $wpdb->prefix . 'pq_service_meta';
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$service_meta_table'") === $service_meta_table;
-        
-        ?>
-        <div class="wrap">
-            <h1><?php _e('Custom Fields Migration', 'pro-clean-quotation'); ?></h1>
-            
-            <?php if (!$table_exists): ?>
-                <div class="notice notice-error">
-                    <h2><?php _e('Database Schema Missing', 'pro-clean-quotation'); ?></h2>
-                    <p><?php _e('The service_meta table does not exist. Please deactivate and reactivate the plugin first.', 'pro-clean-quotation'); ?></p>
-                    <p>
-                        <a href="<?php echo admin_url('plugins.php'); ?>" class="button button-primary">
-                            <?php _e('Go to Plugins', 'pro-clean-quotation'); ?>
-                        </a>
-                    </p>
-                </div>
-            <?php else: ?>
-                <div class="card" style="max-width: 800px;">
-                    <h2><?php _e('Migrate Existing Data to Custom Fields', 'pro-clean-quotation'); ?></h2>
-                    
-                    <p><?php _e('This migration will:', 'pro-clean-quotation'); ?></p>
-                    <ul>
-                        <li><?php _e('Create "Roof Type" custom field for roof cleaning services', 'pro-clean-quotation'); ?></li>
-                        <li><?php _e('Convert existing roof_type data in quotes to custom_field_data JSON', 'pro-clean-quotation'); ?></li>
-                        <li><?php _e('Convert existing roof_type data in appointments to custom_field_data JSON', 'pro-clean-quotation'); ?></li>
-                    </ul>
-                    
-                    <p><strong><?php _e('Note:', 'pro-clean-quotation'); ?></strong> <?php _e('This migration is safe to run multiple times. Existing custom fields will not be overwritten.', 'pro-clean-quotation'); ?></p>
-                    
-                    <form method="post" onsubmit="return confirm('<?php _e('Are you sure you want to run the migration?', 'pro-clean-quotation'); ?>')">
-                        <?php wp_nonce_field('pcq_run_migration', 'pcq_migration_nonce'); ?>
-                        <p>
-                            <button type="submit" name="run_migration" class="button button-primary button-large">
-                                <?php _e('Run Migration Now', 'pro-clean-quotation'); ?>
-                            </button>
-                        </p>
-                    </form>
-                    
-                    <hr>
-                    
-                    <h3><?php _e('Current Database Status', 'pro-clean-quotation'); ?></h3>
-                    <?php
-                    $quotes_with_roof_type = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pq_quotes WHERE roof_type IS NOT NULL AND roof_type != ''");
-                    $quotes_with_custom_data = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pq_quotes WHERE custom_field_data IS NOT NULL AND custom_field_data != ''");
-                    $service_meta_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pq_service_meta");
-                    ?>
-                    <table class="widefat">
-                        <tr>
-                            <th><?php _e('Quotes with roof_type data', 'pro-clean-quotation'); ?></th>
-                            <td><?php echo intval($quotes_with_roof_type); ?></td>
-                        </tr>
-                        <tr>
-                            <th><?php _e('Quotes with custom_field_data', 'pro-clean-quotation'); ?></th>
-                            <td><?php echo intval($quotes_with_custom_data); ?></td>
-                        </tr>
-                        <tr>
-                            <th><?php _e('Service meta records', 'pro-clean-quotation'); ?></th>
-                            <td><?php echo intval($service_meta_count); ?></td>
-                        </tr>
-                    </table>
-                </div>
-            <?php endif; ?>
         </div>
         <?php
     }

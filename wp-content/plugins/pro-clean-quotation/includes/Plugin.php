@@ -325,16 +325,11 @@ class Plugin {
         try {
             // Verify nonce
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_nonce')) {
-                error_log('PCQ: Calculate quote nonce verification failed');
                 wp_die(__('Security check failed.', 'pro-clean-quotation'));
             }
             
-            error_log('PCQ: Calculate quote request data: ' . print_r($_POST, true));
-            
             $calculator = Services\QuoteCalculator::getInstance();
             $result = $calculator->calculateQuote($_POST);
-            
-            error_log('PCQ: Calculate quote result: ' . print_r($result, true));
             
             // Add language information to response
             $lang_manager = I18n\LanguageManager::getInstance();
@@ -374,12 +369,8 @@ class Plugin {
      * Handle AJAX get calendar events
      */
     public function handleAjaxGetCalendarEvents(): void {
-        // Log the request for debugging
-        error_log('PCQ: Calendar events AJAX request received');
-        
         // Verify nonce and permissions
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_admin_nonce') || !current_user_can('manage_options')) {
-            error_log('PCQ: Calendar events security check failed');
             wp_send_json_error(__('Security check failed.', 'pro-clean-quotation'));
         }
         
@@ -387,17 +378,12 @@ class Plugin {
         $end_date = sanitize_text_field($_POST['end'] ?? '');
         $employee_id = intval($_POST['employee_id'] ?? 0);
         
-        error_log('PCQ: Calendar events request - Start: ' . $start_date . ', End: ' . $end_date . ', Employee: ' . $employee_id);
-        
         try {
             $appointment_manager = Services\AppointmentManager::getInstance();
             $events = $appointment_manager->getCalendarEvents($start_date, $end_date, $employee_id ?: null);
             
-            error_log('PCQ: Calendar events found: ' . count($events));
-            
             wp_send_json_success($events);
         } catch (\Exception $e) {
-            error_log('PCQ: Calendar events error: ' . $e->getMessage());
             wp_send_json_error('Failed to load calendar events: ' . $e->getMessage());
         }
     }
@@ -610,8 +596,6 @@ class Plugin {
         try {
             // Verify nonce
             if (!wp_verify_nonce($_POST['pcq_booking_nonce'] ?? '', 'pcq_create_booking')) {
-                error_log('PCQ Booking Error: Nonce verification failed');
-                error_log('PCQ Booking Data: ' . print_r($_POST, true));
                 wp_send_json_error(__('Security check failed.', 'pro-clean-quotation'));
             }
             
@@ -626,8 +610,6 @@ class Plugin {
             }
             
             if (!empty($missing_fields)) {
-                error_log('PCQ Booking Error: Missing required fields: ' . implode(', ', $missing_fields));
-                error_log('PCQ Booking Data: ' . print_r($_POST, true));
                 wp_send_json_error(
                     sprintf(
                         __('Missing required fields: %s', 'pro-clean-quotation'),
@@ -642,12 +624,9 @@ class Plugin {
             if ($result['success']) {
                 wp_send_json_success($result['data']);
             } else {
-                error_log('PCQ Booking Error: ' . ($result['message'] ?? 'Unknown error'));
                 wp_send_json_error($result['message'] ?? __('Booking creation failed.', 'pro-clean-quotation'));
             }
         } catch (\Exception $e) {
-            error_log('PCQ Booking Exception: ' . $e->getMessage());
-            error_log('PCQ Booking Trace: ' . $e->getTraceAsString());
             wp_send_json_error(__('An unexpected error occurred. Please try again.', 'pro-clean-quotation'));
         }
     }

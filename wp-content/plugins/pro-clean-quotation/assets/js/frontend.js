@@ -18,8 +18,6 @@
             this.isSubmitting = false;
             this.calculationTimeout = null;
             
-            console.log('[DEBUG] PCQQuoteForm initialized for form:', this.form.attr('id'));
-            
             this.init();
         }
 
@@ -69,14 +67,9 @@
          * Setup real-time calculation
          */
         setupRealTimeCalculation() {
-            console.log('[DEBUG] setupRealTimeCalculation called');
-            
             // Initial calculation if form has values
             if (this.hasRequiredCalculationFields()) {
-                console.log('[DEBUG] Form has required fields, triggering initial calculation');
                 this.triggerCalculation();
-            } else {
-                console.log('[DEBUG] Form does not have required fields for initial calculation');
             }
         }
 
@@ -198,7 +191,6 @@
                     }
                 }
             } catch (error) {
-                console.error('Quote submission error:', error);
                 this.showErrorMessage(pcq_ajax.strings.error);
             } finally {
                 this.isSubmitting = false;
@@ -210,18 +202,12 @@
          * Trigger price calculation with debouncing
          */
         triggerCalculation() {
-            console.log('[DEBUG] triggerCalculation called');
-            
             const hasRequired = this.hasRequiredCalculationFields();
-            console.log('[DEBUG] hasRequiredCalculationFields:', hasRequired);
             
             if (!hasRequired) {
-                console.log('[DEBUG] Missing required fields, hiding price display');
                 this.hidePriceDisplay();
                 return;
             }
-
-            console.log('[DEBUG] Required fields present, scheduling calculation');
 
             // Clear existing timeout
             if (this.calculationTimeout) {
@@ -230,7 +216,6 @@
 
             // Set new timeout for debounced calculation
             this.calculationTimeout = setTimeout(() => {
-                console.log('[DEBUG] Debounce timeout completed, calling calculatePrice');
                 this.calculatePrice();
             }, 500);
         }
@@ -239,39 +224,28 @@
          * Calculate price
          */
         async calculatePrice() {
-            console.log('[DEBUG] calculatePrice called, isCalculating:', this.isCalculating);
-            
             if (this.isCalculating) {
-                console.log('[DEBUG] Already calculating, skipping');
                 return;
             }
 
             this.isCalculating = true;
             this.showCalculatingState();
-            console.log('[DEBUG] Showing calculating state');
 
             try {
                 const formData = this.getCalculationData();
-                console.log('[DEBUG] Calculation data:', formData);
                 
-                console.log('[DEBUG] Sending AJAX request to:', pcq_ajax.ajax_url);
                 const response = await this.requestCalculation(formData);
-                console.log('[DEBUG] AJAX response:', response);
                 
                 if (response.success) {
-                    console.log('[DEBUG] Calculation successful, displaying price');
                     this.displayPrice(response.data);
                 } else {
-                    console.warn('[DEBUG] Calculation failed:', response.message);
                     this.hidePriceDisplay();
                 }
             } catch (error) {
-                console.error('[DEBUG] Price calculation error:', error);
                 this.hidePriceDisplay();
             } finally {
                 this.isCalculating = false;
                 this.hideCalculatingState();
-                console.log('[DEBUG] Calculation complete, isCalculating:', this.isCalculating);
             }
         }
 
@@ -528,11 +502,6 @@
             const serviceType = this.form.find('input[name="service_type"]:checked').val();
             const squareMeters = this.form.find('input[name="square_meters"]').val();
             
-            console.log('[DEBUG] hasRequiredCalculationFields check:');
-            console.log('  - serviceType:', serviceType);
-            console.log('  - squareMeters:', squareMeters);
-            console.log('  - squareMeters >= 10:', squareMeters && parseFloat(squareMeters) >= 10);
-            
             return serviceType && squareMeters && parseFloat(squareMeters) >= 10;
         }
 
@@ -664,13 +633,8 @@
          * Display calculated price
          */
         displayPrice(data) {
-            console.log('[DEBUG] displayPrice called with data:', data);
-            
             const priceDisplay = this.form.find('.pcq-price-display');
-            console.log('[DEBUG] priceDisplay element found:', priceDisplay.length);
-            
             const breakdown = priceDisplay.find('.pcq-price-breakdown');
-            console.log('[DEBUG] breakdown element found:', breakdown.length);
             
             let html = '';
             
@@ -694,11 +658,8 @@
                 </div>
             `;
             
-            console.log('[DEBUG] Generated HTML length:', html.length);
             breakdown.html(html);
-            console.log('[DEBUG] Calling priceDisplay.show()');
             priceDisplay.show();
-            console.log('[DEBUG] priceDisplay visibility:', priceDisplay.is(':visible'));
         }
 
         /**
@@ -895,9 +856,7 @@
         if (servicesDataElement) {
             try {
                 window.pcqServicesData = JSON.parse(servicesDataElement.textContent);
-                console.log('Loaded services custom fields data:', window.pcqServicesData);
             } catch (e) {
-                console.error('Failed to parse services custom fields data:', e);
                 window.pcqServicesData = {};
             }
         } else {

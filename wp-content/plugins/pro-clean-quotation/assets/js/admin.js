@@ -44,9 +44,6 @@
             'display': 'flex',
             'visibility': 'visible'
         });
-        
-        // Log for debugging
-        console.log('PCQ: Settings page visibility ensured');
     }
 
     /**
@@ -155,12 +152,9 @@
 
         // Wait for FullCalendar to be available
         if (typeof FullCalendar === 'undefined') {
-            console.log('FullCalendar not loaded, retrying...');
             setTimeout(initCalendar, 500);
             return;
         }
-
-        console.log('Initializing FullCalendar...');
 
         // Calendar configuration
         const calendarConfig = {
@@ -172,8 +166,6 @@
             },
             height: 'auto',
             events: function(fetchInfo, successCallback, failureCallback) {
-                console.log('Fetching calendar events...');
-                
                 // Fetch events via AJAX
                 jQuery.ajax({
                     url: pcq_admin_ajax.ajax_url,
@@ -186,28 +178,23 @@
                         employee_id: jQuery('#pcq-employee-filter').val() || ''
                     },
                     success: function(response) {
-                        console.log('Calendar events response:', response);
                         if (response.success) {
                             successCallback(response.data || []);
                         } else {
-                            console.error('Calendar events error:', response.data);
                             failureCallback(response.data || 'Failed to load events');
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX error:', error);
                         failureCallback('Failed to load events: ' + error);
                     }
                 });
             },
             eventClick: function(info) {
-                console.log('Event clicked:', info.event);
                 if (info.event.extendedProps && info.event.extendedProps.appointment_id) {
                     openAppointmentModal(info.event.extendedProps.appointment_id);
                 }
             },
             dateClick: function(info) {
-                console.log('Date clicked:', info.dateStr);
                 openAppointmentModal(null, info.dateStr);
             },
             eventDidMount: function(info) {
@@ -225,7 +212,6 @@
                 }
             },
             loading: function(isLoading) {
-                console.log('Calendar loading:', isLoading);
                 if (isLoading) {
                     jQuery('#pcq-calendar').addClass('loading');
                 } else {
@@ -238,8 +224,6 @@
             // Initialize FullCalendar
             const calendar = new FullCalendar.Calendar(document.getElementById('pcq-calendar'), calendarConfig);
             calendar.render();
-            
-            console.log('Calendar rendered successfully');
 
             // Calendar controls
             jQuery('#pcq-prev-period').on('click', function() {
@@ -263,7 +247,6 @@
             });
 
             jQuery('#pcq-employee-filter').on('change', function() {
-                console.log('Employee filter changed:', jQuery(this).val());
                 calendar.refetchEvents();
             });
 
@@ -281,7 +264,6 @@
             window.pcqCalendar = calendar;
             
         } catch (error) {
-            console.error('Calendar initialization error:', error);
             jQuery('#pcq-calendar').html('<div class="error"><p>Failed to initialize calendar: ' + error.message + '</p></div>');
         }
     }
@@ -435,7 +417,7 @@
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Error loading quotes:', error);
+                // Silently fail - quotes loading is optional
             }
         });
     }
