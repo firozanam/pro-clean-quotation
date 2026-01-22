@@ -123,6 +123,14 @@ class CalendarPage {
                     <form id="pcq-appointment-form">
                         <input type="hidden" id="appointment-id" name="appointment_id">
                         
+                        <div class="pcq-form-field">
+                            <label for="appointment-quote"><?php _e('Select Quote (Optional)', 'pro-clean-quotation'); ?></label>
+                            <select id="appointment-quote" name="quote_id">
+                                <option value=""><?php _e('-- Select a quote to auto-fill --', 'pro-clean-quotation'); ?></option>
+                            </select>
+                            <p class="description"><?php _e('Select an existing quote to automatically fill customer and service information.', 'pro-clean-quotation'); ?></p>
+                        </div>
+                        
                         <div class="pcq-form-row">
                             <div class="pcq-form-field">
                                 <label for="appointment-service"><?php _e('Service', 'pro-clean-quotation'); ?></label>

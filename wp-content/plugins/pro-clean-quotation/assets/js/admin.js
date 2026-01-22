@@ -306,6 +306,14 @@
                 closeAppointmentModal();
             }
         });
+        
+        // Quote selection change - auto-fill form
+        jQuery('#appointment-quote').on('change', function() {
+            const quoteId = jQuery(this).val();
+            if (quoteId) {
+                autoFillFromQuote(quoteId);
+            }
+        });
 
         // Service selection change
         jQuery('#appointment-service').on('change', function() {
@@ -361,6 +369,9 @@
             jQuery('#pcq-modal-title').text('Add New Appointment');
             jQuery('#pcq-delete-appointment').hide();
             
+            // Load quotes for new appointments
+            loadQuotesForAppointment();
+            
             if (selectedDate) {
                 jQuery('#appointment-date').val(selectedDate);
             }
@@ -383,7 +394,129 @@
     function resetAppointmentForm() {
         jQuery('#pcq-appointment-form')[0].reset();
         jQuery('#appointment-id').val('');
+        jQuery('#appointment-quote').val(''); // Reset quote selector
         jQuery('.pcq-form-field').removeClass('error');
+    }
+    
+    /**
+     * Load quotes for appointment dropdown
+     */
+    function loadQuotesForAppointment() {
+        jQuery.ajax({
+            url: pcq_admin_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'pcq_get_quotes_for_appointment',
+                nonce: pcq_admin_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success && response.data) {
+                    const quotes = response.data;
+                    const $quoteSelect = jQuery('#appointment-quote');
+                    
+                    // Clear existing options except the first one
+                    $quoteSelect.find('option:not(:first)').remove();
+                    
+                    if (quotes.length === 0) {
+                        // Optionally update the placeholder text
+                        $quoteSelect.find('option:first').text('-- No quotes available --');
+                        return;
+                    }
+                    
+                    // Add quote options
+                    quotes.forEach(function(quote) {
+                        $quoteSelect.append(
+                            jQuery('<option></option>')
+                                .val(quote.id)
+                                .text(quote.display_text)
+                                .data('quote', quote)
+                        );
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading quotes:', error);
+            }
+        });
+    }
+    
+    /**
+     * Auto-fill form from selected quote
+     */
+    function autoFillFromQuote(quoteId) {
+        const $selectedOption = jQuery('#appointment-quote option:selected');
+        const quote = $selectedOption.data('quote');
+        
+        if (!quote) {
+            return;
+        }
+        
+        // Fill customer information
+        jQuery('#customer-name').val(quote.customer_name || '');
+        jQuery('#customer-email').val(quote.customer_email || '');
+        jQuery('#customer-phone').val(quote.customer_phone || '');
+        
+        // Fill price
+        jQuery('#appointment-price').val(quote.total_price || '');
+        
+        // Set default date to tomorrow if not already set
+        const $dateField = jQuery('#appointment-date');
+        if (!$dateField.val()) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            $dateField.val(tomorrowStr);
+        }
+        
+        // Set default start time to 9:00 AM if not already set
+        const $startTime = jQuery('#appointment-time-start');
+        if (!$startTime.val()) {
+            $startTime.val('09:00');
+        }
+        
+        // Fill notes with special requirements
+        const existingNotes = jQuery('#appointment-notes').val();
+        if (quote.special_requirements) {
+            const newNotes = existingNotes ? 
+                existingNotes + '\n\n' + quote.special_requirements : 
+                quote.special_requirements;
+            jQuery('#appointment-notes').val(newNotes);
+        }
+        
+        // Try to match service by service_type (this will auto-calculate end time)
+        matchServiceByType(quote.service_type);
+        
+        // If service was matched, trigger time calculation
+        // Otherwise set default 2-hour duration
+        const $endTime = jQuery('#appointment-time-end');
+        if (!$endTime.val() && $startTime.val()) {
+            const endTime = calculateEndTime($startTime.val(), 120); // Default 2 hours
+            $endTime.val(endTime);
+        }
+        
+        // Show success feedback
+        showNotice('Quote information loaded successfully! Please verify date and time.', 'success');
+    }
+    
+    /**
+     * Match and select service by type from quote
+     */
+    function matchServiceByType(serviceType) {
+        if (!serviceType) return;
+        
+        const $serviceSelect = jQuery('#appointment-service');
+        const normalizedType = serviceType.toLowerCase().replace(/[\s-_]/g, '');
+        
+        // Try to find matching service option
+        $serviceSelect.find('option').each(function() {
+            const optionText = jQuery(this).text().toLowerCase().replace(/[\s-_]/g, '');
+            
+            // Check if service name contains the type or type contains service name
+            if (optionText.includes(normalizedType) || normalizedType.includes(optionText)) {
+                $serviceSelect.val(jQuery(this).val()).trigger('change');
+                return false; // break loop
+            }
+        });
     }
 
     /**

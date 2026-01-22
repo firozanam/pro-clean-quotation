@@ -85,6 +85,7 @@ class Plugin {
         add_action('wp_ajax_pcq_get_appointment', [$this, 'handleAjaxGetAppointment']);
         add_action('wp_ajax_pcq_save_appointment', [$this, 'handleAjaxSaveAppointment']);
         add_action('wp_ajax_pcq_delete_appointment', [$this, 'handleAjaxDeleteAppointment']);
+        add_action('wp_ajax_pcq_get_quotes_for_appointment', [$this, 'handleAjaxGetQuotesForAppointment']);
         add_action('wp_ajax_pcq_test_smtp', [$this, 'handleAjaxTestSMTP']);
         
         // Database health checks
@@ -498,6 +499,59 @@ class Plugin {
         } else {
             wp_send_json_error(__('Failed to delete appointment.', 'pro-clean-quotation'));
         }
+    }
+    
+    /**
+     * Handle AJAX get quotes for appointment
+     */
+    public function handleAjaxGetQuotesForAppointment(): void {
+        // Verify nonce and permissions
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_admin_nonce') || !current_user_can('manage_options')) {
+            wp_send_json_error(__('Security check failed.', 'pro-clean-quotation'));
+        }
+        
+        // Get quotes that can be booked (not expired, cancelled, or rejected)
+        global $wpdb;
+        $table = $wpdb->prefix . 'pq_quotes';
+        
+        $quotes = $wpdb->get_results(
+            "SELECT id, quote_number, customer_name, customer_email, customer_phone, 
+                    property_address, service_type, total_price, special_requirements, 
+                    created_at, status
+             FROM {$table}
+             WHERE status IN ('new', 'sent', 'accepted')
+               AND (valid_until IS NULL OR valid_until > NOW())
+             ORDER BY created_at DESC
+             LIMIT 100",
+            ARRAY_A
+        );
+        
+        // Format quotes for dropdown
+        $formatted_quotes = [];
+        foreach ($quotes as $quote) {
+            $formatted_quotes[] = [
+                'id' => $quote['id'],
+                'quote_number' => $quote['quote_number'],
+                'customer_name' => $quote['customer_name'],
+                'customer_email' => $quote['customer_email'],
+                'customer_phone' => $quote['customer_phone'],
+                'property_address' => $quote['property_address'],
+                'service_type' => $quote['service_type'],
+                'total_price' => $quote['total_price'],
+                'special_requirements' => $quote['special_requirements'],
+                'created_at' => $quote['created_at'],
+                'status' => $quote['status'],
+                'display_text' => sprintf(
+                    '#%s - %s (%s) - €%s',
+                    $quote['quote_number'],
+                    $quote['customer_name'],
+                    $quote['service_type'],
+                    number_format($quote['total_price'], 2)
+                )
+            ];
+        }
+        
+        wp_send_json_success($formatted_quotes);
     }
     
     /**

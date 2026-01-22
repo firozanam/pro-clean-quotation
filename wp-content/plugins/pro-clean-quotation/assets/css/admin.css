@@ -569,6 +569,35 @@
     gap: 10px;
 }
 
+/* Quote selector styling */
+#appointment-quote {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+}
+
+#appointment-quote:focus {
+    outline: none;
+    border-color: #2196F3;
+    background-color: #fff;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+#appointment-quote option {
+    padding: 8px;
+}
+
+.pcq-form-field .description {
+    margin-top: 5px;
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+}
+
 /* Service legend */
 .pcq-service-legend {
     margin-top: 20px;

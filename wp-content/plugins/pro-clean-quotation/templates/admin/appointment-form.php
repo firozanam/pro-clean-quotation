@@ -21,21 +21,51 @@ if ($quote_id && !$is_edit) {
     $quote = new \ProClean\Quotation\Models\Quote($quote_id);
 }
 
+// Match service by type from quote
+$matched_service_id = '';
+if ($quote && $quote->getId()) {
+    $quote_service_type = $quote->getServiceType();
+    
+    // Only proceed if service type is valid
+    if ($quote_service_type && is_string($quote_service_type) && trim($quote_service_type) !== '') {
+        $services_list = \ProClean\Quotation\Models\Service::getAll(true);
+        
+        // Try to find matching service by name/type
+        // Note: hyphen must be escaped or placed at start/end of character class
+        $normalized_quote_type = strtolower(preg_replace('/[\s_-]/', '', $quote_service_type));
+        
+        foreach ($services_list as $service) {
+            $normalized_service_name = strtolower(preg_replace('/[\s_-]/', '', $service->getName()));
+            
+            // Check if names match (fuzzy)
+            if (strpos($normalized_service_name, $normalized_quote_type) !== false || 
+                strpos($normalized_quote_type, $normalized_service_name) !== false) {
+                $matched_service_id = $service->getId();
+                break;
+            }
+        }
+    }
+}
+
 // Default values (from quote or appointment)
 $appointment_data = [
-    'service_id' => $is_edit ? $appointment->data['service_id'] : '',
+    'service_id' => $is_edit ? $appointment->data['service_id'] : $matched_service_id,
     'employee_id' => $is_edit ? $appointment->data['employee_id'] : '',
-    'customer_name' => $is_edit ? $appointment->getCustomerName() : ($quote ? $quote->getCustomerName() : ($_GET['customer_name'] ?? '')),
-    'customer_email' => $is_edit ? $appointment->getCustomerEmail() : ($quote ? $quote->getCustomerEmail() : ($_GET['customer_email'] ?? '')),
-    'customer_phone' => $is_edit ? $appointment->getCustomerPhone() : ($quote ? $quote->getCustomerPhone() : ($_GET['customer_phone'] ?? '')),
-    'service_date' => $is_edit ? $appointment->data['service_date'] : '',
+    'customer_name' => $is_edit ? (string)$appointment->getCustomerName() : ($quote ? (string)$quote->getCustomerName() : ($_GET['customer_name'] ?? '')),
+    'customer_email' => $is_edit ? (string)$appointment->getCustomerEmail() : ($quote ? (string)$quote->getCustomerEmail() : ($_GET['customer_email'] ?? '')),
+    'customer_phone' => $is_edit ? (string)$appointment->getCustomerPhone() : ($quote ? (string)$quote->getCustomerPhone() : ($_GET['customer_phone'] ?? '')),
+    'service_date' => $is_edit ? $appointment->data['service_date'] : date('Y-m-d', strtotime('+1 day')), // Default: tomorrow
     'service_time_start' => $is_edit ? $appointment->data['service_time_start'] : '09:00',
     'service_time_end' => $is_edit ? $appointment->data['service_time_end'] : '11:00',
     'duration' => $is_edit ? $appointment->data['duration'] : 120,
     'price' => $is_edit ? $appointment->data['price'] : ($quote ? $quote->getTotalPrice() : ($_GET['total_amount'] ?? 0)),
     'status' => $is_edit ? $appointment->data['status'] : 'pending',
-    'notes' => $is_edit ? $appointment->data['notes'] : '',
-    'internal_notes' => $is_edit ? $appointment->data['internal_notes'] : ''
+    'notes' => $is_edit ? (string)($appointment->data['notes'] ?? '') : (
+        $quote && $quote->getSpecialRequirements() && trim($quote->getSpecialRequirements()) !== '' && !is_numeric($quote->getSpecialRequirements()) 
+            ? $quote->getSpecialRequirements() 
+            : ''
+    ),
+    'internal_notes' => $is_edit ? (string)($appointment->data['internal_notes'] ?? '') : ''
 ];
 
 // Get assigned employees for edit mode
