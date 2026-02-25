@@ -320,6 +320,12 @@ class AdminMenu {
                     }
                     break;
                     
+                case 'clear_except_services':
+                    if (wp_verify_nonce($_GET['_wpnonce'] ?? '', 'clear_except_services')) {
+                        $this->clearDummyDataExceptServices();
+                    }
+                    break;
+                    
                 case 'recreate':
                     if (wp_verify_nonce($_GET['_wpnonce'] ?? '', 'recreate_database')) {
                         $this->recreateDatabase();
@@ -898,6 +904,26 @@ class AdminMenu {
         } catch (Exception $e) {
             add_action('admin_notices', function() use ($e) {
                 echo '<div class="notice notice-error is-dismissible"><p>' . __('Error clearing dummy data: ', 'pro-clean-quotation') . esc_html($e->getMessage()) . '</p></div>';
+            });
+        }
+        
+        wp_redirect(admin_url('admin.php?page=pcq-dummy-data'));
+        exit;
+    }
+    
+    /**
+     * Clear dummy data except services and service categories
+     */
+    private function clearDummyDataExceptServices(): void {
+        try {
+            \ProClean\Quotation\Database\DummyDataGenerator::clearAllExceptServices();
+            
+            add_action('admin_notices', function() {
+                echo '<div class="notice notice-success is-dismissible"><p>' . __('All data cleared successfully! Services and service categories have been preserved.', 'pro-clean-quotation') . '</p></div>';
+            });
+        } catch (Exception $e) {
+            add_action('admin_notices', function() use ($e) {
+                echo '<div class="notice notice-error is-dismissible"><p>' . __('Error clearing data: ', 'pro-clean-quotation') . esc_html($e->getMessage()) . '</p></div>';
             });
         }
         
@@ -1508,12 +1534,14 @@ class AdminMenu {
                 'description' => sanitize_textarea_field($data['description'] ?? ''),
                 'category_id' => intval($data['category_id'] ?? 0) ?: null,
                 'duration' => max(15, intval($data['duration'] ?? 60)),
-                'price' => max(0, floatval($data['price'] ?? 0)),
+                'base_rate' => max(0, floatval($data['base_rate'] ?? 20.00)),
+                'rate_per_sqm' => max(0, floatval($data['rate_per_sqm'] ?? 20.00)),
+                'rate_per_linear_meter' => max(0, floatval($data['rate_per_linear_meter'] ?? 5.00)),
                 'capacity' => max(1, intval($data['capacity'] ?? 1)),
                 'buffer_time_before' => max(0, intval($data['buffer_time_before'] ?? 0)),
                 'buffer_time_after' => max(0, intval($data['buffer_time_after'] ?? 0)),
                 'color' => sanitize_hex_color($data['color'] ?? '#2196F3') ?: '#2196F3',
-                'status' => in_array($data['status'] ?? 'active', ['active', 'inactive']) ? $data['status'] : 'active',
+                'status' => isset($data['status']) && in_array($data['status'], ['active', 'inactive']) ? $data['status'] : 'active',
                 'sort_order' => intval($data['sort_order'] ?? 0),
                 'min_advance_time' => max(0, intval($data['min_advance_time'] ?? 0)),
                 'max_advance_time' => max(0, intval($data['max_advance_time'] ?? 0))

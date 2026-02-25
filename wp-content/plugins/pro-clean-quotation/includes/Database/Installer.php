@@ -135,6 +135,9 @@ class Installer {
             description TEXT,
             duration INT DEFAULT 60,
             price DECIMAL(10,2) DEFAULT 0,
+            base_rate DECIMAL(10,2) DEFAULT 20.00,
+            rate_per_sqm DECIMAL(10,2) DEFAULT 20.00,
+            rate_per_linear_meter DECIMAL(10,2) DEFAULT 5.00,
             capacity INT DEFAULT 1,
             buffer_time_before INT DEFAULT 0,
             buffer_time_after INT DEFAULT 0,
@@ -344,6 +347,8 @@ class Installer {
                 'description' => 'Professional façade cleaning service for residential and commercial properties',
                 'duration' => 120,
                 'price' => 150.00,
+                'base_rate' => 20.00,
+                'rate_per_sqm' => 2.50,
                 'capacity' => 1,
                 'buffer_time_before' => 15,
                 'buffer_time_after' => 15,
@@ -357,6 +362,8 @@ class Installer {
                 'description' => 'Professional roof cleaning service with safety equipment',
                 'duration' => 180,
                 'price' => 200.00,
+                'base_rate' => 25.00,
+                'rate_per_sqm' => 3.00,
                 'capacity' => 1,
                 'buffer_time_before' => 30,
                 'buffer_time_after' => 30,
@@ -370,6 +377,8 @@ class Installer {
                 'description' => 'Comprehensive façade and roof cleaning service',
                 'duration' => 300,
                 'price' => 320.00,
+                'base_rate' => 40.00,
+                'rate_per_sqm' => 5.00,
                 'capacity' => 2,
                 'buffer_time_before' => 30,
                 'buffer_time_after' => 30,
@@ -635,5 +644,80 @@ class Installer {
         if ($migrated > 0) {
             error_log("Pro Clean Quotation: Successfully migrated {$migrated} employee assignments to team system");
         }
+    }
+    
+    /**
+     * Migrate services to add base_rate and rate_per_sqm columns
+     * This ensures backward compatibility when upgrading to new pricing system
+     */
+    public static function migrateServicePricingFields(): void {
+        global $wpdb;
+        
+        $services_table = $wpdb->prefix . 'pq_services';
+        
+        // Check if base_rate column exists
+        $base_rate_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = %s AND table_name = %s AND column_name = %s",
+                DB_NAME,
+                $services_table,
+                'base_rate'
+            )
+        );
+        
+        // Add base_rate column if it doesn't exist
+        if (!$base_rate_exists) {
+            $wpdb->query(
+                "ALTER TABLE $services_table ADD COLUMN base_rate DECIMAL(10,2) DEFAULT 20.00 AFTER price"
+            );
+            error_log("Pro Clean Quotation: Added base_rate column to services table");
+        }
+        
+        // Check if rate_per_sqm column exists
+        $rate_per_sqm_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = %s AND table_name = %s AND column_name = %s",
+                DB_NAME,
+                $services_table,
+                'rate_per_sqm'
+            )
+        );
+        
+        // Add rate_per_sqm column if it doesn't exist
+        if (!$rate_per_sqm_exists) {
+            $wpdb->query(
+                "ALTER TABLE $services_table ADD COLUMN rate_per_sqm DECIMAL(10,2) DEFAULT 20.00 AFTER base_rate"
+            );
+            error_log("Pro Clean Quotation: Added rate_per_sqm column to services table");
+        }
+        
+        // Check if rate_per_linear_meter column exists
+        $rate_per_linear_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = %s AND table_name = %s AND column_name = %s",
+                DB_NAME,
+                $services_table,
+                'rate_per_linear_meter'
+            )
+        );
+        
+        // Add rate_per_linear_meter column if it doesn't exist
+        if (!$rate_per_linear_exists) {
+            $wpdb->query(
+                "ALTER TABLE $services_table ADD COLUMN rate_per_linear_meter DECIMAL(10,2) DEFAULT 5.00 AFTER rate_per_sqm"
+            );
+            error_log("Pro Clean Quotation: Added rate_per_linear_meter column to services table");
+        }
+        
+        // Update existing services with default values if they have NULL or 0 values
+        $wpdb->query(
+            "UPDATE $services_table SET base_rate = 20.00 WHERE base_rate IS NULL OR base_rate = 0"
+        );
+        $wpdb->query(
+            "UPDATE $services_table SET rate_per_sqm = 20.00 WHERE rate_per_sqm IS NULL OR rate_per_sqm = 0"
+        );
+        $wpdb->query(
+            "UPDATE $services_table SET rate_per_linear_meter = 5.00 WHERE rate_per_linear_meter IS NULL OR rate_per_linear_meter = 0"
+        );
     }
 }

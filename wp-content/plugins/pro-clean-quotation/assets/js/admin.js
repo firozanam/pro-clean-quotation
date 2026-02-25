@@ -66,6 +66,13 @@
             jQuery('.pcq-tab-content').hide();
             jQuery('#' + targetTab).fadeIn(200);
             
+            // Show/hide submit button (hide on Update tab)
+            if (targetTab === 'update') {
+                jQuery('#pcq-main-submit').hide();
+            } else {
+                jQuery('#pcq-main-submit').show();
+            }
+            
             // Update URL hash without jumping
             if (history.pushState) {
                 history.pushState(null, null, '#' + targetTab);
@@ -79,6 +86,11 @@
         if (hash && jQuery('#' + hash).length) {
             jQuery('.pcq-nav-tab[href="#' + hash + '"]').addClass('pcq-nav-tab-active');
             jQuery('#' + hash).show();
+            
+            // Hide submit button if on Update tab
+            if (hash === 'update') {
+                jQuery('#pcq-main-submit').hide();
+            }
         } else {
             jQuery('.pcq-nav-tab').first().addClass('pcq-nav-tab-active');
             jQuery('.pcq-tab-content').first().show();

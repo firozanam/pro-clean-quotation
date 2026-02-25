@@ -98,6 +98,12 @@ find "$BUILD_PLUGIN_DIR" -name ".scrutinizer.yml" -exec rm -f {} + 2>/dev/null |
 find "$BUILD_PLUGIN_DIR" -name "infection.json*" -exec rm -f {} + 2>/dev/null || true
 find "$BUILD_PLUGIN_DIR" -name ".psalm" -exec rm -rf {} + 2>/dev/null || true
 
+# Remove development-specific files (not needed in production)
+rm -f "$BUILD_PLUGIN_DIR/.phpunit.result.cache" 2>/dev/null || true
+rm -f "$BUILD_PLUGIN_DIR/git-commit.txt" 2>/dev/null || true
+rm -f "$BUILD_PLUGIN_DIR/generate-dummy-data.php" 2>/dev/null || true
+rm -f "$BUILD_PLUGIN_DIR/build-production.sh" 2>/dev/null || true
+
 # Remove test/doc directories from vendor
 echo "Removing tests and docs from vendor..."
 find "$BUILD_PLUGIN_DIR/vendor" -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true

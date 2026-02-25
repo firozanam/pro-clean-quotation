@@ -87,6 +87,8 @@ class Plugin {
         add_action('wp_ajax_pcq_delete_appointment', [$this, 'handleAjaxDeleteAppointment']);
         add_action('wp_ajax_pcq_get_quotes_for_appointment', [$this, 'handleAjaxGetQuotesForAppointment']);
         add_action('wp_ajax_pcq_test_smtp', [$this, 'handleAjaxTestSMTP']);
+        add_action('wp_ajax_pcq_get_service_pricing', [$this, 'handleAjaxGetServicePricing']);
+        add_action('wp_ajax_nopriv_pcq_get_service_pricing', [$this, 'handleAjaxGetServicePricing']);
         
         // Database health checks
         add_action('admin_notices', [Admin\DatabaseFixer::class, 'showMissingTablesNotice']);
@@ -348,21 +350,91 @@ class Plugin {
     }
     
     /**
+     * Handle AJAX get service pricing
+     * Returns base_rate and rate_per_sqm for a specific service
+     */
+    public function handleAjaxGetServicePricing(): void {
+        try {
+            // Verify nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_nonce')) {
+                wp_send_json([
+                    'success' => false,
+                    'message' => __('Security check failed.', 'pro-clean-quotation')
+                ]);
+                return;
+            }
+            
+            $service_id = intval($_POST['service_id'] ?? 0);
+            
+            if (!$service_id) {
+                wp_send_json([
+                    'success' => false,
+                    'message' => __('Service ID is required.', 'pro-clean-quotation')
+                ]);
+                return;
+            }
+            
+            $service = new Models\Service($service_id);
+            
+            if (!$service->getId()) {
+                wp_send_json([
+                    'success' => false,
+                    'message' => __('Service not found.', 'pro-clean-quotation')
+                ]);
+                return;
+            }
+            
+            wp_send_json([
+                'success' => true,
+                'data' => [
+                    'id' => $service->getId(),
+                    'name' => $service->getName(),
+                    'base_rate' => $service->getBaseRate(),
+                    'rate_per_sqm' => $service->getRatePerSqm(),
+                    'rate_per_linear_meter' => $service->getRatePerLinearMeter(),
+                    'price' => $service->getPrice()
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            error_log('PCQ: Fatal error in handleAjaxGetServicePricing: ' . $e->getMessage());
+            
+            wp_send_json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    /**
      * Handle AJAX quote submission
      */
     public function handleAjaxSubmitQuote(): void {
-        // Verify nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_nonce')) {
-            wp_die(__('Security check failed.', 'pro-clean-quotation'));
+        try {
+            // Verify nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pcq_nonce')) {
+                wp_send_json([
+                    'success' => false,
+                    'message' => __('Security check failed.', 'pro-clean-quotation')
+                ]);
+                return;
+            }
+            
+            $form_handler = Frontend\FormHandler::getInstance();
+            $result = $form_handler->submitQuote($_POST);
+            
+            // Add language information to response
+            $result = apply_filters('pcq_ajax_response', $result, 'submit_quote');
+            
+            wp_send_json($result);
+        } catch (\Throwable $e) {
+            error_log('PCQ: Fatal error in handleAjaxSubmitQuote: ' . $e->getMessage());
+            error_log('PCQ: Stack trace: ' . $e->getTraceAsString());
+            
+            wp_send_json([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ]);
         }
-        
-        $form_handler = Frontend\FormHandler::getInstance();
-        $result = $form_handler->submitQuote($_POST);
-        
-        // Add language information to response
-        $result = apply_filters('pcq_ajax_response', $result, 'submit_quote');
-        
-        wp_send_json($result);
     }
     
     /**

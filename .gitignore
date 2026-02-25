@@ -20,7 +20,8 @@ xmlrpc.php
 # WordPress Plugins (Exclude All Except pro-clean-quotation)
 # ====================================
 /wp-content/plugins/*
-!/wp-content/plugins/pro-clean-quotation/
+!/wp-content/plugins/pro-clean-quotation
+/wp-content/plugins/pro-clean-quotation/**
 
 # ====================================
 # WordPress Themes (Exclude All)

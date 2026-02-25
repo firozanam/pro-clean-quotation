@@ -25,7 +25,9 @@ $service_data = [
     'description' => $is_edit ? $service->getDescription() : '',
     'category_id' => $is_edit ? $service->getCategoryId() : 0,
     'duration' => $is_edit ? $service->getDuration() : 60,
-    'price' => $is_edit ? $service->getPrice() : 0,
+    'base_rate' => $is_edit ? $service->getBaseRate() : 20.00,
+    'rate_per_sqm' => $is_edit ? $service->getRatePerSqm() : 20.00,
+    'rate_per_linear_meter' => $is_edit ? $service->getRatePerLinearMeter() : 5.00,
     'capacity' => $is_edit ? $service->getCapacity() : 1,
     'buffer_time_before' => $is_edit ? $service->getBufferTimeBefore() : 15,
     'buffer_time_after' => $is_edit ? $service->getBufferTimeAfter() : 15,
@@ -192,17 +194,71 @@ $custom_fields = $is_edit ? $service->getCustomFields() : [];
                     <table class="form-table">
                         <tr>
                             <th scope="row">
-                                <label for="price"><?php _e('Base Price', 'pro-clean-quotation'); ?></label>
+                                <label for="base_rate"><?php _e('Service/Call-out Fee', 'pro-clean-quotation'); ?> <span class="required">*</span></label>
                             </th>
                             <td>
-                                <input type="number" name="price" id="price" 
-                                       value="<?php echo esc_attr($service_data['price']); ?>" 
-                                       class="regular-text" step="0.01" min="0">
+                                <input type="number" name="base_rate" id="base_rate"
+                                       value="<?php echo esc_attr($service_data['base_rate']); ?>"
+                                       class="regular-text" step="0.01" min="0" required>
                                 <span>€</span>
-                                <p class="description"><?php _e('Base price for this service. Can be overridden per appointment.', 'pro-clean-quotation'); ?></p>
+                                <p class="description"><?php _e('Minimum cost to show up at the job site, regardless of property size (e.g., €20.00). This is the fixed call-out fee.', 'pro-clean-quotation'); ?></p>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
+                                <label for="rate_per_sqm"><?php _e('Rate per Square Meter', 'pro-clean-quotation'); ?> <span class="required">*</span></label>
+                            </th>
+                            <td>
+                                <input type="number" name="rate_per_sqm" id="rate_per_sqm"
+                                       value="<?php echo esc_attr($service_data['rate_per_sqm']); ?>"
+                                       class="regular-text" step="0.01" min="0" required>
+                                <span>€/m²</span>
+                                <p class="description"><?php _e('Price per square meter for the work (e.g., €20.00/m²). This is multiplied by the property area.', 'pro-clean-quotation'); ?></p>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
+                                <label for="rate_per_linear_meter"><?php _e('Rate per Linear Meter', 'pro-clean-quotation'); ?></label>
+                            </th>
+                            <td>
+                                <input type="number" name="rate_per_linear_meter" id="rate_per_linear_meter"
+                                       value="<?php echo esc_attr($service_data['rate_per_linear_meter']); ?>"
+                                       class="regular-text" step="0.01" min="0">
+                                <span>€/m</span>
+                                <p class="description"><?php _e('Price per linear meter for perimeter/edge work (e.g., €5.00/m). This is multiplied by the property perimeter length.', 'pro-clean-quotation'); ?></p>
                             </td>
                         </tr>
                     </table>
+                    
+                    <div class="pcq-pricing-preview" style="margin-top: 15px; padding: 15px; background: #f7f7f7; border-left: 4px solid #2196F3;">
+                        <h4 style="margin: 0 0 10px 0;"><?php _e('Pricing Formula Preview', 'pro-clean-quotation'); ?></h4>
+                        <p class="description" style="margin: 0;">
+                            <strong><?php _e('Formula:', 'pro-clean-quotation'); ?></strong><br>
+                            <code style="background: #e0e0e0; padding: 2px 6px; border-radius: 3px;">
+                                <?php _e('Subtotal', 'pro-clean-quotation'); ?> = <?php _e('Service Fee', 'pro-clean-quotation'); ?> + (<?php _e('Area', 'pro-clean-quotation'); ?> × <?php _e('Rate/m²', 'pro-clean-quotation'); ?>) + (<?php _e('Perimeter', 'pro-clean-quotation'); ?> × <?php _e('Rate/m', 'pro-clean-quotation'); ?>)
+                            </code><br><br>
+                            <strong><?php _e('Example (100 m², 40 m perimeter):', 'pro-clean-quotation'); ?></strong><br>
+                            <span id="pcq-pricing-example">
+                                <?php
+                                $example_base = $service_data['base_rate'];
+                                $example_rate_sqm = $service_data['rate_per_sqm'];
+                                $example_rate_linear = $service_data['rate_per_linear_meter'];
+                                $example_area = 100;
+                                $example_perimeter = 40;
+                                $example_subtotal = $example_base + ($example_area * $example_rate_sqm) + ($example_perimeter * $example_rate_linear);
+                                printf(
+                                    '€%s + (100 m² × €%s/m²) + (40 m × €%s/m) = €%s',
+                                    number_format($example_base, 2),
+                                    number_format($example_rate_sqm, 2),
+                                    number_format($example_rate_linear, 2),
+                                    number_format($example_subtotal, 2)
+                                );
+                                ?>
+                            </span>
+                        </p>
+                    </div>
                 </div>
                 
                 <!-- Custom Fields -->
@@ -387,7 +443,9 @@ $custom_fields = $is_edit ? $service->getCustomFields() : [];
                         
                         <div class="pcq-preview-details">
                             <div><strong><?php _e('Duration:', 'pro-clean-quotation'); ?></strong> <span id="preview-duration"><?php echo $service_data['duration']; ?></span> min</div>
-                            <div><strong><?php _e('Price:', 'pro-clean-quotation'); ?></strong> €<span id="preview-price"><?php echo number_format($service_data['price'], 2); ?></span></div>
+                            <div><strong><?php _e('Call-out Fee:', 'pro-clean-quotation'); ?></strong> €<span id="preview-base-rate"><?php echo number_format($service_data['base_rate'], 2); ?></span></div>
+                            <div><strong><?php _e('Rate/sqm:', 'pro-clean-quotation'); ?></strong> €<span id="preview-rate-per-sqm"><?php echo number_format($service_data['rate_per_sqm'], 2); ?></span></div>
+                            <div><strong><?php _e('Rate/linear m:', 'pro-clean-quotation'); ?></strong> €<span id="preview-rate-linear"><?php echo number_format($service_data['rate_per_linear_meter'], 2); ?></span></div>
                             <div><strong><?php _e('Capacity:', 'pro-clean-quotation'); ?></strong> <span id="preview-capacity"><?php echo $service_data['capacity']; ?></span> people</div>
                         </div>
                     </div>
@@ -627,20 +685,24 @@ jQuery(document).ready(function($) {
     }
     
     // Update preview when fields change
-    $('#name, #duration, #price, #capacity, #color').on('input change', function() {
+    $('#name, #duration, #base_rate, #rate_per_sqm, #rate_per_linear_meter, #capacity, #color').on('input change', function() {
         updatePreview();
     });
     
     function updatePreview() {
         var name = $('#name').val() || 'Service Name';
         var duration = $('#duration').val() || '60';
-        var price = parseFloat($('#price').val()) || 0;
+        var baseRate = parseFloat($('#base_rate').val()) || 0;
+        var ratePerSqm = parseFloat($('#rate_per_sqm').val()) || 0;
+        var ratePerLinear = parseFloat($('#rate_per_linear_meter').val()) || 0;
         var capacity = $('#capacity').val() || '1';
         var color = $('#color').val() || '#2196F3';
         
         $('#preview-name').text(name);
         $('#preview-duration').text(duration);
-        $('#preview-price').text(price.toFixed(2));
+        $('#preview-base-rate').text(baseRate.toFixed(2));
+        $('#preview-rate-per-sqm').text(ratePerSqm.toFixed(2));
+        $('#preview-rate-linear').text(ratePerLinear.toFixed(2));
         $('#preview-capacity').text(capacity);
         $('#preview-badge').css('background-color', color);
     }

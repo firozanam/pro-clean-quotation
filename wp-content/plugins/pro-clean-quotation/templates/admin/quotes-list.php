@@ -90,7 +90,7 @@ if (!defined('ABSPATH')) {
                                 </div>
                             </td>
                             <td>
-                                <div class="pcq-service-type"><?php echo esc_html(ucfirst($quote->getServiceType())); ?></div>
+                                <div class="pcq-service-type"><?php echo esc_html($quote->getServiceName()); ?></div>
                                 <small><?php echo number_format($quote->getSquareMeters(), 1); ?> sqm</small>
                             </td>
                             <td>

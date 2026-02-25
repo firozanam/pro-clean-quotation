@@ -117,7 +117,7 @@ defined('ABSPATH') || exit;
                                                     <?php echo esc_html__('Service Type:', 'pro-clean-quotation'); ?>
                                                 </td>
                                                 <td style="padding: 6px 0; color: #2c3e50; font-size: 14px;">
-                                                    <?php echo esc_html(ucfirst(str_replace('_', ' ', $quote->getServiceType()))); ?>
+                                                    <?php echo esc_html($quote->getServiceName()); ?>
                                                 </td>
                                             </tr>
                                             <tr>

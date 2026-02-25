@@ -39,9 +39,12 @@ class SettingsPage {
                 <a href="#integration" class="pcq-nav-tab <?php echo $active_tab === 'integration' ? 'pcq-nav-tab-active' : ''; ?>">
                     <?php _e('Integration', 'pro-clean-quotation'); ?>
                 </a>
+                <a href="#update" class="pcq-nav-tab <?php echo $active_tab === 'update' ? 'pcq-nav-tab-active' : ''; ?>">
+                    <?php _e('Update', 'pro-clean-quotation'); ?>
+                </a>
             </nav>
             
-            <form method="post" action="" class="pcq-settings-form">
+            <form method="post" action="" class="pcq-settings-form" id="pcq-main-settings-form">
                 <?php wp_nonce_field('pcq_save_settings'); ?>
                 <input type="hidden" name="action" value="save">
                 
@@ -517,10 +520,119 @@ class SettingsPage {
                     </table>
                 </div>
                 
-                <p class="submit">
+                <p class="submit" id="pcq-main-submit" style="<?php echo $active_tab === 'update' ? 'display: none;' : ''; ?>">
                     <input type="submit" class="button-primary" value="<?php _e('Save Settings', 'pro-clean-quotation'); ?>">
                 </p>
             </form>
+            
+            <!-- Update Settings (outside main form due to multipart/form-data) -->
+            <div id="update" class="pcq-tab-content" style="display: <?php echo $active_tab === 'update' ? 'block' : 'none'; ?>; padding: 0 20px;">
+                <?php
+                // Initialize the plugin updater
+                $updater = PluginUpdater::getInstance();
+                $plugin_version = PCQ_VERSION;
+                
+                // Check for update success message
+                if (isset($_GET['updated']) && $_GET['updated'] == '1') {
+                    echo '<div class="notice notice-success is-dismissible"><p>' .
+                         __('Plugin updated successfully!', 'pro-clean-quotation') .
+                         '</p></div>';
+                }
+                ?>
+                
+                <h2><?php _e('Manual Plugin Update', 'pro-clean-quotation'); ?></h2>
+                
+                <div class="pcq-update-info" style="background: #f8fafc; padding: 20px; margin: 20px 0; border: 1px solid #e2e8f0; border-radius: 8px; max-width: 800px;">
+                    <h3 style="margin-top: 0; color: #1e293b;"><?php _e('Current Installation', 'pro-clean-quotation'); ?></h3>
+                    <table class="form-table" role="presentation">
+                        <tr>
+                            <th scope="row" style="width: 180px; color: #64748b;"><?php _e('Plugin Version', 'pro-clean-quotation'); ?></th>
+                            <td><code style="background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-size: 14px;"><?php echo esc_html($plugin_version); ?></code></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="color: #64748b;"><?php _e('Plugin Directory', 'pro-clean-quotation'); ?></th>
+                            <td><code style="background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;"><?php echo esc_html(PCQ_PLUGIN_DIR); ?></code></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="pcq-upload-form" style="background: #fff; padding: 20px; margin: 20px 0; border: 1px solid #e2e8f0; border-radius: 8px; max-width: 800px;">
+                    <h3 style="margin-top: 0; color: #1e293b;"><?php _e('Upload Plugin Package', 'pro-clean-quotation'); ?></h3>
+                    <p class="description" style="color: #64748b; margin-bottom: 20px;">
+                        <?php _e('Upload a ZIP file containing the plugin package to update or reinstall the plugin. The ZIP file must contain a "pro-clean-quotation" folder at the root level.', 'pro-clean-quotation'); ?>
+                    </p>
+                    
+                    <form method="post" enctype="multipart/form-data" id="pcq-update-form">
+                        <?php wp_nonce_field('pcq_plugin_update', 'pcq_plugin_update_nonce'); ?>
+                        
+                        <table class="form-table" role="presentation">
+                            <tr>
+                                <th scope="row" style="width: 180px;">
+                                    <label for="pcq_plugin_zip"><?php _e('Plugin ZIP File', 'pro-clean-quotation'); ?></label>
+                                </th>
+                                <td>
+                                    <input type="file"
+                                           name="pcq_plugin_zip"
+                                           id="pcq_plugin_zip"
+                                           accept=".zip,application/zip,application/x-zip-compressed"
+                                           required
+                                           class="regular-text"
+                                           style="padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                                    <p class="description" style="color: #64748b; margin-top: 8px;">
+                                        <?php _e('Maximum file size: 50MB. Accepted format: ZIP', 'pro-clean-quotation'); ?>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <p class="submit" style="margin-top: 20px;">
+                            <button type="submit"
+                                    name="pcq_plugin_upload"
+                                    value="1"
+                                    class="button button-primary"
+                                    onclick="return confirm('<?php echo esc_js(__('Are you sure you want to update the plugin? This will overwrite all existing plugin files.', 'pro-clean-quotation')); ?>');">
+                                <?php _e('Update Plugin', 'pro-clean-quotation'); ?>
+                            </button>
+                        </p>
+                    </form>
+                </div>
+                
+                <div class="pcq-update-warning" style="background: #fffbeb; padding: 20px; margin: 20px 0 40px 0; border: 1px solid #fbbf24; border-radius: 8px; max-width: 800px;">
+                    <h3 style="color: #92400e; margin-top: 0;">
+                        <span class="dashicons dashicons-warning" style="color: #f59e0b;"></span>
+                        <?php _e('Important Notes', 'pro-clean-quotation'); ?>
+                    </h3>
+                    <ul style="list-style-type: disc; margin-left: 20px; color: #78350f;">
+                        <li><?php _e('This will completely replace all plugin files in the current installation.', 'pro-clean-quotation'); ?></li>
+                        <li><?php _e('Your settings and database data will be preserved.', 'pro-clean-quotation'); ?></li>
+                        <li><?php _e('A backup of the current plugin will be created before updating.', 'pro-clean-quotation'); ?></li>
+                        <li><?php _e('The ZIP file must contain the "pro-clean-quotation" folder at its root.', 'pro-clean-quotation'); ?></li>
+                        <li><?php _e('After update, you may need to clear any caching (OPcache, etc.).', 'pro-clean-quotation'); ?></li>
+                    </ul>
+                </div>
+                
+                <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                    $('#pcq-update-form').on('submit', function() {
+                        var fileInput = $('#pcq_plugin_zip')[0];
+                        if (fileInput.files.length > 0) {
+                            var file = fileInput.files[0];
+                            var maxSize = 50 * 1024 * 1024; // 50MB
+                            
+                            if (file.size > maxSize) {
+                                alert('<?php echo esc_js(__('File size exceeds the maximum limit of 50MB.', 'pro-clean-quotation')); ?>');
+                                return false;
+                            }
+                            
+                            if (!file.name.endsWith('.zip')) {
+                                alert('<?php echo esc_js(__('Please select a ZIP file.', 'pro-clean-quotation')); ?>');
+                                return false;
+                            }
+                        }
+                    });
+                });
+                </script>
+            </div>
         </div>
         <?php
     }

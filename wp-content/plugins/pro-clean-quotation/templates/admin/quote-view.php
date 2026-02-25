@@ -133,21 +133,30 @@ $price_breakdown = json_decode($quote_data['price_breakdown'] ?? '{}', true);
                         <label><?php _e('Service Type:', 'pro-clean-quotation'); ?></label>
                         <div class="pcq-detail-value">
                             <span class="pcq-service-badge pcq-service-<?php echo esc_attr($quote->getServiceType()); ?>">
-                                <?php 
-                                // Support both old and new service type formats
-                                $service_type = $quote->getServiceType();
-                                $service_labels = [
-                                    // New format (from quote form)
-                                    'facade' => __('Façade Cleaning', 'pro-clean-quotation'),
-                                    'roof' => __('Roof Cleaning', 'pro-clean-quotation'),
-                                    'both' => __('Both Services', 'pro-clean-quotation'),
-                                    // Legacy format (backward compatibility)
-                                    'facade_cleaning' => __('Façade Cleaning', 'pro-clean-quotation'),
-                                    'roof_cleaning' => __('Roof Cleaning', 'pro-clean-quotation'),
-                                    'complete_package' => __('Complete Package', 'pro-clean-quotation'),
-                                    'window_cleaning' => __('Window Cleaning', 'pro-clean-quotation')
-                                ];
-                                echo $service_labels[$service_type] ?? ucfirst(str_replace('_', ' ', $service_type));
+                                <?php
+                                // Try to get service name from ID first
+                                $service_name = $quote->getServiceName();
+                                
+                                // If service name is numeric (meaning it's a legacy string value), apply labels
+                                if (is_numeric($quote->getServiceType()) || $service_name !== $quote->getServiceType()) {
+                                    // Service ID was resolved to name
+                                    echo esc_html($service_name);
+                                } else {
+                                    // Legacy format - apply label mapping
+                                    $service_type = $quote->getServiceType();
+                                    $service_labels = [
+                                        // New format (from quote form)
+                                        'facade' => __('Façade Cleaning', 'pro-clean-quotation'),
+                                        'roof' => __('Roof Cleaning', 'pro-clean-quotation'),
+                                        'both' => __('Both Services', 'pro-clean-quotation'),
+                                        // Legacy format (backward compatibility)
+                                        'facade_cleaning' => __('Façade Cleaning', 'pro-clean-quotation'),
+                                        'roof_cleaning' => __('Roof Cleaning', 'pro-clean-quotation'),
+                                        'complete_package' => __('Complete Package', 'pro-clean-quotation'),
+                                        'window_cleaning' => __('Window Cleaning', 'pro-clean-quotation')
+                                    ];
+                                    echo esc_html($service_labels[$service_type] ?? ucfirst(str_replace('_', ' ', $service_type)));
+                                }
                                 ?>
                             </span>
                         </div>

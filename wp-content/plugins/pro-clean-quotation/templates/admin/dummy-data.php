@@ -132,17 +132,41 @@ $total_records = array_sum($counts);
                         <?php _e('This action cannot be undone. All data will be permanently deleted.', 'pro-clean-quotation'); ?>
                     </div>
                     
-                    <?php if ($total_records > 0): ?>
-                        <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=pcq-dummy-data&action=clear'), 'clear_dummy_data'); ?>" 
-                           class="button button-large pcq-danger-btn"
-                           onclick="return confirm('<?php _e('Are you sure you want to delete ALL data? This cannot be undone!', 'pro-clean-quotation'); ?>')">
-                            <?php _e('Clear All Data', 'pro-clean-quotation'); ?>
-                        </a>
-                    <?php else: ?>
-                        <button class="button button-large" disabled>
-                            <?php _e('No Data to Clear', 'pro-clean-quotation'); ?>
-                        </button>
-                    <?php endif; ?>
+                    <?php 
+                    // Calculate non-service records
+                    $non_service_records = $counts['quotes'] + $counts['appointments'] + $counts['bookings'] + 
+                                          $counts['employees'] + $counts['email_logs'] + $counts['settings'];
+                    ?>
+                    
+                    <div class="pcq-button-group">
+                        <?php if ($total_records > 0): ?>
+                            <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=pcq-dummy-data&action=clear'), 'clear_dummy_data'); ?>" 
+                               class="button button-large pcq-danger-btn"
+                               onclick="return confirm('<?php _e('Are you sure you want to delete ALL data? This cannot be undone!', 'pro-clean-quotation'); ?>')">
+                                <?php _e('Clear All Data', 'pro-clean-quotation'); ?>
+                            </a>
+                        <?php else: ?>
+                            <button class="button button-large" disabled>
+                                <?php _e('No Data to Clear', 'pro-clean-quotation'); ?>
+                            </button>
+                        <?php endif; ?>
+                        
+                        <?php if ($non_service_records > 0): ?>
+                            <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=pcq-dummy-data&action=clear_except_services'), 'clear_except_services'); ?>" 
+                               class="button button-large pcq-warning-btn"
+                               onclick="return confirm('<?php _e('This will delete all quotes, appointments, bookings, employees, and logs. Services will be preserved. Continue?', 'pro-clean-quotation'); ?>')">
+                                <?php _e('Clear (Keep Services)', 'pro-clean-quotation'); ?>
+                            </a>
+                        <?php else: ?>
+                            <button class="button button-large" disabled title="<?php _e('No data to clear (only services exist)', 'pro-clean-quotation'); ?>">
+                                <?php _e('Clear (Keep Services)', 'pro-clean-quotation'); ?>
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <p class="pcq-hint-text">
+                        <?php _e('💡 "Clear (Keep Services)" preserves your services and service categories while removing all other data.', 'pro-clean-quotation'); ?>
+                    </p>
                 </div>
             </div>
         </div>
@@ -340,6 +364,48 @@ $total_records = array_sum($counts);
 .pcq-danger-btn:hover {
     background-color: #d32f2f !important;
     border-color: #d32f2f !important;
+}
+
+.pcq-warning-card {
+    border-color: #ff9800;
+    background: #fff8f0;
+}
+
+.pcq-warning-btn {
+    background-color: #ff9800 !important;
+    color: #fff !important;
+    border-color: #ff9800 !important;
+}
+
+.pcq-warning-btn:hover {
+    background-color: #f57c00 !important;
+    border-color: #f57c00 !important;
+}
+
+.pcq-button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.pcq-hint-text {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.pcq-info-box {
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 15px 0;
+    font-size: 13px;
+    color: #1565c0;
 }
 
 .pcq-data-details {

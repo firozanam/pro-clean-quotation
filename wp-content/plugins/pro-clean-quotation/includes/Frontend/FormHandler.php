@@ -157,8 +157,9 @@ class FormHandler {
                 ]
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PCQ Form submission error: ' . $e->getMessage());
+            error_log('PCQ: Stack trace: ' . $e->getTraceAsString());
             
             return [
                 'success' => false,
@@ -364,7 +365,7 @@ class FormHandler {
             'last_cleaning_date' => !empty($form_data['last_cleaning_date']) ? sanitize_text_field($form_data['last_cleaning_date']) : null,
             'special_requirements' => sanitize_textarea_field($form_data['special_requirements'] ?? ''),
             'custom_field_data' => !empty($custom_field_data) ? json_encode($custom_field_data) : null,
-            'base_price' => $calculation_data['base_price'],
+            'base_price' => $calculation_data['base_rate'], // Use base_rate from calculator
             'adjustments' => $calculation_data['adjustments'],
             'subtotal' => $calculation_data['subtotal'],
             'tax_amount' => $calculation_data['tax_amount'],

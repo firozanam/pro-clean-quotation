@@ -65,7 +65,7 @@ $title = isset($atts['title']) ? $atts['title'] : __('Book Your Service', 'pro-c
                 </tr>
                 <tr style="border-bottom: 1px solid #dee2e6;">
                     <td style="padding: 12px 8px; color: #666;"><?php _e('Service:', 'pro-clean-quotation'); ?></td>
-                    <td style="padding: 12px 8px; text-align: right;"><?php echo esc_html(ucfirst($quote->getServiceType())); ?></td>
+                    <td style="padding: 12px 8px; text-align: right;"><?php echo esc_html($quote->getServiceName()); ?></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #dee2e6;">
                     <td style="padding: 12px 8px; color: #666;"><?php _e('Property Size:', 'pro-clean-quotation'); ?></td>

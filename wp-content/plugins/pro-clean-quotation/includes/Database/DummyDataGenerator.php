@@ -842,4 +842,34 @@ class DummyDataGenerator {
         
         echo "Cleared all dummy data\n";
     }
+    
+    /**
+     * Clear all data except services and service categories
+     * Preserves service configuration while removing transactional data
+     */
+    public static function clearAllExceptServices(): void {
+        global $wpdb;
+        
+        // Tables to clear (excluding services and service categories)
+        $tables_to_clear = [
+            'pq_employee_services',
+            'pq_appointments', 
+            'pq_email_logs',
+            'pq_bookings',
+            'pq_employees',
+            'pq_quotes',
+            'pq_settings'
+        ];
+        
+        foreach ($tables_to_clear as $table) {
+            $full_table = $wpdb->prefix . $table;
+            $wpdb->query("DELETE FROM $full_table");
+            $wpdb->query("ALTER TABLE $full_table AUTO_INCREMENT = 1");
+        }
+        
+        // Note: pq_services and pq_service_categories are preserved
+        // pq_service_meta is also cleared as it depends on specific service instances
+        
+        echo "Cleared all data except services and service categories\n";
+    }
 }

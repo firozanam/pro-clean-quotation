@@ -43,7 +43,9 @@ if (!defined('ABSPATH')) {
                         <th><?php _e('ID', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Service Name', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Duration', 'pro-clean-quotation'); ?></th>
-                        <th><?php _e('Price', 'pro-clean-quotation'); ?></th>
+                        <th><?php _e('Call-out Fee', 'pro-clean-quotation'); ?></th>
+                        <th><?php _e('Rate/sqm', 'pro-clean-quotation'); ?></th>
+                        <th><?php _e('Rate/linear m', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Capacity', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Buffer Time', 'pro-clean-quotation'); ?></th>
                         <th><?php _e('Status', 'pro-clean-quotation'); ?></th>
@@ -62,7 +64,13 @@ if (!defined('ABSPATH')) {
                                 <?php echo $service->getDuration(); ?> <?php _e('min', 'pro-clean-quotation'); ?>
                             </td>
                             <td>
-                                <strong>€<?php echo number_format($service->getPrice(), 2); ?></strong>
+                                €<?php echo number_format($service->getBaseRate(), 2); ?>
+                            </td>
+                            <td>
+                                €<?php echo number_format($service->getRatePerSqm(), 2); ?>/m²
+                            </td>
+                            <td>
+                                €<?php echo number_format($service->getRatePerLinearMeter(), 2); ?>/m
                             </td>
                             <td>
                                 <?php echo $service->getCapacity(); ?> 

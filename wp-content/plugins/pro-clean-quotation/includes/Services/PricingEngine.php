@@ -239,24 +239,52 @@ class PricingEngine {
     }
     
     /**
-     * Calculate comprehensive pricing
-     * 
+     * Calculate comprehensive pricing with new formula
+     *
+     * Formula:
+     *   Subtotal = base_rate + (area_sqm × rate_per_sqm)
+     *   VAT Amount = Subtotal × vat_rate
+     *   Total Estimate = Subtotal + VAT Amount
+     *
      * @param array $params Pricing parameters
      * @return array Detailed pricing breakdown
      */
     public function calculateComprehensivePricing(array $params): array {
         $base_pricing = Settings::getPricingSettings();
         
-        // Base calculation
-        $base_price = $this->calculateBasePrice($params['service_type'], $base_pricing);
-        $size_cost = $this->calculateSizeCost($params, $base_pricing);
-        $complexity_adjustments = $this->calculateComplexityAdjustments($params, $base_pricing);
+        // Get service-specific pricing or fall back to global settings
+        $service_pricing = $this->getServicePricing($params['service_type'] ?? null, $base_pricing);
         
-        $subtotal = $base_price + $size_cost + $complexity_adjustments;
+        // Extract pricing values
+        $base_rate = $service_pricing['base_rate'];        // Fixed call-out fee
+        $rate_per_sqm = $service_pricing['rate_per_sqm'];  // Price per square meter
+        $area_sqm = max(0, floatval($params['square_meters'] ?? 0));  // Area input
+        
+        // Validate minimum area
+        if ($area_sqm <= 0) {
+            return [
+                'error' => true,
+                'message' => __('Area must be greater than 0', 'pro-clean-quotation'),
+                'base_calculation' => null,
+                'tax_amount' => 0,
+                'final_total' => 0
+            ];
+        }
+        
+        // === NEW PRICING FORMULA ===
+        // 1. Calculate the variable size cost
+        $size_cost = $area_sqm * $rate_per_sqm;
+        
+        // 2. Calculate Subtotal (base_rate + size_cost)
+        $subtotal = $base_rate + $size_cost;
         
         // Apply custom field price modifiers
         $custom_field_adjustments = $this->applyCustomFieldModifiers($params);
         $subtotal += $custom_field_adjustments;
+        
+        // Apply complexity adjustments (property type, material, height)
+        $complexity_adjustments = $this->calculateComplexityAdjustments($params, $base_pricing);
+        $subtotal += $complexity_adjustments;
         
         // Apply minimum charge
         $subtotal = max($subtotal, $base_pricing['minimum_quote_value']);
@@ -298,26 +326,138 @@ class PricingEngine {
             }
         }
         
-        // Calculate tax
+        // 3. Calculate VAT (tax)
+        $tax_rate = $base_pricing['tax_rate'] ?? 21;  // Default 21%
         $tax_amount = $this->calculateTax($adjusted_subtotal, $base_pricing);
+        
+        // 4. Calculate Total
         $total = $adjusted_subtotal + $tax_amount;
+        
+        // Build breakdown for display
+        $breakdown = [
+            [
+                'label' => sprintf(__('Service/Call-out Fee', 'pro-clean-quotation')),
+                'amount' => round($base_rate, 2)
+            ],
+            [
+                'label' => sprintf(__('Cleaning Service (%d sqm @ €%s/sqm)', 'pro-clean-quotation'),
+                    $area_sqm, number_format($rate_per_sqm, 2)),
+                'amount' => round($size_cost, 2)
+            ]
+        ];
+        
+        // Add custom field adjustments to breakdown
+        if ($custom_field_adjustments != 0) {
+            $breakdown[] = [
+                'label' => __('Custom Options', 'pro-clean-quotation'),
+                'amount' => round($custom_field_adjustments, 2)
+            ];
+        }
+        
+        // Add complexity adjustments to breakdown
+        if ($complexity_adjustments != 0) {
+            $breakdown[] = [
+                'label' => __('Complexity Adjustments', 'pro-clean-quotation'),
+                'amount' => round($complexity_adjustments, 2)
+            ];
+        }
+        
+        // Add subtotal
+        $breakdown[] = [
+            'label' => __('Subtotal', 'pro-clean-quotation'),
+            'amount' => round($subtotal, 2)
+        ];
+        
+        // Add dynamic adjustments
+        foreach ($adjustments_breakdown as $type => $adj) {
+            $breakdown[] = [
+                'label' => $adj['label'],
+                'amount' => round($adj['adjustment'], 2)
+            ];
+        }
+        
+        // Add promo discount
+        if ($promo_discount > 0) {
+            $breakdown[] = [
+                'label' => __('Promotional Discount', 'pro-clean-quotation'),
+                'amount' => -round($promo_discount, 2)
+            ];
+        }
+        
+        // Add VAT with dynamic percentage
+        if ($tax_amount > 0) {
+            $breakdown[] = [
+                'label' => sprintf(__('VAT (%d%%)', 'pro-clean-quotation'), $tax_rate),
+                'amount' => round($tax_amount, 2)
+            ];
+        }
+        
+        // Add total
+        $breakdown[] = [
+            'label' => __('Total Estimate', 'pro-clean-quotation'),
+            'amount' => round($total, 2)
+        ];
         
         return [
             'base_calculation' => [
-                'base_price' => $base_price,
-                'size_cost' => $size_cost,
-                'complexity_adjustments' => $complexity_adjustments,
-                'custom_field_adjustments' => $custom_field_adjustments,
-                'subtotal' => $subtotal
+                'base_rate' => round($base_rate, 2),
+                'rate_per_sqm' => round($rate_per_sqm, 2),
+                'area_sqm' => $area_sqm,
+                'size_cost' => round($size_cost, 2),
+                'complexity_adjustments' => round($complexity_adjustments, 2),
+                'custom_field_adjustments' => round($custom_field_adjustments, 2),
+                'subtotal' => round($subtotal, 2)
             ],
+            'breakdown' => $breakdown,
             'dynamic_adjustments' => $adjustments_breakdown,
-            'promotional_discount' => $promo_discount,
+            'promotional_discount' => round($promo_discount, 2),
             'promo_result' => $promo_result,
-            'tax_amount' => $tax_amount,
-            'final_total' => $total,
-            'savings' => max(0, $subtotal - $adjusted_subtotal + $promo_discount),
+            'tax_rate' => $tax_rate,
+            'tax_amount' => round($tax_amount, 2),
+            'adjusted_subtotal' => round($adjusted_subtotal, 2),
+            'final_total' => round($total, 2),
+            'total' => round($total, 2),
+            'total_price' => round($total, 2),
+            'savings' => round(max(0, $subtotal - $adjusted_subtotal + $promo_discount), 2),
             'multipliers_applied' => array_keys(array_filter($multipliers, fn($m) => $m != 1.0))
         ];
+    }
+    
+    /**
+     * Get service-specific pricing values
+     *
+     * @param int|null $service_id Service ID
+     * @param array $base_pricing Base pricing settings
+     * @return array Pricing values (base_rate, rate_per_sqm)
+     */
+    private function getServicePricing($service_id, array $base_pricing): array {
+        // Default values from settings
+        $default = [
+            'base_rate' => 20.00,
+            'rate_per_sqm' => 20.00
+        ];
+        
+        if (empty($service_id)) {
+            return $default;
+        }
+        
+        // Try to load service-specific pricing
+        global $wpdb;
+        $services_table = $wpdb->prefix . 'pq_services';
+        
+        $service = $wpdb->get_row($wpdb->prepare(
+            "SELECT base_rate, rate_per_sqm FROM $services_table WHERE id = %d",
+            $service_id
+        ), ARRAY_A);
+        
+        if ($service) {
+            return [
+                'base_rate' => floatval($service['base_rate'] ?? $default['base_rate']),
+                'rate_per_sqm' => floatval($service['rate_per_sqm'] ?? $default['rate_per_sqm'])
+            ];
+        }
+        
+        return $default;
     }
 
     /**
@@ -506,6 +646,21 @@ class PricingEngine {
         $linear_meters = $params['linear_meters'] ?? 0;
         $service_type = $params['service_type'];
         
+        // Try to get service-specific rates if service_type is a numeric ID
+        if (is_numeric($service_type)) {
+            $service = new \ProClean\Quotation\Models\Service(intval($service_type));
+            if ($service->getId()) {
+                $sqm_rate = $service->getRatePerSqm();
+                $linear_rate = $service->getRatePerLinearMeter();
+                
+                $sqm_cost = $square_meters * $sqm_rate;
+                $linear_cost = $linear_meters * $linear_rate;
+                
+                return $sqm_cost + $linear_cost;
+            }
+        }
+        
+        // Fallback to global pricing settings for legacy string-based service types
         $sqm_cost = 0;
         $linear_cost = 0;
         

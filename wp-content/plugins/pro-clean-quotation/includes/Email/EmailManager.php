@@ -49,11 +49,19 @@ class EmailManager {
     
     /**
      * Get service type label
-     * 
-     * @param string $service_type Service type code
+     *
+     * @param string $service_type Service type code or ID
      * @return string Formatted service type label
      */
     private function getServiceTypeLabel(string $service_type): string {
+        // If it's a numeric ID, look up the service name
+        if (is_numeric($service_type)) {
+            $service = new \ProClean\Quotation\Models\Service((int) $service_type);
+            if ($service->getId()) {
+                return $service->getName();
+            }
+        }
+        
         $labels = [
             // New format (from quote form)
             'facade' => __('Façade Cleaning', 'pro-clean-quotation'),

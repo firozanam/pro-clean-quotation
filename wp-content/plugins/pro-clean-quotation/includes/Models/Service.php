@@ -64,7 +64,7 @@ class Service {
     
     /**
      * Save service to database
-     * 
+     *
      * @return bool Success status
      */
     public function save(): bool {
@@ -74,13 +74,16 @@ class Service {
         
         if ($this->id) {
             // Update existing service
-            $this->data['updated_at'] = current_time('mysql');
+            // Remove 'id' from data array - it should only be in WHERE clause
+            $data = $this->data;
+            unset($data['id']);
+            $data['updated_at'] = current_time('mysql');
             
             $result = $wpdb->update(
                 $table,
-                $this->data,
+                $data,
                 ['id' => $this->id],
-                $this->getFieldFormats(),
+                $this->getFormatsForData($data),
                 ['%d']
             );
             
@@ -92,7 +95,7 @@ class Service {
             $result = $wpdb->insert(
                 $table,
                 $this->data,
-                $this->getFieldFormats()
+                $this->getFormatsForData($this->data)
             );
             
             if ($result) {
@@ -148,8 +151,8 @@ class Service {
     
     /**
      * Get field formats for database operations
-     * 
-     * @return array Field formats
+     *
+     * @return array Field formats (keyed by field name)
      */
     private function getFieldFormats(): array {
         return [
@@ -157,6 +160,9 @@ class Service {
             'description' => '%s',
             'duration' => '%d',
             'price' => '%f',
+            'base_rate' => '%f',
+            'rate_per_sqm' => '%f',
+            'rate_per_linear_meter' => '%f',
             'capacity' => '%d',
             'buffer_time_before' => '%d',
             'buffer_time_after' => '%d',
@@ -169,6 +175,31 @@ class Service {
             'created_at' => '%s',
             'updated_at' => '%s'
         ];
+    }
+    
+    /**
+     * Get formats array in the same order as $this->data keys
+     * This is critical for $wpdb->update() which expects formats in data order
+     *
+     * @return array Indexed array of formats matching $this->data order
+     */
+    /**
+     * Get formats array in the same order as data keys
+     * This is critical for $wpdb->update() which expects formats in data order
+     *
+     * @param array $data The data array to get formats for
+     * @return array Indexed array of formats matching data order
+     */
+    private function getFormatsForData(array $data): array {
+        $field_formats = $this->getFieldFormats();
+        $formats = [];
+        
+        foreach (array_keys($data) as $key) {
+            // Use the defined format if available, otherwise default to '%s'
+            $formats[] = $field_formats[$key] ?? '%s';
+        }
+        
+        return $formats;
     }
     
     // Getter methods
@@ -190,6 +221,18 @@ class Service {
     
     public function getPrice(): float {
         return (float) ($this->data['price'] ?? 0);
+    }
+    
+    public function getBaseRate(): float {
+        return (float) ($this->data['base_rate'] ?? 20.00);
+    }
+    
+    public function getRatePerSqm(): float {
+        return (float) ($this->data['rate_per_sqm'] ?? 20.00);
+    }
+    
+    public function getRatePerLinearMeter(): float {
+        return (float) ($this->data['rate_per_linear_meter'] ?? 5.00);
     }
     
     public function getCapacity(): int {
@@ -251,6 +294,18 @@ class Service {
     
     public function setPrice(float $price): void {
         $this->data['price'] = $price;
+    }
+    
+    public function setBaseRate(float $base_rate): void {
+        $this->data['base_rate'] = $base_rate;
+    }
+    
+    public function setRatePerSqm(float $rate_per_sqm): void {
+        $this->data['rate_per_sqm'] = $rate_per_sqm;
+    }
+    
+    public function setRatePerLinearMeter(float $rate_per_linear_meter): void {
+        $this->data['rate_per_linear_meter'] = $rate_per_linear_meter;
     }
     
     public function setCapacity(int $capacity): void {

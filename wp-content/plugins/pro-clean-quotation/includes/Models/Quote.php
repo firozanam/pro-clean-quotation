@@ -74,13 +74,16 @@ class Quote {
         
         if ($this->id) {
             // Update existing quote
-            $this->data['updated_at'] = current_time('mysql');
+            // Remove 'id' from data array - it should only be in WHERE clause
+            $data = $this->data;
+            unset($data['id']);
+            $data['updated_at'] = current_time('mysql');
             
             $result = $wpdb->update(
                 $table,
-                $this->data,
+                $data,
                 ['id' => $this->id],
-                $this->getFieldFormats(),
+                $this->getFormatsForData($data),
                 ['%d']
             );
             
@@ -92,7 +95,7 @@ class Quote {
             $result = $wpdb->insert(
                 $table,
                 $this->data,
-                $this->getFieldFormats()
+                $this->getFormatsForData($this->data)
             );
             
             if ($result) {
@@ -267,8 +270,8 @@ class Quote {
     
     /**
      * Get field formats for database operations
-     * 
-     * @return array Field formats
+     *
+     * @return array Field formats (keyed by field name)
      */
     private function getFieldFormats(): array {
         return [
@@ -287,6 +290,7 @@ class Quote {
             'roof_type' => '%s',
             'last_cleaning_date' => '%s',
             'special_requirements' => '%s',
+            'custom_field_data' => '%s',
             'base_price' => '%f',
             'adjustments' => '%f',
             'subtotal' => '%f',
@@ -302,6 +306,25 @@ class Quote {
             'created_at' => '%s',
             'updated_at' => '%s'
         ];
+    }
+    
+    /**
+     * Get formats array in the same order as data keys
+     * This is critical for $wpdb->update() which expects formats in data order
+     *
+     * @param array $data The data array to get formats for
+     * @return array Indexed array of formats matching data order
+     */
+    private function getFormatsForData(array $data): array {
+        $field_formats = $this->getFieldFormats();
+        $formats = [];
+        
+        foreach (array_keys($data) as $key) {
+            // Use the defined format if available, otherwise default to '%s'
+            $formats[] = $field_formats[$key] ?? '%s';
+        }
+        
+        return $formats;
     }
     
     // Getter methods
@@ -335,6 +358,26 @@ class Quote {
     
     public function getServiceType(): string {
         return $this->data['service_type'] ?? '';
+    }
+    
+    /**
+     * Get service name from service ID
+     *
+     * @return string Service name or the raw value if not found
+     */
+    public function getServiceName(): string {
+        $service_type = $this->data['service_type'] ?? '';
+        
+        // If it's a numeric ID, look up the service name
+        if (is_numeric($service_type)) {
+            $service = new Service((int) $service_type);
+            if ($service->getId()) {
+                return $service->getName();
+            }
+        }
+        
+        // Return the raw value if not numeric or service not found
+        return $service_type;
     }
     
     public function getSquareMeters(): float {

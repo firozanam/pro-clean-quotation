@@ -1,1180 +1,1053 @@
 # Pro Clean Quotation System - User Manual
 
-**Version:** 1.0.0  
-**For:** Façade & Roof Cleaning Services  
-**Platform:** WordPress  
-**Last Updated:** December 2025
+**Version 1.3.0**  
+**Last Updated: February 2026**
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
-1. [Getting Started](#getting-started)
-2. [Dashboard Overview](#dashboard-overview)
-3. [Managing Quotes](#managing-quotes)
-4. [Managing Bookings & Appointments](#managing-bookings--appointments)
-5. [Calendar Management](#calendar-management)
-6. [Services & Pricing](#services--pricing)
-7. [Employee Management](#employee-management)
-8. [Settings Configuration](#settings-configuration)
-9. [Email System](#email-system)
-10. [Adding Forms to Your Website](#adding-forms-to-your-website)
-11. [Frequently Asked Questions](#frequently-asked-questions)
-12. [Troubleshooting](#troubleshooting)
-
----
-
-## 🚀 Getting Started
-
-### What This Plugin Does
-
-The Pro Clean Quotation System automates your entire quote-to-booking process:
-
-✅ **Customers can:**
-- Get instant price quotes based on property size
-- Receive quotes via email with PDF attachments
-- Book appointments directly online
-- Receive automated reminders 24 hours before service
-
-✅ **You can:**
-- Manage all quotes and bookings from one dashboard
-- Set your own pricing rules (no coding required)
-- Track customer history and interactions
-- Monitor email delivery
-- Integrate with external systems via webhooks
-
-### First-Time Setup (5 Minutes)
-
-1. **Go to WordPress Admin** → **Quotations** → **Settings**
-2. **Fill in Company Information:**
-   - Company Name
-   - Email Address
-   - Phone Number
-   - Service Area (postal codes)
-3. **Set Your Pricing** (see [Pricing Configuration](#pricing-configuration))
-4. **Configure Email Settings** (see [Email Configuration](#email-configuration))
-5. **Add Forms to Your Website** (see [Adding Forms](#adding-forms-to-your-website))
+1. [Introduction](#1-introduction)
+   - 1.1 [Overview](#11-overview)
+   - 1.2 [Core Features](#12-core-features)
+   - 1.3 [System Requirements](#13-system-requirements)
+2. [Installation & Activation](#2-installation--activation)
+   - 2.1 [Before You Begin](#21-before-you-begin)
+   - 2.2 [Installation Methods](#22-installation-methods)
+   - 2.3 [Activation](#23-activation)
+   - 2.4 [Post-Installation Setup](#24-post-installation-setup)
+3. [Initial Configuration](#3-initial-configuration)
+   - 3.1 [Accessing Settings](#31-accessing-settings)
+   - 3.2 [General Settings](#32-general-settings)
+   - 3.3 [Pricing Settings](#33-pricing-settings)
+   - 3.4 [Email Settings](#34-email-settings)
+   - 3.5 [SMTP Configuration](#35-smtp-configuration)
+   - 3.6 [Form Settings](#36-form-settings)
+   - 3.7 [Integration Settings](#37-integration-settings)
+4. [Usage & Functionality](#4-usage--functionality)
+   - 4.1 [Dashboard Overview](#41-dashboard-overview)
+   - 4.2 [Managing Services](#42-managing-services)
+   - 4.3 [Managing Employees](#43-managing-employees)
+   - 4.4 [Managing Quotes](#44-managing-quotes)
+   - 4.5 [Managing Bookings](#45-managing-bookings)
+   - 4.6 [Managing Appointments](#46-managing-appointments)
+   - 4.7 [Calendar View](#47-calendar-view)
+   - 4.8 [Customer Management](#48-customer-management)
+   - 4.9 [Email Logs](#49-email-logs)
+   - 4.10 [Using Shortcodes](#410-using-shortcodes)
+5. [How It Works](#5-how-it-works)
+   - 5.1 [Quote Flow Process](#51-quote-flow-process)
+   - 5.2 [Pricing Calculation Engine](#52-pricing-calculation-engine)
+   - 5.3 [Booking System](#53-booking-system)
+   - 5.4 [Email Notification System](#54-email-notification-system)
+   - 5.5 [PDF Generation](#55-pdf-generation)
+   - 5.6 [Data Storage Architecture](#56-data-storage-architecture)
+6. [Troubleshooting](#6-troubleshooting)
+7. [Support](#7-support)
 
 ---
 
-## 📊 Dashboard Overview
+## 1. Introduction
 
-**Location:** Quotations → Dashboard
+### 1.1 Overview
 
-The dashboard gives you a quick snapshot of your business:
+The **Pro Clean Quotation System** is a comprehensive WordPress plugin designed specifically for cleaning service businesses specializing in façade and roof cleaning. The plugin automates the entire quotation and booking process, from initial customer inquiry to scheduled service appointment.
 
-### Key Statistics
+This powerful system enables your customers to:
+- Request instant price quotes through an intuitive online form
+- Receive detailed PDF quotations via email
+- Book services directly from their quote
+- Select preferred appointment times
 
-- **Quotes Today:** Number of new quote requests received today
-- **Pending Quotes:** Quotes waiting for customer response (last 30 days)
-- **This Week Revenue:** Total estimated value of quotes this week
-- **Conversion Rate:** Percentage of quotes that became bookings (last 30 days)
+For business owners, the plugin provides:
+- Complete quote and booking management
+- Automated email notifications
+- Calendar-based appointment scheduling
+- Customer relationship management
+- Comprehensive reporting dashboard
 
-### Recent Quotes Table
+### 1.2 Core Features
 
-Displays the 5 most recent quote requests with:
-- Quote number
-- Customer name and email
-- Service type and property size
-- Total amount
-- Status (New, Viewed, Booked, Expired)
-- Date submitted
-- Quick actions (View button)
+| Feature | Description |
+|---------|-------------|
+| **Instant Quote Calculator** | Real-time price calculation based on property size, service type, and various factors |
+| **PDF Quote Generation** | Professional PDF quotations automatically generated and emailed to customers |
+| **Online Booking System** | Customers can book services directly from their quote confirmation |
+| **Calendar Management** | Visual calendar view of all appointments with drag-and-drop functionality |
+| **Email Automation** | Automated confirmation emails, reminders, and admin notifications |
+| **Service Management** | Define multiple cleaning services with custom pricing |
+| **Employee Management** | Assign employees to services and manage availability |
+| **Customer Database** | Centralized customer information and quote history |
+| **Multi-language Support** | Compatible with WPML and Polylang for international operations |
+| **Service Area Control** | Restrict services to specific postal codes or regions |
 
-### Quick Actions
+### 1.3 System Requirements
 
-Four shortcut cards to common tasks:
-- **Pricing Settings** → Update service rates
-- **Email Templates** → Customize email content
-- **Form Settings** → Configure form fields
-- **Integration** → Manage plugin connections
+**Minimum Requirements:**
+- WordPress version 6.4 or higher
+- PHP version 8.0 or higher
+- MySQL version 5.7 or higher
+- HTTPS connection (recommended)
 
-### System Status
+**Recommended Plugins (Optional):**
+- **MotoPress Appointment Lite** - Enhanced booking management and calendar integration
+- **WooCommerce** - Advanced payment processing for deposits and online payments
 
-Real-time health check showing:
-- Plugin version
-- WordPress version
-- PHP version
-- MotoPress Appointment status (for advanced booking)
-- WooCommerce status (for online payments)
-- Email notifications status
-
----
-
-## 📝 Managing Quotes
-
-**Location:** Quotations → Quotes
-
-### Understanding Quote Statuses
-
-| Status | Meaning | What to Do |
-|--------|---------|------------|
-| **New** | Just submitted, not yet viewed | Review and contact customer |
-| **Viewed** | You've opened the quote | Follow up if needed |
-| **Booked** | Customer scheduled service | Prepare for appointment |
-| **Expired** | Quote validity period passed | Contact customer to update |
-| **Declined** | Customer decided not to proceed | Archive or delete |
-
-### Viewing Quote Details
-
-1. Go to **Quotations** → **Quotes**
-2. Click **View** on any quote
-3. You'll see:
-   - Complete customer information
-   - Property details (size, type, materials)
-   - Service requirements
-   - **Price Breakdown:**
-     - Base Rate
-     - Size-based cost (per sqm/linear meter)
-     - Complexity adjustments
-     - Subtotal
-     - VAT/Tax
-     - **Total Amount**
-   - Quote validity period
-   - Email history (sent/opened)
-
-### Editing a Quote
-
-1. Click **Edit** on the quote
-2. You can modify:
-   - Customer contact information
-   - Property details
-   - Price adjustments (manual override)
-   - Quote status
-   - Validity date
-3. Click **Save** to update
-
-> **Note:** Editing a quote does NOT automatically resend the email. Use the "Resend Email" action if needed.
-
-### Converting Quote to Booking
-
-**Fastest way to create a booking from a quote:**
-
-1. Open the quote details
-2. Click **Convert to Booking** button
-3. You'll be redirected to the appointment form with customer details pre-filled
-4. Select date and time
-5. Click **Create Appointment**
-
-### Searching & Filtering Quotes
-
-**Search Options:**
-- By customer name or email
-- By status (dropdown filter)
-- By service type (Façade, Roof, Both)
-- By date range
-
-**Example:** To find all pending quotes from last week:
-1. Select "New" from Status filter
-2. Use date picker to select last week
-3. Click **Filter**
-
-### Deleting Quotes
-
-1. Click the **Delete** link (with trash icon)
-2. Confirm deletion
-3. Quote is permanently removed
-
-> **Warning:** Deletion is permanent. Consider changing status to "Declined" instead of deleting for record-keeping.
+**Browser Compatibility:**
+- Google Chrome (latest version)
+- Mozilla Firefox (latest version)
+- Safari (latest version)
+- Microsoft Edge (latest version)
 
 ---
 
-## 📅 Managing Bookings & Appointments
+## 2. Installation & Activation
 
-**Location:** Quotations → Appointments
+### 2.1 Before You Begin
 
-### Booking Statuses Explained
+Before installing the Pro Clean Quotation System, ensure you have:
 
-| Status | Meaning | Customer Notified? |
-|--------|---------|-------------------|
-| **Pending** | Awaiting confirmation | Yes (booking confirmation sent) |
-| **Confirmed** | Service scheduled | Yes |
-| **In Progress** | Team is on-site | No |
-| **Completed** | Job finished | Optional (completion email) |
-| **Cancelled** | Booking cancelled | Yes (if via system) |
+1. **Administrator access** to your WordPress dashboard
+2. **FTP or file manager access** (for manual installation)
+3. A **backup** of your WordPress site (recommended)
+4. Verified that your server meets the **minimum requirements**
 
-### Viewing Appointment Details
+### 2.2 Installation Methods
 
-1. Go to **Quotations** → **Appointments**
-2. Click **View** on any appointment
-3. Details shown:
-   - Customer information (name, email, phone)
-   - Service date and time window
-   - Service type and property details
-   - Total amount and payment status
-   - **Original quote reference** (if converted)
-   - Assigned employee (if set)
-   - Special notes/requirements
-   - Status history
+#### Method A: WordPress Admin Upload (Recommended)
 
-### Creating Manual Appointments
+1. Download the plugin ZIP file from your account
+2. Log in to your WordPress admin dashboard
+3. Navigate to **Plugins → Add New**
+4. Click the **Upload Plugin** button at the top of the page
+5. Click **Choose File** and select the downloaded ZIP file
+6. Click **Install Now**
+7. Wait for the installation to complete
 
-**Use this when customer books via phone or in-person:**
+#### Method B: FTP Upload
 
-1. Go to **Quotations** → **Appointments**
-2. Click **Add New Appointment**
-3. Fill in the form:
-   - **Customer Information** (name, email, phone)
-   - **Service Details** (type, date, time)
-   - **Property Information**
-   - **Pricing** (or link to existing quote)
-   - **Notes** (special requirements)
-4. Select **Assigned Employee** (optional)
-5. Click **Create Appointment**
+1. Extract the plugin ZIP file on your computer
+2. Connect to your web server via FTP
+3. Navigate to the `/wp-content/plugins/` directory
+4. Upload the extracted `pro-clean-quotation` folder
+5. Ensure all files have been transferred successfully
 
-### Editing Appointments
+### 2.3 Activation
 
-1. Click **Edit** on the appointment
-2. You can change:
-   - Date and time (checks availability)
-   - Assigned employee
-   - Status
-   - Notes
-   - Payment status
-3. Click **Save Changes**
+1. Go to **Plugins → Installed Plugins**
+2. Locate **"Pro Clean Quotation System"** in the list
+3. Click the **Activate** link
+4. Upon activation, the plugin will:
+   - Create necessary database tables
+   - Set up default configuration options
+   - Create required pages (booking page, confirmation page)
+   - Schedule automated maintenance tasks
 
-> **Important:** Rescheduling sends an automatic email to the customer with the new date/time.
+### 2.4 Post-Installation Setup
 
-### Cancelling Appointments
+After activation, you'll see a new menu item labeled **"Quotations"** in your WordPress admin sidebar. A notice may appear recommending optional plugins (MotoPress Appointment and WooCommerce) for enhanced functionality.
 
-1. Open the appointment
-2. Click **Cancel Appointment**
-3. Enter cancellation reason (optional)
-4. Confirm cancellation
-5. Customer receives automatic cancellation email
-
-**Cancellation Policy Notes:**
-- Free cancellation up to 48 hours before service
-- System enforces this policy automatically
-- Reason is logged for your records
-
-### Sending Manual Reminders
-
-1. Open the appointment details
-2. Click **Send Reminder** button
-3. Immediate reminder email sent to customer
-
-> **Note:** Automated 24-hour reminders are sent automatically. Use manual reminders only for special cases.
+**Immediate Next Steps:**
+1. Configure your company information in Settings
+2. Set up your service pricing
+3. Add your cleaning services
+4. Configure email notifications
+5. Create frontend pages with shortcodes
 
 ---
 
-## 🗓️ Calendar Management
+## 3. Initial Configuration
 
-**Location:** Quotations → Calendar
+### 3.1 Accessing Settings
 
-### Calendar Views
+1. From the WordPress admin dashboard, click **Quotations** in the sidebar
+2. Navigate to **Settings** from the submenu
+3. The settings page is organized into tabs:
+   - General
+   - Pricing
+   - Email
+   - SMTP
+   - Form
+   - Integration
+   - Update
 
-Switch between different views:
-- **Month View:** See all bookings for the month
-- **Week View:** Detailed weekly schedule
-- **Day View:** Hour-by-hour breakdown
+### 3.2 General Settings
 
-### Understanding Calendar Colors
+The General tab contains your company information and service area configuration.
 
-Bookings are color-coded by service type:
-- **Blue:** Façade cleaning
-- **Green:** Roof cleaning
-- **Purple:** Both services
-- **Red:** Cancelled bookings
-- **Gray:** Completed bookings
+#### Company Information
 
-### Managing Availability
+| Field | Description | Required |
+|-------|-------------|----------|
+| **Company Name** | Your business name as it appears on quotes and emails | Yes |
+| **Company Email** | Main contact email address | Yes |
+| **Company Phone** | Contact phone number for customer inquiries | No |
+| **Service Area** | Postal codes or ranges you service | No |
 
-**Setting Blocked Dates (Holidays/Maintenance):**
+#### Service Area Configuration
 
-1. Go to **Quotations** → **Settings** → **Integration** tab
-2. Scroll to **Availability Overrides**
-3. Add dates you're NOT available:
-   - Click **Add Blocked Date**
-   - Select date
-   - Enter reason (e.g., "Holiday", "Equipment maintenance")
-   - Click **Save**
+The Service Area field allows you to restrict quote requests to specific geographic regions:
 
-**Business Hours Configuration:**
+**Format Examples:**
+- **Specific code:** `28001` - Serves only this postal code
+- **Range:** `29600-29699` - Serves all codes in this range
+- **Wildcard:** `296**` - Serves codes 29600 through 29699
+- **Multiple areas:** `28***, 29***, 08***` - Serves multiple regions
 
-1. Go to **Quotations** → **Settings** → **General** tab
-2. Configure hours for each day:
-   - Monday-Friday: Default 8:00-18:00
-   - Saturday: Default 9:00-15:00
-   - Sunday: Default OFF
-3. Enable/disable days as needed
+**Important:** Leave the field empty to accept all valid Spanish postal codes (01001-52999).
 
-**Booking Capacity Limits:**
+### 3.3 Pricing Settings
 
-Control how many bookings per day:
-- Go to **Settings** → **General**
-- Set **Maximum Daily Bookings** (default: 3)
-- System automatically blocks new bookings when limit reached
+Configure your service pricing structure in the Pricing tab.
 
----
+#### Pricing Fields
 
-## 🛠️ Services & Pricing
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Façade Base Rate (€)** | Fixed starting price for façade cleaning | €150.00 |
+| **Façade Per SQM (€)** | Price per square meter for façade | €2.50 |
+| **Roof Base Rate (€)** | Fixed starting price for roof cleaning | €200.00 |
+| **Roof Per SQM (€)** | Price per square meter for roof | €3.00 |
+| **Minimum Quote Value (€)** | Lowest acceptable quote amount | €100.00 |
+| **VAT Rate (%)** | Tax percentage applied to quotes | 21% |
 
-### Managing Services
+#### Pricing Formula
 
-**Location:** Quotations → Services
+The final quote price is calculated using this formula:
 
-**Default Services:**
-- Façade Cleaning
-- Roof Cleaning
-- Both Services (combined)
-
-**Adding Custom Services:**
-
-1. Click **Add New Service**
-2. Fill in:
-   - **Service Name** (e.g., "Gutter Cleaning")
-   - **Description** (visible to customers)
-   - **Category** (optional grouping)
-   - **Duration** (minutes per service)
-   - **Base Price** (starting price)
-   - **Status** (Active/Inactive)
-3. Click **Create Service**
-
-**Editing Services:**
-
-1. Click **Edit** on the service
-2. Modify any fields
-3. Click **Update Service**
-
-> **Tip:** Set service to "Inactive" to hide it temporarily without deleting.
-
-### Service Categories
-
-**Location:** Quotations → Service Categories
-
-Organize services into categories for better organization:
-
-**Example Categories:**
-- Exterior Cleaning
-- Roof Services
-- Maintenance Packages
-- Emergency Services
-
-**Adding Category:**
-1. Click **Add New Category**
-2. Enter **Name** and **Description**
-3. Set **Display Order** (lower numbers appear first)
-4. Click **Save**
-
-### Pricing Configuration
-
-**Location:** Quotations → Settings → Pricing Tab
-
-#### Base Pricing
-
-Set starting prices for each service:
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| **Façade Base Rate** | €150 | Minimum charge for façade cleaning |
-| **Façade Per SQM** | €2.50 | Additional charge per square meter |
-| **Façade Per Linear Meter** | €5.00 | Charge per linear meter |
-| **Roof Base Rate** | €200 | Minimum charge for roof cleaning |
-| **Roof Per SQM** | €3.00 | Additional charge per square meter |
-| **Roof Per Linear Meter** | €6.00 | Charge per linear meter |
-
-**Example Calculation:**
 ```
-Customer requests façade cleaning:
-- Property: 150 sqm, 45 linear meters
-
-Base Rate:              €150.00
-Size (150 sqm × €2.50): €375.00
-Linear (45m × €5.00):   €225.00
-───────────────────────────────
-Subtotal:               €750.00
-VAT (21%):              €157.50
-───────────────────────────────
-TOTAL:                  €907.50
+Subtotal = Base Rate + (Square Meters × Rate per SQM) + (Linear Meters × Rate per Linear Meter) + Adjustments
+Total = Subtotal + (Subtotal × VAT Rate)
 ```
 
-#### Property Type Multipliers
+**Adjustments** may include:
+- Property type multipliers (commercial vs. residential)
+- Building height surcharges
+- Surface material complexity factors
+- Custom field modifiers
 
-Adjust pricing based on property type:
+### 3.4 Email Settings
 
-| Property Type | Multiplier | Effect |
-|---------------|-----------|--------|
-| **Residential** | 1.0× | Standard pricing |
-| **Commercial** | 1.2× | +20% surcharge |
-| **Industrial** | 1.5× | +50% surcharge |
+Configure email notification behavior in the Email tab.
 
-**Why?** Commercial/industrial properties typically require more equipment, safety measures, and time.
+#### Email Configuration Options
 
-#### Surface Material Multipliers
+| Setting | Description |
+|---------|-------------|
+| **Enable Email Notifications** | Master switch for all email notifications |
+| **From Name** | Sender name displayed in customer emails |
+| **From Email** | Sender email address |
+| **Admin Notification Email** | Email address receiving new quote/booking alerts |
+| **Quote Email Subject** | Customizable subject line for quote emails |
+| **Booking Email Subject** | Customizable subject line for booking confirmations |
 
-Different materials require different cleaning methods:
+#### Email Templates
 
-| Material | Multiplier | Effect |
-|----------|-----------|--------|
-| Brick | 1.0× | Standard |
-| Stone | 1.1× | +10% |
-| Glass | 1.3× | +30% (delicate) |
-| Metal | 1.2× | +20% |
-| Concrete | 1.0× | Standard |
-| Composite | 1.4× | +40% (special care) |
+The plugin uses customizable HTML email templates for:
+- Quote confirmation (sent to customer)
+- Admin notification (sent to administrator)
+- Booking confirmation (sent to customer)
+- Booking reminder (sent before appointment)
 
-#### Building Height Adjustment
+### 3.5 SMTP Configuration
 
-Taller buildings = more equipment + safety measures:
+For reliable email delivery, configure SMTP settings in the SMTP tab.
 
-- **Height Multiplier:** 5% per floor above ground level
-- **Example:** 3-story building = +10% (2 floors above ground × 5%)
+#### SMTP Settings
 
-#### Minimum Quote Value
+| Field | Description | Example |
+|-------|-------------|---------|
+| **SMTP Host** | Mail server hostname | `smtp.gmail.com` |
+| **SMTP Port** | Server port number | `587` |
+| **Encryption** | SSL or TLS encryption | `TLS` |
+| **Username** | SMTP authentication username | `your@email.com` |
+| **Password** | SMTP authentication password | `********` |
 
-Set the minimum amount you'll accept:
-- **Default:** €100
-- **Purpose:** Covers travel and setup costs
+**Testing SMTP:** Click the "Test SMTP" button to verify your configuration before saving.
 
-#### Tax/VAT Configuration
+### 3.6 Form Settings
 
-- **Tax Rate:** 21% (default for Netherlands)
-- **Tax Inclusive:** Enable if your prices include tax
+Customize the quote form behavior in the Form tab.
 
-> **Important:** After changing pricing, the system automatically clears the price cache.
+#### Available Options
 
-### Automatic Pricing Features
+| Setting | Description |
+|---------|-------------|
+| **Required Fields** | Define which fields customers must complete |
+| **Field Labels** | Customize field labels and help text |
+| **Validation Rules** | Set minimum/maximum values for measurements |
+| **Custom Fields** | Add additional form fields as needed |
+| **Maintenance Mode** | Temporarily disable the quote form with a custom message |
 
-The plugin includes smart pricing that adjusts automatically:
+### 3.7 Integration Settings
 
-#### 1. Seasonal Pricing
+Configure third-party plugin integrations in the Integration tab.
 
-**Automatically adjusts based on service date:**
+#### MotoPress Appointment Integration
 
-| Season | Months | Adjustment |
-|--------|--------|------------|
-| **Peak Season** | March-August | +10% |
-| **Normal Season** | September-November | Standard |
-| **Off-Season** | December-February | -10% discount |
+When MotoPress Appointment is installed and active:
+- Appointments sync automatically with MotoPress calendar
+- Employee availability respects MotoPress schedules
+- Service durations match MotoPress configuration
 
-**Why?** Encourages bookings during slower periods.
+#### WooCommerce Integration
 
-#### 2. Demand-Based Pricing
-
-**Adjusts based on booking volume:**
-
-| Capacity | Adjustment | Reason |
-|----------|------------|--------|
-| ≥80% booked | +20% | High demand |
-| ≥60% booked | +10% | Medium demand |
-| <60% booked | Standard | Normal demand |
-
-**Calculation:** Based on bookings for the requested service week vs. your maximum capacity.
-
-#### 3. Bulk Discounts
-
-**Automatic discounts for large properties:**
-
-| Property Size | Discount | Example Savings |
-|--------------|----------|-----------------|
-| 5000+ sqm | 20% | €1,000 quote → €800 |
-| 2000+ sqm | 15% | €1,000 quote → €850 |
-| 1000+ sqm | 10% | €1,000 quote → €900 |
-| 500+ sqm | 5% | €1,000 quote → €950 |
-
-**Why?** Larger jobs = more efficient use of time and equipment.
-
-#### 4. Repeat Customer Discounts
-
-**Loyalty rewards for returning customers:**
-
-| Completed Bookings | Discount | Recognition |
-|-------------------|----------|-------------|
-| 5+ bookings | 10% | VIP Customer |
-| 2-4 bookings | 5% | Returning Customer |
-| First booking | 0% | New Customer |
-
-**How It Works:** System automatically recognizes customers by email address.
-
-#### 5. Promotional Codes
-
-**Create custom discount codes:**
-
-1. Currently managed in code (planned admin UI in Phase 2)
-2. **Example codes:**
-   - `WELCOME10` → 10% off for orders €100+
-   - `SPRING25` → €25 off for orders €200+
-   - `BULK50` → 15% off large properties (max €50 discount)
-
-**Phase 2 Feature:** Full promotional code management UI coming soon.
+When WooCommerce is active:
+- Deposit payments can be collected online
+- Full payment processing available
+- Order history linked to quotes
 
 ---
 
-## 👥 Employee Management
+## 4. Usage & Functionality
 
-**Location:** Quotations → Employees
+### 4.1 Dashboard Overview
 
-### Adding Employees
+The main dashboard provides an at-a-glance view of your quotation business.
+
+**Access:** Quotations → Dashboard
+
+#### Dashboard Statistics
+
+| Metric | Description |
+|--------|-------------|
+| **Quotes Today** | Number of quotes submitted today |
+| **Pending Quotes** | Quotes awaiting action |
+| **This Week Revenue** | Total value of confirmed bookings this week |
+| **Conversion Rate** | Percentage of quotes converted to bookings |
+
+#### Dashboard Sections
+
+1. **Recent Quotes** - Latest quote submissions with quick actions
+2. **Upcoming Bookings** - Scheduled services in the next 7 days
+3. **Quick Actions** - Shortcuts to common configuration tasks
+
+### 4.2 Managing Services
+
+Services are the core offerings customers can request quotes for.
+
+**Access:** Quotations → Services
+
+#### Adding a New Service
+
+1. Click **Add New Service** at the top of the page
+2. Complete the service form:
+
+| Field | Description | Required |
+|-------|-------------|----------|
+| **Service Name** | Display name for the service | Yes |
+| **Description** | Detailed service description | No |
+| **Duration** | Estimated service duration (minutes) | Yes |
+| **Base Rate** | Fixed starting price | Yes |
+| **Rate per SQM** | Price per square meter | Yes |
+| **Rate per Linear Meter** | Price per linear meter (for gutters, etc.) | No |
+| **Category** | Service category for organization | No |
+| **Color** | Calendar display color | No |
+| **Status** | Active or Inactive | Yes |
+
+3. Click **Save Service**
+
+#### Service Categories
+
+Organize services into categories for better management:
+
+**Access:** Quotations → Service Categories
+
+Categories help group similar services (e.g., "Façade Cleaning", "Roof Services", "Gutter Maintenance").
+
+### 4.3 Managing Employees
+
+Employees are team members who perform cleaning services.
+
+**Access:** Quotations → Employees
+
+#### Adding a New Employee
 
 1. Click **Add New Employee**
-2. Fill in:
-   - **Name** (e.g., "John Smith")
-   - **Email** (for notifications)
-   - **Phone**
-   - **Description** (skills, experience)
-   - **Status** (Active/Inactive)
-   - **Working Hours** (when they're available)
+2. Complete the employee form:
+
+| Field | Description | Required |
+|-------|-------------|----------|
+| **Name** | Full name | Yes |
+| **Email** | Contact email | No |
+| **Phone** | Contact phone | No |
+| **Description** | Notes about the employee | No |
+| **Avatar** | Profile photo | No |
+| **Services** | Services this employee can perform | No |
+| **Working Hours** | Weekly availability schedule | No |
+| **Status** | Active or Inactive | Yes |
+
 3. Click **Save Employee**
 
-### Assigning Employees to Bookings
+#### Employee-Service Assignment
 
-**During booking creation:**
-1. Open appointment form
-2. Select employee from **Assigned Technician** dropdown
-3. Save appointment
-
-**For existing bookings:**
-1. Edit the appointment
-2. Change **Assigned Technician**
+Assign employees to specific services:
+1. Edit an employee record
+2. Check the services they can perform
 3. Save changes
 
-### Employee Schedule Tracking
+The booking system will only show availability for employees assigned to the selected service.
 
-- View employee workload in Calendar view
-- Filter calendar by employee
-- See availability conflicts before assigning
+### 4.4 Managing Quotes
 
-> **Note:** Employee management integrates with MotoPress Appointment plugin if installed.
+Quotes are customer price requests submitted through your website.
+
+**Access:** Quotations → Quotes
+
+#### Quote List View
+
+The quotes list displays:
+- Quote number
+- Customer name and email
+- Service type
+- Total amount
+- Status
+- Submission date
+- Quick action buttons
+
+#### Quote Statuses
+
+| Status | Description |
+|--------|-------------|
+| **New** | Freshly submitted, no action taken |
+| **Pending** | Under review |
+| **Sent** | Quote email sent to customer |
+| **Viewed** | Customer has opened the quote |
+| **Booked** | Converted to a booking |
+| **Accepted** | Customer approved the quote |
+| **Rejected** | Customer declined the quote |
+| **Expired** | Quote validity period has passed |
+| **Cancelled** | Quote was cancelled |
+
+#### Viewing a Quote
+
+1. Click **View** on any quote row
+2. The quote detail page shows:
+   - Customer information
+   - Property details
+   - Service specifications
+   - Price breakdown
+   - Quote history
+
+#### Quote Actions
+
+From the quote view, you can:
+- **Download PDF** - Generate and download the quote PDF
+- **Resend Email** - Resend the quote confirmation email
+- **Convert to Booking** - Create a booking from this quote
+- **Edit** - Modify quote details
+- **Change Status** - Update the quote status
+
+### 4.5 Managing Bookings
+
+Bookings are confirmed service appointments.
+
+**Access:** Quotations → Bookings
+
+#### Booking List View
+
+The bookings list displays:
+- Booking number
+- Customer name
+- Service type
+- Service date and time
+- Total amount
+- Payment status
+- Booking status
+
+#### Booking Statuses
+
+| Status | Description |
+|--------|-------------|
+| **Pending** | Awaiting confirmation or payment |
+| **Confirmed** | Booking is confirmed |
+| **In Progress** | Service is being performed |
+| **Completed** | Service finished successfully |
+| **Cancelled** | Booking was cancelled |
+| **No-show** | Customer did not appear |
+
+#### Creating a Booking
+
+Bookings are typically created by customers from their quote, but administrators can also create bookings manually:
+
+1. Click **Add New Booking**
+2. Select an existing quote or enter details manually
+3. Choose service date and time
+4. Assign employee (optional)
+5. Click **Create Booking**
+
+### 4.6 Managing Appointments
+
+Appointments are scheduled service times in the calendar system.
+
+**Access:** Quotations → Appointments
+
+#### Appointment Management
+
+The appointments interface allows you to:
+- View all scheduled appointments
+- Create new appointments
+- Edit existing appointments
+- Cancel appointments
+- Assign employees
+
+### 4.7 Calendar View
+
+The calendar provides a visual overview of all scheduled services.
+
+**Access:** Quotations → Calendar
+
+#### Calendar Features
+
+- **Monthly/Weekly/Daily views** - Switch between time scales
+- **Employee filtering** - View appointments by employee
+- **Drag and drop** - Reschedule appointments by dragging
+- **Color coding** - Services display in their assigned colors
+- **Click to edit** - Click any appointment to view details
+
+#### Navigating the Calendar
+
+1. Use the arrow buttons to navigate between periods
+2. Click "Today" to return to the current date
+3. Use the filter dropdown to show specific employees
+4. Click any appointment to view or edit details
+
+### 4.8 Customer Management
+
+The customer database stores all customer information.
+
+**Access:** Quotations → Customers
+
+#### Customer List
+
+View all customers who have submitted quotes or bookings:
+- Name and contact information
+- Total quotes submitted
+- Total bookings made
+- Customer since date
+
+#### Customer Details
+
+Click any customer to view:
+- Contact information
+- Quote history
+- Booking history
+- Notes
+
+### 4.9 Email Logs
+
+Track all emails sent by the system.
+
+**Access:** Quotations → Email Logs
+
+#### Log Information
+
+Each log entry shows:
+- Email type (quote confirmation, booking reminder, etc.)
+- Recipient email address
+- Subject line
+- Send date and time
+- Status (sent/failed)
+- Error messages (if failed)
+
+### 4.10 Using Shortcodes
+
+Shortcodes allow you to place plugin functionality on any page or post.
+
+#### Available Shortcodes
+
+| Shortcode | Description |
+|-----------|-------------|
+| `[pcq_quote_form]` | Displays the quote request form |
+| `[pcq_booking_form]` | Displays the booking form |
+| `[pcq_booking_confirmation]` | Displays booking confirmation message |
+| `[pcq_quote_calculator]` | Displays a simplified price calculator |
+
+#### Shortcode Attributes
+
+**Quote Form:**
+```
+[pcq_quote_form title="Get Your Free Quote" show_title="true" style="default" columns="2"]
+```
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `title` | Any text | "Get Your Free Quote" |
+| `show_title` | true/false | true |
+| `style` | default/minimal/modern | default |
+| `columns` | 1/2 | 2 |
+
+**Booking Form:**
+```
+[pcq_booking_form quote_id="123" title="Book Your Service" show_title="true"]
+```
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `quote_id` | Specific quote ID | (auto-detected) |
+| `title` | Any text | "Book Your Service" |
+| `show_title` | true/false | true |
+
+#### Creating Pages with Shortcodes
+
+1. Go to **Pages → Add New**
+2. Enter a page title (e.g., "Request a Quote")
+3. Add the desired shortcode in the content area
+4. Publish the page
+
+**Recommended Page Structure:**
+- **Quote Page:** Contains `[pcq_quote_form]`
+- **Booking Page:** Contains `[pcq_booking_form]` (auto-created)
+- **Confirmation Page:** Contains `[pcq_booking_confirmation]` (auto-created)
 
 ---
 
-## ⚙️ Settings Configuration
+## 5. How It Works
 
-**Location:** Quotations → Settings
+### 5.1 Quote Flow Process
 
-The Settings page has 5 tabs:
+Understanding the complete quote workflow helps you manage customer expectations and system configuration.
 
-### General Tab
+#### Step-by-Step Process
 
-**Company Information:**
-- Company Name (appears on emails and PDFs)
-- Company Email (customer contact email)
-- Company Phone (displayed on website)
-- Company Address (for invoices/PDFs)
-
-**Service Area:**
-- Postal Codes (comma-separated)
-- Example: `1000, 2000, 3000`
-- Leave empty to serve all areas
-- System validates customer postcodes against this list
-
-**Business Hours:**
-- Configure for each day of week
-- Set start time and end time
-- Enable/disable specific days
-- Affects booking availability
-
-**Booking Configuration:**
-- **Booking Buffer Time:** Minutes between bookings (default: 60)
-- **Max Daily Bookings:** Maximum per day (default: 3)
-- **Lead Time:** Minimum days before booking (default: 1)
-- **Quote Validity:** Days quote remains valid (default: 30)
-
-### Pricing Tab
-
-*(See [Pricing Configuration](#pricing-configuration) above)*
-
-All base rates, multipliers, and minimum charges are configured here.
-
-### Email Tab
-
-**Email Notifications:**
-- Enable/disable all email notifications (master switch)
-
-**Sender Information:**
-- **From Name:** Name that appears in emails (e.g., "Pro Clean Services")
-- **From Email:** Email address shown as sender
-- **Admin Notification Email:** Where new quote alerts are sent
-
-**Email Templates:**
-- Templates are located in `/templates/email/` folder
-- Customize HTML templates directly
-- Variables available:
-  - `{customer_name}` → Customer's name
-  - `{quote_number}` → Quote reference number
-  - `{total_price}` → Total amount
-  - `{service_date}` → Booking date
-  - And more...
-
-**SMTP Configuration:**
-- **Recommended:** Install "WP Mail SMTP" plugin for reliable delivery
-- **Supported Services:** SendGrid, Mailgun, Gmail, etc.
-- Without SMTP: Uses default PHP `mail()` function (less reliable)
-
-### Form Tab
-
-**Security & Validation:**
-
-- **Rate Limiting:**
-  - Maximum submissions per 5 minutes per IP
-  - Default: 5 submissions
-  - Prevents spam and abuse
-
-- **Quote Validity:**
-  - How long quotes remain valid
-  - Default: 30 days
-  - After expiry, status changes to "Expired"
-
-- **Required Fields:**
-  - Configure which form fields are mandatory
-  - Currently set in code (admin UI planned)
-
-- **Duplicate Prevention:**
-  - 5-minute cooldown per email address
-  - Prevents accidental double submissions
-
-### Integration Tab
-
-**MotoPress Appointment:**
-- Enable/disable integration
-- **Status Indicator:**
-  - ✓ Green: Plugin active
-  - ⚠ Orange: Plugin not installed
-- **What It Does:** Enhanced booking management and calendar features
-
-**WooCommerce (Optional):**
-- Enable/disable integration
-- **Required For:** Online deposit payments
-- **Status Indicator:**
-  - ✓ Green: Active - online payments available
-  - ℹ Gray: Not installed - cash/bank transfer only
-
-**Online Payments (if WooCommerce active):**
-- **Enable Deposits:** Allow customers to pay online
-- **Deposit Percentage:** % of total required (default: 20%)
-- **Payment Methods:** Configured in WooCommerce settings
-
-**Webhook Integration:**
-- Configure webhook URL for external systems
-- **Events Available:**
-  1. `quote.submitted` → New quote received
-  2. `quote.accepted` → Customer accepted quote
-  3. `quote.rejected` → Customer declined
-  4. `booking.created` → New booking made
-  5. `booking.confirmed` → Booking confirmed
-  6. `booking.completed` → Service completed
-  7. `booking.cancelled` → Booking cancelled
-  8. `payment.received` → Payment processed
-
-**Webhook Features:**
-- HMAC SHA-256 signature verification
-- Automatic retry (3 attempts with exponential backoff)
-- Delivery logging in database
-- Payload includes all relevant data
-
----
-
-## 📧 Email System
-
-**Location:** Quotations → Email Logs
-
-### Email Types Sent Automatically
-
-| Email Type | Trigger | Sent To | Includes |
-|------------|---------|---------|----------|
-| **Quote Confirmation** | Customer submits form | Customer | PDF quote attachment |
-| **Admin Notification** | New quote received | Admin | Quote summary |
-| **Booking Confirmation** | Booking created | Customer | Service details, date/time |
-| **Booking Reminder** | 24 hours before service | Customer | Service details |
-| **Appointment Confirmation** | Appointment scheduled | Customer | Full appointment details |
-
-### Monitoring Email Delivery
-
-**Viewing Email Logs:**
-
-1. Go to **Quotations** → **Email Logs**
-2. See complete history:
-   - **Email Type**
-   - **Recipient**
-   - **Subject Line**
-   - **Sent Date/Time**
-   - **Status** (Sent ✓ or Failed ✗)
-   - **Error Message** (if failed)
-
-**Filtering Logs:**
-- Filter by email type (dropdown)
-- Filter by status (sent/failed)
-- Search by recipient email or subject
-- Date range selection
-
-### Resending Failed Emails
-
-1. Find the failed email in logs
-2. Click **View** to see details
-3. Click **Resend Email** button
-4. Confirm resend
-5. Check status in logs
-
-### Email Troubleshooting
-
-**If emails aren't being delivered:**
-
-1. **Check System Status:**
-   - Dashboard → System Status
-   - Verify "Email Notifications: Enabled"
-
-2. **Install SMTP Plugin:**
-   - Install "WP Mail SMTP" from WordPress plugins
-   - Configure with SendGrid or Mailgun (free tier available)
-   - Much more reliable than default `mail()` function
-
-3. **Check Spam Folders:**
-   - Ask customers to check spam/junk
-   - Add your domain to their safe senders
-
-4. **Verify Email Settings:**
-   - Settings → Email Tab
-   - Ensure "From Email" is valid
-   - Use domain email (not gmail/yahoo)
-
-5. **Test Email Function:**
-   - Settings → Email Tab
-   - Use "Send Test Email" button
-   - Check if it arrives
-
-**Common Issues:**
-
-| Problem | Solution |
-|---------|----------|
-| Emails go to spam | Configure SPF/DKIM records in DNS |
-| Emails not sending | Install WP Mail SMTP plugin |
-| Attachments missing | Check PDF generation in settings |
-| Wrong sender name | Update "From Name" in Email settings |
-
-### Customizing Email Templates
-
-**Template Files Location:**
 ```
-/wp-content/plugins/pro-clean-quotation/templates/email/
+┌─────────────────────────────────────────────────────────────────┐
+│                    QUOTE SUBMISSION FLOW                        │
+└─────────────────────────────────────────────────────────────────┘
+
+1. CUSTOMER VISITS WEBSITE
+   │
+   ▼
+2. FILLS OUT QUOTE FORM
+   │  • Selects service type
+   │  • Enters property measurements
+   │  • Provides contact information
+   │
+   ▼
+3. REAL-TIME VALIDATION
+   │  • JavaScript validates inputs
+   │  • Postal code checked against service area
+   │  • Rate limiting prevents spam
+   │
+   ▼
+4. AJAX CALCULATION REQUEST
+   │  • Form data sent to server
+   │  • QuoteCalculator processes request
+   │  • Pricing engine applies rates
+   │
+   ▼
+5. QUOTE RECORD CREATED
+   │  • Unique quote number generated
+   │  • Data stored in database
+   │  • Security token created
+   │
+   ▼
+6. PDF GENERATION
+   │  • mPDF library creates PDF
+   │  • Company branding applied
+   │  • Price breakdown included
+   │
+   ▼
+7. EMAIL NOTIFICATIONS
+   │  • Customer receives quote + PDF
+   │  • Admin receives notification
+   │  • Email logged in system
+   │
+   ▼
+8. CUSTOMER REVIEW
+   │  • Customer views quote
+   │  • Quote status updated to "Viewed"
+   │  • Booking link provided
+   │
+   ▼
+9. BOOKING (OPTIONAL)
+   │  • Customer selects date/time
+   │  • Availability checked
+   │  • Booking confirmation sent
+   │
+   ▼
+10. SERVICE COMPLETION
+    │  • Appointment marked complete
+    │  • Follow-up email sent (optional)
+    │
+    ▼
+    END
 ```
 
-**Available Templates:**
-- `quote-confirmation.php` - Customer quote email
-- `admin-notification.php` - Admin alert email
-- `booking-confirmation.php` - Customer booking email
-- `booking-reminder.php` - 24-hour reminder
-- `appointment-confirmation.php` - Appointment details
+### 5.2 Pricing Calculation Engine
 
-**To Customize:**
-1. Copy template to your theme folder:
-   ```
-   /wp-content/themes/your-theme/pro-clean-quotation/email/
-   ```
-2. Edit the HTML/CSS
-3. Use available variables (documented in template comments)
-4. Save and test
+The pricing engine calculates quotes using a sophisticated multi-factor formula.
 
-> **Tip:** Template overrides in theme folder won't be lost during plugin updates.
+#### Calculation Components
 
----
+**1. Base Rate**
+- Fixed starting price for each service type
+- Covers basic service overhead
 
-## 🌐 Adding Forms to Your Website
+**2. Area-Based Pricing**
+- Square meters × Rate per SQM
+- Linear meters × Rate per Linear Meter (for gutters, edges)
 
-**Location:** Quotations → Shortcodes
+**3. Adjustments**
+Various factors can modify the base price:
 
-The plugin provides 3 shortcodes to add forms to your pages:
+| Factor | Effect |
+|--------|--------|
+| Property Type | Commercial properties may have higher rates |
+| Building Height | Taller buildings require specialized equipment |
+| Surface Material | Delicate surfaces may require special treatment |
+| Roof Type | Complex roof structures increase difficulty |
+| Custom Fields | Additional services or requirements |
 
-### 1. Quote Request Form
+**4. Tax Calculation**
+- VAT applied to subtotal
+- Configurable tax rate
 
-**Full quote form with price calculation**
+**5. Minimum Charge**
+- Ensures quotes meet minimum business requirements
 
-**Basic Shortcode:**
+#### Example Calculation
+
 ```
-[pcq_quote_form]
-```
+Service: Façade Cleaning
+Property: 150 sqm residential building
 
-**Customized Example:**
-```
-[pcq_quote_form title="Get Your Free Quote" columns="1" style="compact"]
-```
-
-**Parameters:**
-
-| Parameter | Default | Options | Description |
-|-----------|---------|---------|-------------|
-| `title` | "Get Your Free Quote" | Any text | Form heading |
-| `show_title` | true | true/false | Show/hide title |
-| `style` | default | default, compact, modern | Visual style |
-| `columns` | 2 | 1 or 2 | Form layout |
-
-**Where to Use:**
-- Homepage
-- Services page
-- Contact page
-- Landing pages
-
-### 2. Direct Booking Form
-
-**Schedule service without quote**
-
-**Basic Shortcode:**
-```
-[pcq_booking_form]
+Base Rate:           €150.00
+Area Cost:           €375.00 (150 sqm × €2.50/sqm)
+Height Adjustment:   € 25.00 (3-story building surcharge)
+────────────────────────────
+Subtotal:            €550.00
+VAT (21%):           €115.50
+────────────────────────────
+TOTAL:               €665.50
 ```
 
-**Customized Example:**
+### 5.3 Booking System
+
+The booking system manages appointment scheduling with availability checking.
+
+#### Availability Logic
+
 ```
-[pcq_booking_form title="Schedule Your Cleaning" show_title="true"]
-```
+┌─────────────────────────────────────────────────────────────────┐
+│                  AVAILABILITY CHECK PROCESS                     │
+└─────────────────────────────────────────────────────────────────┘
 
-**Parameters:**
-
-| Parameter | Default | Options | Description |
-|-----------|---------|---------|-------------|
-| `title` | "Book Your Service" | Any text | Form heading |
-| `show_title` | true | true/false | Show/hide title |
-| `quote_id` | - | Quote ID | Pre-fill from quote |
-
-**Where to Use:**
-- Booking page
-- Thank you page (after quote)
-- Direct booking page for existing customers
-
-### 3. Quick Price Calculator
-
-**Estimate prices without contact form**
-
-**Basic Shortcode:**
-```
-[pcq_quote_calculator]
-```
-
-**Customized Example:**
-```
-[pcq_quote_calculator title="Estimate Your Price" show_contact_form="false"]
-```
-
-**Parameters:**
-
-| Parameter | Default | Options | Description |
-|-----------|---------|---------|-------------|
-| `title` | "Quick Price Calculator" | Any text | Calculator heading |
-| `show_title` | true | true/false | Show/hide title |
-| `show_contact_form` | false | true/false | Add contact form after |
-
-**Where to Use:**
-- Pricing page
-- Homepage (informational)
-- FAQ page
-- Blog posts about pricing
-
-### How to Add Shortcodes
-
-#### Method 1: WordPress Block Editor (Gutenberg)
-
-1. Edit your page/post
-2. Click **+** to add block
-3. Search for "Shortcode"
-4. Select **Shortcode** block
-5. Paste shortcode (e.g., `[pcq_quote_form]`)
-6. Click **Publish** or **Update**
-
-#### Method 2: Classic Editor
-
-1. Edit your page/post
-2. Place cursor where you want the form
-3. Type or paste the shortcode
-4. Click **Publish** or **Update**
-
-#### Method 3: Text Widget (Sidebar/Footer)
-
-1. Go to **Appearance** → **Widgets**
-2. Add **Text** or **Custom HTML** widget
-3. Paste shortcode
-4. Save widget
-
-#### Method 4: Theme Template
-
-Add directly to your theme files:
-```php
-<?php echo do_shortcode('[pcq_quote_form]'); ?>
+1. DATE SELECTION
+   │
+   ▼
+2. BUSINESS HOURS CHECK
+   │  • Is this a working day?
+   │  • Is time within business hours?
+   │
+   ▼
+3. EMPLOYEE AVAILABILITY
+   │  • Are assigned employees available?
+   │  • Do they work this service type?
+   │
+   ▼
+4. EXISTING BOOKING CHECK
+   │  • Any conflicts with existing appointments?
+   │  • Buffer time respected?
+   │
+   ▼
+5. RETURN AVAILABLE SLOTS
+   │  • List of bookable time slots
+   │  • Each marked available/unavailable
+   │
+   ▼
+   END
 ```
 
-### Styling Forms
+#### Booking Creation
 
-Forms automatically inherit your theme's styles. To customize:
+When a customer confirms a booking:
+1. Quote token verified (prevents unauthorized bookings)
+2. Time slot availability re-checked
+3. Booking record created
+4. Quote status updated to "Booked"
+5. Confirmation emails sent
+6. Reminder scheduled
 
-1. **Via Theme Customizer:**
-   - Appearance → Customize → Additional CSS
-   - Add custom CSS
+### 5.4 Email Notification System
 
-2. **Example Custom CSS:**
-```css
-/* Customize quote form */
-.pcq-quote-form {
-    max-width: 800px;
-    margin: 0 auto;
-}
+The email system handles all customer and admin communications.
 
-.pcq-quote-form .form-field {
-    margin-bottom: 20px;
-}
+#### Email Types
 
-.pcq-quote-form button[type="submit"] {
-    background-color: #007cba;
-    padding: 15px 40px;
-    font-size: 18px;
-}
+| Email Type | Recipient | Trigger |
+|------------|-----------|---------|
+| Quote Confirmation | Customer | Quote submitted |
+| Admin Notification | Administrator | Quote submitted |
+| Booking Confirmation | Customer | Booking created |
+| Booking Reminder | Customer | 24 hours before appointment |
+| Cancellation Notice | Customer | Booking cancelled |
+
+#### Email Processing
+
+```
+1. Trigger Event Occurs
+   │
+   ▼
+2. EmailManager Instantiated
+   │
+   ▼
+3. Template Selected
+   │  • HTML template loaded
+   │  • Variables injected
+   │
+   ▼
+4. PDF Generated (if applicable)
+   │  • mPDF creates attachment
+   │  • Stored temporarily
+   │
+   ▼
+5. Email Sent via WordPress wp_mail()
+   │  • Uses configured SMTP (if set)
+   │  • Headers applied
+   │
+   ▼
+6. Result Logged
+   │  • Success/failure recorded
+   │  • Error details captured
+   │
+   ▼
+7. Cleanup
+   • Temporary PDF deleted
+```
+
+### 5.5 PDF Generation
+
+Professional PDF quotes are generated using the mPDF library.
+
+#### PDF Contents
+
+1. **Header**
+   - Company logo or name
+   - Company contact information
+
+2. **Quote Metadata**
+   - Quote number
+   - Date issued
+   - Valid until date
+
+3. **Customer Information**
+   - Name
+   - Email
+   - Phone
+   - Property address
+
+4. **Service Details**
+   - Service type
+   - Property measurements
+   - Property specifications
+
+5. **Price Breakdown**
+   - Base rate
+   - Area charges
+   - Adjustments
+   - Subtotal
+   - VAT amount
+   - Total
+
+6. **Terms & Conditions**
+   - Quote validity
+   - Payment terms
+   - Contact information
+
+#### PDF Storage
+
+- PDFs are generated on-demand
+- Temporarily stored in `/wp-content/uploads/pro-clean-quotes/temp/`
+- Automatically deleted after email delivery
+- Daily cleanup removes files older than 24 hours
+
+### 5.6 Data Storage Architecture
+
+The plugin uses custom database tables for efficient data management.
+
+#### Database Tables
+
+| Table | Purpose |
+|-------|---------|
+| `wp_pq_quotes` | Stores all quote submissions |
+| `wp_pq_bookings` | Stores confirmed bookings |
+| `wp_pq_appointments` | Stores scheduled appointments |
+| `wp_pq_customers` | Stores customer records |
+| `wp_pq_services` | Stores service definitions |
+| `wp_pq_service_categories` | Stores service categories |
+| `wp_pq_employees` | Stores employee records |
+| `wp_pq_employee_services` | Links employees to services |
+| `wp_pq_email_logs` | Stores email sending history |
+| `wp_pq_settings` | Stores plugin configuration |
+
+#### Key Relationships
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│   Quotes     │────▶│   Bookings   │────▶│ Appointments │
+└──────────────┘     └──────────────┘     └──────────────┘
+       │                    │                    │
+       │                    │                    │
+       ▼                    ▼                    ▼
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Customers   │     │   Services   │     │  Employees   │
+└──────────────┘     └──────────────┘     └──────────────┘
 ```
 
 ---
 
-## ❓ Frequently Asked Questions
+## 6. Troubleshooting
 
-### General Questions
+### Common Issues
 
-**Q: Do I need coding skills to use this plugin?**  
-A: No! Everything is managed through the WordPress admin interface. No coding required.
+#### Quotes Not Submitting
 
-**Q: Can I use this plugin in multiple languages?**  
-A: Yes! The plugin is translation-ready and includes Dutch and French translations. You can add more languages using Poedit.
+**Symptoms:** Form hangs, error message, or no response
 
-**Q: Does it work with my WordPress theme?**  
-A: Yes! The plugin works with any WordPress theme. Forms automatically adapt to your theme's styling.
-
-**Q: What if I'm already using a booking plugin?**  
-A: The plugin works standalone but integrates seamlessly with MotoPress Appointment for enhanced features.
-
-### Pricing Questions
-
-**Q: Can I set different prices for different services?**  
-A: Yes! Each service (façade, roof, etc.) has its own base rate and per-sqm pricing.
-
-**Q: How do the automatic discounts work?**  
-A: The system automatically applies:
-- Seasonal pricing (peak/off-season)
-- Bulk discounts for large properties
-- Repeat customer discounts
-- Demand-based pricing adjustments
-
-All discounts are transparent and shown in the price breakdown.
-
-**Q: Can I manually override prices?**  
-A: Yes! You can edit any quote and manually adjust the pricing before sending to the customer.
-
-**Q: How do I create promotional codes?**  
-A: Currently, promo codes are managed in the code. A full admin interface for promotional codes is planned for Phase 2.
-
-### Booking Questions
-
-**Q: Can customers cancel or reschedule bookings?**  
-A: Customers can request cancellation/rescheduling by contacting you. You then update it in the admin panel. Self-service customer portal is planned for Phase 2.
-
-**Q: What happens if two bookings overlap?**  
-A: The system prevents double-bookings automatically. When checking availability, it ensures no time conflicts.
-
-**Q: Can I block specific dates (holidays)?**  
-A: Yes! Go to Settings → Integration → Availability Overrides to block dates.
-
-**Q: How far in advance can customers book?**  
-A: You control this with the "Lead Time" setting (default: 1 day minimum). You can also set a maximum lead time if needed.
-
-### Email Questions
-
-**Q: Why are my emails going to spam?**  
-A: This is common with default WordPress mail. Install "WP Mail SMTP" plugin and use a service like SendGrid or Mailgun. Also configure SPF/DKIM DNS records.
-
-**Q: Can I customize the email templates?**  
-A: Yes! Copy templates to your theme folder and edit the HTML. See [Customizing Email Templates](#customizing-email-templates).
-
-**Q: How do I test if emails are working?**  
-A: Go to Settings → Email Tab and use the "Send Test Email" button.
-
-**Q: What if a customer doesn't receive their quote email?**  
-A: Check Email Logs to see if it was sent. If failed, you can resend it. Also ask customer to check spam folder.
-
-### Technical Questions
-
-**Q: What are the minimum requirements?**  
-A:
-- WordPress 6.4+
-- PHP 8.0+
-- MySQL 8.0+
-- HTTPS/SSL certificate recommended
-
-**Q: Does it work on mobile devices?**  
-A: Yes! All forms and admin interfaces are fully responsive and mobile-optimized.
-
-**Q: Can I export customer data?**  
-A: Yes! Use the export functionality in the Quotes and Appointments sections. GDPR-compliant data export is available.
-
-**Q: Does it integrate with other systems?**  
-A: Yes! Use webhooks to send data to external CRM, accounting software, or custom applications. See [Webhook Integration](#integration-tab).
-
-**Q: Is customer data secure?**  
-A: Yes! The plugin follows WordPress security best practices:
-- All database queries use prepared statements (SQL injection protection)
-- All user input is sanitized and validated
-- CSRF tokens on all forms
-- Rate limiting to prevent abuse
-- Secure password storage
-
----
-
-## 🔧 Troubleshooting
-
-### Common Issues & Solutions
-
-#### Issue: Forms Not Displaying
-
-**Symptoms:** Shortcode appears as text on page  
 **Solutions:**
-1. Check shortcode spelling: `[pcq_quote_form]` not `[pcp_quote_form]`
-2. Ensure plugin is activated
-3. Clear cache (if using caching plugin)
-4. Try different WordPress editor (Classic vs Block)
-
-#### Issue: Quotes Not Saving
-
-**Symptoms:** Form submits but no quote in admin  
-**Solutions:**
-1. Check if emails are being sent (Email Logs)
-2. Verify database tables exist (check with database admin tool)
+1. Check browser console for JavaScript errors
+2. Verify AJAX endpoint is accessible
 3. Check PHP error logs
-4. Ensure proper file permissions
-5. Deactivate other plugins temporarily to check for conflicts
+4. Ensure nonce verification passes
+5. Verify rate limiting isn't blocking legitimate requests
 
-#### Issue: Calendar Not Showing Bookings
+#### Emails Not Sending
 
-**Symptoms:** Calendar displays but bookings don't appear  
+**Symptoms:** Customers don't receive confirmation emails
+
 **Solutions:**
-1. Refresh the page
-2. Check if bookings have correct dates
-3. Verify booking status (only active bookings show)
-4. Clear browser cache
-5. Check JavaScript console for errors
+1. Check Email Logs for delivery status
+2. Verify SMTP configuration
+3. Test with "Test SMTP" button
+4. Check spam folder
+5. Verify email address is correct
+6. Check WordPress cron is running
 
-#### Issue: Price Calculation Incorrect
+#### PDF Not Generating
 
-**Symptoms:** Quoted price doesn't match expected amount  
+**Symptoms:** No PDF attached to emails
+
 **Solutions:**
-1. Verify pricing settings (Settings → Pricing)
-2. Check if automatic adjustments are applying:
-   - Seasonal pricing (check date)
-   - Bulk discounts (check property size)
-   - Demand pricing (check booking volume)
-3. Review property type multiplier
-4. Verify tax/VAT rate
-5. Check for active promotional codes
+1. Verify mPDF library is installed
+2. Check PHP memory limit (increase if needed)
+3. Verify uploads directory is writable
+4. Check for PHP errors in logs
 
-#### Issue: Reminders Not Sending
+#### Calendar Not Loading
 
-**Symptoms:** No reminder emails 24 hours before booking  
+**Symptoms:** Calendar page shows empty or error
+
 **Solutions:**
-1. Check if reminders are enabled (Settings)
-2. Verify WordPress cron is working:
-   - Install "WP Crontrol" plugin to check
-   - Ensure cron is not disabled in wp-config.php
-3. Check Email Logs for failed attempts
-4. Verify booking has correct date/time
-5. Ensure customer email is valid
+1. Verify FullCalendar library loads
+2. Check admin JavaScript enqueues
+3. Clear browser cache
+4. Check for JavaScript conflicts with other plugins
 
-#### Issue: PDF Attachments Missing
+#### Database Errors
 
-**Symptoms:** Quote emails arrive but no PDF  
+**Symptoms:** "Table doesn't exist" or SQL errors
+
 **Solutions:**
-1. Check if mPDF library is installed (via Composer)
-2. Verify temp directory is writable
-3. Check PHP memory limit (increase if needed)
-4. Review error logs for PDF generation errors
-5. Test PDF generation manually in admin
-
-#### Issue: Slow Performance
-
-**Symptoms:** Admin pages load slowly  
-**Solutions:**
-1. Optimize database (delete old dummy data)
-2. Clean up email logs (delete old entries)
-3. Increase PHP memory limit
-4. Enable caching (pricing cache is automatic)
-5. Check for conflicting plugins
-6. Upgrade hosting if on shared hosting
-
-### Getting More Help
-
-**Plugin Support Resources:**
-
-1. **Documentation:**
-   - This user manual
-   - `/docs/quotation_system_spec.md` (technical specs)
-   - `/tests/README.md` (testing guide)
-
-2. **Check Error Logs:**
-   - WordPress Debug Log: `/wp-content/debug.log`
-   - Server Error Log: Ask your hosting provider
-   - Browser Console: Press F12 (for JavaScript errors)
-
-3. **System Information:**
-   - Dashboard → System Status
-   - Copy system info when reporting issues
-
-4. **Contact Developer:**
-   - Include system information
-   - Describe steps to reproduce issue
-   - Attach relevant screenshots
-   - Check error logs first
+1. Deactivate and reactivate the plugin
+2. Use Database Fixer in Settings
+3. Manually run database update
+4. Check WordPress database prefix
 
 ---
 
-## 📞 Quick Reference
+## 7. Support
 
-### Essential Links
+### Getting Help
 
-| Task | Location |
-|------|----------|
-| View Dashboard | Quotations → Dashboard |
-| Manage Quotes | Quotations → Quotes |
-| Manage Bookings | Quotations → Appointments |
-| View Calendar | Quotations → Calendar |
-| Update Pricing | Quotations → Settings → Pricing |
-| Configure Email | Quotations → Settings → Email |
-| Check Email Logs | Quotations → Email Logs |
-| Get Shortcodes | Quotations → Shortcodes |
+For technical support:
 
-### Shortcode Quick Copy
+1. **Documentation** - Review this user manual thoroughly
+2. **Email Logs** - Check for error messages
+3. **Debug Mode** - Enable WordPress debug mode for detailed errors
+4. **Contact Support** - Reach out with:
+   - Plugin version
+   - WordPress version
+   - PHP version
+   - Description of the issue
+   - Steps to reproduce
+   - Any error messages
+
+### Plugin Updates
+
+The plugin includes an automatic update checker:
+
+1. Go to **Quotations → Settings → Update**
+2. Click "Check for Updates"
+3. If updates available, click "Update Now"
+4. Always backup before updating
+
+### Maintenance Mode
+
+To temporarily disable quote submissions:
+
+1. Go to **Quotations → Settings → Form**
+2. Enable "Maintenance Mode"
+3. Enter a custom message
+4. Save settings
+
+The quote form will display your message instead of the form.
+
+---
+
+## Appendix A: Quick Reference
+
+### Admin Menu Structure
 
 ```
-Quote Form:      [pcq_quote_form]
-Booking Form:    [pcq_booking_form]
-Calculator:      [pcq_quote_calculator]
+Quotations
+├── Dashboard
+├── Quotes
+├── Bookings
+├── Appointments
+├── Calendar
+├── Customers
+├── Services
+├── Service Categories
+├── Employees
+├── Settings
+├── Email Logs
+├── Shortcodes
+└── Setup Booking Page
 ```
 
-### Default Credentials
+### Shortcode Quick Reference
 
-- **Admin Access:** Your WordPress admin login
-- **Plugin Location:** Quotations menu (left sidebar)
-- **Settings:** Quotations → Settings
+| Shortcode | Purpose |
+|-----------|---------|
+| `[pcq_quote_form]` | Quote request form |
+| `[pcq_booking_form]` | Booking form |
+| `[pcq_booking_confirmation]` | Confirmation message |
+| `[pcq_quote_calculator]` | Price calculator |
 
-### Support Contacts
+### Status Reference
 
-- **Plugin Version:** 1.0.0
-- **Documentation:** This file (USER_MANUAL.md)
-- **Technical Specs:** /docs/quotation_system_spec.md
+**Quote Statuses:**
+- `new` - Freshly submitted
+- `pending` - Under review
+- `sent` - Email sent
+- `viewed` - Opened by customer
+- `booked` - Converted to booking
+- `accepted` - Approved
+- `rejected` - Declined
+- `expired` - Past validity date
+- `cancelled` - Cancelled
 
----
-
-## 🎉 You're Ready to Go!
-
-Congratulations! You now know how to:
-
-✅ Manage quotes and bookings  
-✅ Configure pricing rules  
-✅ Set up email notifications  
-✅ Add forms to your website  
-✅ Monitor customer interactions  
-✅ Customize settings for your business
-
-**Next Steps:**
-
-1. Complete the initial setup (5 minutes)
-2. Add the quote form to your website
-3. Test the complete flow (submit a test quote)
-4. Customize pricing for your services
-5. Configure email templates with your branding
-
-**Need Help?** Refer to the [Troubleshooting](#troubleshooting) section or contact your developer.
+**Booking Statuses:**
+- `pending` - Awaiting confirmation
+- `confirmed` - Confirmed
+- `in_progress` - Being serviced
+- `completed` - Finished
+- `cancelled` - Cancelled
+- `no_show` - Customer absent
 
 ---
 
-**Happy Quoting! 🚀**
+**Document Version:** 1.0  
+**Plugin Version:** 1.3.0  
+**Copyright © 2026 Pro Clean Development Team**
