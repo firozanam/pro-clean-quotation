@@ -134,12 +134,19 @@ class FormHandler {
                 ];
             }
             
-            // Send confirmation email
-            $email_manager = EmailManager::getInstance();
-            $email_sent = $email_manager->sendQuoteConfirmation($quote);
-            
-            // Send admin notification
-            $email_manager->sendAdminNotification($quote);
+            // Send confirmation email (wrap in try-catch to prevent email failures from breaking submission)
+            $email_sent = false;
+            try {
+                $email_manager = EmailManager::getInstance();
+                $email_sent = $email_manager->sendQuoteConfirmation($quote);
+                
+                // Send admin notification
+                $email_manager->sendAdminNotification($quote);
+            } catch (\Throwable $emailError) {
+                // Log email error but don't fail the submission
+                error_log('PCQ: Email sending failed: ' . $emailError->getMessage());
+                error_log('PCQ: Email error stack: ' . $emailError->getTraceAsString());
+            }
             
             // Update rate limiting
             $validator->updateRateLimit(Settings::get('rate_limit_window', 5));
@@ -260,7 +267,7 @@ class FormHandler {
         }
         
         // Privacy consent validation
-        if ($required_fields['privacy_consent'] && empty($data['privacy_consent'])) {
+        if (!empty($required_fields['privacy_consent']) && empty($data['privacy_consent'])) {
             $errors['privacy_consent'] = __('You must agree to the privacy policy to continue.', 'pro-clean-quotation');
         }
         
@@ -343,20 +350,25 @@ class FormHandler {
         if (!empty($form_data['custom_fields']) && is_array($form_data['custom_fields'])) {
             foreach ($form_data['custom_fields'] as $field_id => $value) {
                 if (!empty($value)) {
-                    $custom_field_data[sanitize_key($field_id)] = sanitize_text_field($value);
+                    // Handle both array format (from JS) and simple string format
+                    if (is_array($value)) {
+                        $custom_field_data[sanitize_key($field_id)] = sanitize_text_field($value['value'] ?? '');
+                    } else {
+                        $custom_field_data[sanitize_key($field_id)] = sanitize_text_field($value);
+                    }
                 }
             }
         }
         
         return [
             'quote_number' => $this->generateQuoteNumber(),
-            'customer_name' => sanitize_text_field($form_data['customer_name']),
-            'customer_email' => sanitize_email($form_data['customer_email']),
+            'customer_name' => sanitize_text_field($form_data['customer_name'] ?? ''),
+            'customer_email' => sanitize_email($form_data['customer_email'] ?? ''),
             'customer_phone' => sanitize_text_field($form_data['customer_phone'] ?? ''),
-            'property_address' => sanitize_textarea_field($form_data['property_address']),
-            'postal_code' => sanitize_text_field($form_data['postal_code']),
-            'service_type' => sanitize_text_field($form_data['service_type']),
-            'square_meters' => floatval($form_data['square_meters']),
+            'property_address' => sanitize_textarea_field($form_data['property_address'] ?? ''),
+            'postal_code' => sanitize_text_field($form_data['postal_code'] ?? ''),
+            'service_type' => sanitize_text_field($form_data['service_type'] ?? ''),
+            'square_meters' => floatval($form_data['square_meters'] ?? 0),
             'linear_meters' => floatval($form_data['linear_meters'] ?? 0),
             'building_height' => intval($form_data['building_height'] ?? 1),
             'property_type' => sanitize_text_field($form_data['property_type'] ?? 'residential'),
@@ -365,14 +377,14 @@ class FormHandler {
             'last_cleaning_date' => !empty($form_data['last_cleaning_date']) ? sanitize_text_field($form_data['last_cleaning_date']) : null,
             'special_requirements' => sanitize_textarea_field($form_data['special_requirements'] ?? ''),
             'custom_field_data' => !empty($custom_field_data) ? json_encode($custom_field_data) : null,
-            'base_price' => $calculation_data['base_rate'], // Use base_rate from calculator
-            'adjustments' => $calculation_data['adjustments'],
-            'subtotal' => $calculation_data['subtotal'],
-            'tax_amount' => $calculation_data['tax_amount'],
-            'total_price' => $calculation_data['total'],
-            'price_breakdown' => json_encode($calculation_data['breakdown']),
+            'base_price' => $calculation_data['base_rate'] ?? 0,
+            'adjustments' => $calculation_data['adjustments'] ?? 0,
+            'subtotal' => $calculation_data['subtotal'] ?? 0,
+            'tax_amount' => $calculation_data['tax_amount'] ?? 0,
+            'total_price' => $calculation_data['total'] ?? 0,
+            'price_breakdown' => json_encode($calculation_data['breakdown'] ?? []),
             'status' => 'new',
-            'valid_until' => $calculation_data['valid_until'],
+            'valid_until' => $calculation_data['valid_until'] ?? date('Y-m-d', strtotime('+30 days')),
             'user_ip' => $_SERVER['REMOTE_ADDR'] ?? '',
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'marketing_consent' => !empty($form_data['marketing_consent']) ? 1 : 0,

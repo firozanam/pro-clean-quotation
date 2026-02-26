@@ -84,43 +84,55 @@ class EmailManager {
      * @return bool Success status
      */
     public function sendQuoteConfirmation(Quote $quote): bool {
-        if (!Settings::get('email_notifications_enabled', true)) {
+        try {
+            if (!Settings::get('email_notifications_enabled', true)) {
+                return false;
+            }
+            
+            $to = $quote->getCustomerEmail();
+            $subject = sprintf(
+                __('Your Cleaning Service Quote #%s - %s', 'pro-clean-quotation'),
+                $quote->getQuoteNumber(),
+                Settings::get('company_name', get_bloginfo('name'))
+            );
+            
+            $template_data = [
+                'quote' => $quote,
+                'company_name' => Settings::get('company_name', get_bloginfo('name')),
+                'company_email' => Settings::get('company_email', get_option('admin_email')),
+                'company_phone' => Settings::get('company_phone', ''),
+                'booking_url' => $this->generateBookingUrl($quote)
+            ];
+            
+            $message = $this->renderTemplate('quote-confirmation', $template_data);
+            $headers = $this->getEmailHeaders();
+            
+            // Generate PDF attachment (with error handling)
+            $pdf_path = false;
+            try {
+                $pdf_path = $this->generateQuotePDF($quote);
+            } catch (\Throwable $pdfError) {
+                error_log('PCQ: PDF generation failed: ' . $pdfError->getMessage());
+                // Continue without PDF attachment
+            }
+            $attachments = $pdf_path ? [$pdf_path] : [];
+            
+            $sent = wp_mail($to, $subject, $message, $headers, $attachments);
+            
+            // Clean up PDF file
+            if ($pdf_path && file_exists($pdf_path)) {
+                @unlink($pdf_path);
+            }
+            
+            // Log email
+            $this->logEmail('quote', $quote->getId(), 'quote_confirmation', $to, $subject, $sent);
+            
+            return $sent;
+        } catch (\Throwable $e) {
+            error_log('PCQ: sendQuoteConfirmation error: ' . $e->getMessage());
+            error_log('PCQ: Stack trace: ' . $e->getTraceAsString());
             return false;
         }
-        
-        $to = $quote->getCustomerEmail();
-        $subject = sprintf(
-            __('Your Cleaning Service Quote #%s - %s', 'pro-clean-quotation'),
-            $quote->getQuoteNumber(),
-            Settings::get('company_name', get_bloginfo('name'))
-        );
-        
-        $template_data = [
-            'quote' => $quote,
-            'company_name' => Settings::get('company_name', get_bloginfo('name')),
-            'company_email' => Settings::get('company_email', get_option('admin_email')),
-            'company_phone' => Settings::get('company_phone', ''),
-            'booking_url' => $this->generateBookingUrl($quote)
-        ];
-        
-        $message = $this->renderTemplate('quote-confirmation', $template_data);
-        $headers = $this->getEmailHeaders();
-        
-        // Generate PDF attachment
-        $pdf_path = $this->generateQuotePDF($quote);
-        $attachments = $pdf_path ? [$pdf_path] : [];
-        
-        $sent = wp_mail($to, $subject, $message, $headers, $attachments);
-        
-        // Clean up PDF file
-        if ($pdf_path && file_exists($pdf_path)) {
-            unlink($pdf_path);
-        }
-        
-        // Log email
-        $this->logEmail('quote', $quote->getId(), 'quote_confirmation', $to, $subject, $sent);
-        
-        return $sent;
     }
     
     /**
@@ -130,31 +142,36 @@ class EmailManager {
      * @return bool Success status
      */
     public function sendAdminNotification(Quote $quote): bool {
-        if (!Settings::get('email_notifications_enabled', true)) {
+        try {
+            if (!Settings::get('email_notifications_enabled', true)) {
+                return false;
+            }
+            
+            $to = Settings::get('admin_notification_email', get_option('admin_email'));
+            $subject = sprintf(
+                __('New Quote Request #%s - %s', 'pro-clean-quotation'),
+                $quote->getQuoteNumber(),
+                $quote->getCustomerName()
+            );
+            
+            $template_data = [
+                'quote' => $quote,
+                'admin_url' => admin_url('admin.php?page=pcq-quotes&action=view&id=' . $quote->getId())
+            ];
+            
+            $message = $this->renderTemplate('admin-notification', $template_data);
+            $headers = $this->getEmailHeaders();
+            
+            $sent = wp_mail($to, $subject, $message, $headers);
+            
+            // Log email
+            $this->logEmail('quote', $quote->getId(), 'admin_notification', $to, $subject, $sent);
+            
+            return $sent;
+        } catch (\Throwable $e) {
+            error_log('PCQ: sendAdminNotification error: ' . $e->getMessage());
             return false;
         }
-        
-        $to = Settings::get('admin_notification_email', get_option('admin_email'));
-        $subject = sprintf(
-            __('New Quote Request #%s - %s', 'pro-clean-quotation'),
-            $quote->getQuoteNumber(),
-            $quote->getCustomerName()
-        );
-        
-        $template_data = [
-            'quote' => $quote,
-            'admin_url' => admin_url('admin.php?page=pcq-quotes&action=view&id=' . $quote->getId())
-        ];
-        
-        $message = $this->renderTemplate('admin-notification', $template_data);
-        $headers = $this->getEmailHeaders();
-        
-        $sent = wp_mail($to, $subject, $message, $headers);
-        
-        // Log email
-        $this->logEmail('quote', $quote->getId(), 'admin_notification', $to, $subject, $sent);
-        
-        return $sent;
     }
     
     /**

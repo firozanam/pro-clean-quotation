@@ -87,7 +87,12 @@ class Quote {
                 ['%d']
             );
             
-            return $result !== false;
+            if ($result === false) {
+                error_log('PCQ Quote update failed: ' . $wpdb->last_error);
+                return false;
+            }
+            
+            return true;
         } else {
             // Insert new quote
             $this->data['created_at'] = current_time('mysql');
@@ -104,6 +109,8 @@ class Quote {
                 return true;
             }
             
+            error_log('PCQ Quote insert failed: ' . $wpdb->last_error);
+            error_log('PCQ Quote data: ' . print_r($this->data, true));
             return false;
         }
     }

@@ -54,12 +54,27 @@ class PDFGenerator {
     
     /**
      * Generate quote PDF
-     * 
+     *
      * @param Quote $quote Quote object
      * @return string|false Path to generated PDF file or false on failure
      */
     public function generateQuotePDF(Quote $quote) {
         try {
+            // Check if mPDF class exists (vendor autoload may not have loaded it)
+            if (!class_exists('Mpdf\Mpdf')) {
+                // Try to load Composer autoloader
+                $autoload = PCQ_PLUGIN_DIR . 'vendor/autoload.php';
+                if (file_exists($autoload)) {
+                    require_once $autoload;
+                }
+                
+                // If still doesn't exist, return false
+                if (!class_exists('Mpdf\Mpdf')) {
+                    error_log('PCQ PDF: mPDF library not available. Check vendor installation.');
+                    return false;
+                }
+            }
+            
             // Initialize mPDF
             $this->mpdf = new Mpdf([
                 'mode' => 'utf-8',
@@ -108,10 +123,14 @@ class PDFGenerator {
             return $filepath;
             
         } catch (MpdfException $e) {
-            error_log('PCQ PDF Generation Error: ' . $e->getMessage());
+            error_log('PCQ PDF Generation Error (MpdfException): ' . $e->getMessage());
             return false;
         } catch (\Exception $e) {
-            error_log('PCQ PDF Generation Error: ' . $e->getMessage());
+            error_log('PCQ PDF Generation Error (Exception): ' . $e->getMessage());
+            return false;
+        } catch (\Throwable $e) {
+            error_log('PCQ PDF Generation Error (Throwable): ' . $e->getMessage());
+            error_log('PCQ PDF: Stack trace: ' . $e->getTraceAsString());
             return false;
         }
     }
