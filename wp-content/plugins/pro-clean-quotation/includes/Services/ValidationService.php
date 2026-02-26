@@ -306,43 +306,21 @@ class ValidationService {
      * Validate phone number
      * 
      * @param string $phone Phone number
-     * @param string $country Country code
+     * @param string $country Country code (unused, kept for compatibility)
      * @return array Validation result
      */
     public function validatePhone(string $phone, string $country = 'ES'): array {
         // Remove all whitespace and special characters except +
         $cleaned = preg_replace('/[^0-9+]/', '', $phone);
         
-        // Country-specific patterns - now more flexible to accept spaces
-        $patterns = [
-            'ES' => '/^(\+34|0034)?[6-9][0-9]{8}$/',  // Spain: +34612345678 or 612345678 (mobile starts with 6-9)
-            'NL' => '/^(\+31|0031|0)[1-9][0-9]{8}$/',  // Netherlands: +31612345678 or 0612345678 or 0031612345678
-            'BE' => '/^(\+32|0032|0)[1-9][0-9]{8}$/',  // Belgium
-            'DE' => '/^(\+49|0049|0)[1-9][0-9]{9,10}$/', // Germany
-            'FR' => '/^(\+33|0033|0)[1-9][0-9]{8}$/',  // France
-            'UK' => '/^(\+44|0044|0)[1-9][0-9]{9,10}$/', // UK
-        ];
-        
-        $pattern = $patterns[$country] ?? $patterns['ES'];
-        
-        if (!preg_match($pattern, $cleaned)) {
+        // Accept any phone number format - just check for minimum length and valid characters
+        // Must have at least 5 digits and at most 20 characters
+        if (!preg_match('/^[0-9+]{5,20}$/', $cleaned)) {
             return [
                 'valid' => false,
-                'message' => __('Please enter a valid phone number (e.g., +34 612 345 678 or 612345678).', 'pro-clean-quotation'),
+                'message' => __('Please enter a valid phone number.', 'pro-clean-quotation'),
                 'formatted' => ''
             ];
-        }
-        
-        // Format phone number for ES
-        if ($country === 'ES') {
-            // Always ensure it starts with +34
-            if (substr($cleaned, 0, 4) === '0034') {
-                // Convert 0034612345678 to +34612345678
-                $cleaned = '+34' . substr($cleaned, 4);
-            } elseif (substr($cleaned, 0, 3) !== '+34') {
-                // Convert 612345678 to +34612345678
-                $cleaned = '+34' . $cleaned;
-            }
         }
         
         return [

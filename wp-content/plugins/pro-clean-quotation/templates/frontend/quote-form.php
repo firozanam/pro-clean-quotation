@@ -257,11 +257,8 @@ $title = isset($atts['title']) ? $atts['title'] : __('Get Your Free Quote', 'pro
                         id="<?php echo esc_attr($form_id); ?>_customer_phone" 
                         name="customer_phone" 
                         required
-                        pattern="^((\+34|0034)[6-9][0-9]{8}|[6-9][0-9]{8})$"
-                        placeholder="<?php esc_attr_e('+34 612 345 678', 'pro-clean-quotation'); ?>"
-                        title="<?php esc_attr_e('Enter a valid Spanish phone number (e.g., +34 612 345 678 or 612345678)', 'pro-clean-quotation'); ?>"
+                        placeholder="<?php esc_attr_e('Enter your phone number', 'pro-clean-quotation'); ?>"
                     >
-                    <small class="pcq-field-help"><?php _e('Format: +34 612 345 678 or 612345678', 'pro-clean-quotation'); ?></small>
                 </div>
                 <div class="pcq-form-field">
                     <label for="<?php echo esc_attr($form_id); ?>_postal_code">

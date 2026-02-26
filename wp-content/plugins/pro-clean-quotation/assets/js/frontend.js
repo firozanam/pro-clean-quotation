@@ -807,14 +807,11 @@
         }
 
         isValidPhone(phone) {
-            // Remove all spaces for validation
-            const cleanPhone = phone.replace(/\s/g, '');
-            
-            // Accept Spanish phone formats:
-            // +34612345678, 0034612345678, 612345678
-            // Mobile: starts with 6, 7, 8, or 9 (after country code)
-            // Also accept with spaces: +34 612 345 678, 612 345 678, etc.
-            const phoneRegex = /^(\+34|0034)?[6-9][0-9]{8}$/;
+            // Accept any phone number format
+            // Just check that it contains at least some digits
+            const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
+            // Must have at least 5 digits and only contain valid phone characters
+            const phoneRegex = /^[0-9+]{5,20}$/;
             return phoneRegex.test(cleanPhone);
         }
 

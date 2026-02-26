@@ -276,8 +276,7 @@ class ShortcodeManager {
         $html .= '<div class="pcq-form-row">';
         $html .= '<div class="pcq-form-field">';
         $html .= '<label for="customer_phone">' . __('Phone Number', 'pro-clean-quotation') . ' <span class="required">*</span></label>';
-        $html .= '<input type="tel" id="customer_phone" name="customer_phone" required pattern="^((\\+34|0034)[6-9][0-9]{8}|[6-9][0-9]{8})$" placeholder="+34 612 345 678" title="' . __('Enter a valid Spanish phone number (e.g., +34 612 345 678 or 612345678)', 'pro-clean-quotation') . '">';
-        $html .= '<small class="pcq-field-help">' . __('Format: +34 612 345 678 or 612345678', 'pro-clean-quotation') . '</small>';
+        $html .= '<input type="tel" id="customer_phone" name="customer_phone" required placeholder="' . __('Enter your phone number', 'pro-clean-quotation') . '">';
         $html .= '</div>';
         $html .= '<div class="pcq-form-field">';
         $html .= '<label for="postal_code">' . __('Postal Code', 'pro-clean-quotation') . ' <span class="required">*</span></label>';
