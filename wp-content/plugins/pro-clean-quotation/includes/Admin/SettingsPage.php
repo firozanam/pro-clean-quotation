@@ -129,34 +129,6 @@ class SettingsPage {
                     <h2><?php _e('Service Pricing', 'pro-clean-quotation'); ?></h2>
                     <table class="pcq-form-table">
                         <tr>
-                            <th><?php _e('Façade Base Rate (€)', 'pro-clean-quotation'); ?></th>
-                            <td>
-                                <input type="number" name="facade_base_rate" value="<?php echo esc_attr(Settings::get('facade_base_rate', 150.00)); ?>" step="0.01" min="0" required>
-                                <p class="description"><?php _e('Base price for façade cleaning services.', 'pro-clean-quotation'); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><?php _e('Façade Per SQM (€)', 'pro-clean-quotation'); ?></th>
-                            <td>
-                                <input type="number" name="facade_per_sqm" value="<?php echo esc_attr(Settings::get('facade_per_sqm', 2.50)); ?>" step="0.01" min="0" required>
-                                <p class="description"><?php _e('Price per square meter for façade cleaning.', 'pro-clean-quotation'); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><?php _e('Roof Base Rate (€)', 'pro-clean-quotation'); ?></th>
-                            <td>
-                                <input type="number" name="roof_base_rate" value="<?php echo esc_attr(Settings::get('roof_base_rate', 200.00)); ?>" step="0.01" min="0" required>
-                                <p class="description"><?php _e('Base price for roof cleaning services.', 'pro-clean-quotation'); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><?php _e('Roof Per SQM (€)', 'pro-clean-quotation'); ?></th>
-                            <td>
-                                <input type="number" name="roof_per_sqm" value="<?php echo esc_attr(Settings::get('roof_per_sqm', 3.00)); ?>" step="0.01" min="0" required>
-                                <p class="description"><?php _e('Price per square meter for roof cleaning.', 'pro-clean-quotation'); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
                             <th><?php _e('Minimum Quote Value (€)', 'pro-clean-quotation'); ?></th>
                             <td>
                                 <input type="number" name="minimum_quote_value" value="<?php echo esc_attr(Settings::get('minimum_quote_value', 100.00)); ?>" step="0.01" min="0" required>
