@@ -24,7 +24,7 @@ $service_data = [
     'name' => $is_edit ? $service->getName() : '',
     'description' => $is_edit ? $service->getDescription() : '',
     'category_id' => $is_edit ? $service->getCategoryId() : 0,
-    'duration' => $is_edit ? $service->getDuration() : 60,
+    'duration' => $is_edit ? $service->getDuration() : null,
     'base_rate' => $is_edit ? $service->getBaseRate() : 20.00,
     'rate_per_sqm' => $is_edit ? $service->getRatePerSqm() : 20.00,
     'rate_per_linear_meter' => $is_edit ? $service->getRatePerLinearMeter() : 5.00,
@@ -135,14 +135,14 @@ $custom_fields = $is_edit ? $service->getCustomFields() : [];
                     <table class="form-table">
                         <tr>
                             <th scope="row">
-                                <label for="duration"><?php _e('Duration', 'pro-clean-quotation'); ?> <span class="required">*</span></label>
+                                <label for="duration"><?php _e('Duration', 'pro-clean-quotation'); ?></label>
                             </th>
                             <td>
-                                <input type="number" name="duration" id="duration" 
-                                       value="<?php echo esc_attr($service_data['duration']); ?>" 
-                                       class="small-text" min="15" step="15" required>
+                                <input type="number" name="duration" id="duration"
+                                       value="<?php echo esc_attr($service_data['duration']); ?>"
+                                       class="small-text" min="15" step="15">
                                 <span><?php _e('minutes', 'pro-clean-quotation'); ?></span>
-                                <p class="description"><?php _e('Default duration for this service in minutes.', 'pro-clean-quotation'); ?></p>
+                                <p class="description"><?php _e('Default duration for this service in minutes (optional).', 'pro-clean-quotation'); ?></p>
                             </td>
                         </tr>
                         
@@ -442,7 +442,7 @@ $custom_fields = $is_edit ? $service->getCustomFields() : [];
                         </div>
                         
                         <div class="pcq-preview-details">
-                            <div><strong><?php _e('Duration:', 'pro-clean-quotation'); ?></strong> <span id="preview-duration"><?php echo $service_data['duration']; ?></span> min</div>
+                            <div><strong><?php _e('Duration:', 'pro-clean-quotation'); ?></strong> <span id="preview-duration"><?php echo $service_data['duration'] ?? '-'; ?></span><?php echo $service_data['duration'] ? ' min' : ''; ?></div>
                             <div><strong><?php _e('Call-out Fee:', 'pro-clean-quotation'); ?></strong> €<span id="preview-base-rate"><?php echo number_format($service_data['base_rate'], 2); ?></span></div>
                             <div><strong><?php _e('Rate/sqm:', 'pro-clean-quotation'); ?></strong> €<span id="preview-rate-per-sqm"><?php echo number_format($service_data['rate_per_sqm'], 2); ?></span></div>
                             <div><strong><?php _e('Rate/linear m:', 'pro-clean-quotation'); ?></strong> €<span id="preview-rate-linear"><?php echo number_format($service_data['rate_per_linear_meter'], 2); ?></span></div>

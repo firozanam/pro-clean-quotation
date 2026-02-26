@@ -137,7 +137,7 @@ class CalendarPage {
                                 <select id="appointment-service" name="service_id" required>
                                     <option value=""><?php _e('Select Service', 'pro-clean-quotation'); ?></option>
                                     <?php foreach ($services as $service): ?>
-                                        <option value="<?php echo $service->getId(); ?>" data-duration="<?php echo $service->getDuration(); ?>" data-color="<?php echo esc_attr($service->getColor()); ?>">
+                                        <option value="<?php echo $service->getId(); ?>" data-duration="<?php echo $service->getDuration() ?? 0; ?>" data-color="<?php echo esc_attr($service->getColor()); ?>">
                                             <?php echo esc_html($service->getName()); ?>
                                         </option>
                                     <?php endforeach; ?>

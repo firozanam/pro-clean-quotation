@@ -162,12 +162,13 @@ $employees = \ProClean\Quotation\Models\Employee::getAll(true);
                                 <select name="service_id" id="service_id" class="regular-text" required>
                                     <option value=""><?php _e('Select Service', 'pro-clean-quotation'); ?></option>
                                     <?php foreach ($services as $service): ?>
-                                        <option value="<?php echo $service->getId(); ?>" 
-                                                data-duration="<?php echo $service->getDuration(); ?>"
+                                        <?php $svcDur = $service->getDuration(); ?>
+                                        <option value="<?php echo $service->getId(); ?>"
+                                                data-duration="<?php echo $svcDur ?? 0; ?>"
                                                 data-price="<?php echo $service->getPrice(); ?>"
                                                 <?php selected($appointment_data['service_id'], $service->getId()); ?>>
-                                            <?php echo esc_html($service->getName()); ?> 
-                                            (<?php echo $service->getDuration(); ?> min - €<?php echo number_format($service->getPrice(), 2); ?>)
+                                            <?php echo esc_html($service->getName()); ?>
+                                            (<?php echo $svcDur !== null ? $svcDur . ' min' : 'No duration'; ?> - €<?php echo number_format($service->getPrice(), 2); ?>)
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

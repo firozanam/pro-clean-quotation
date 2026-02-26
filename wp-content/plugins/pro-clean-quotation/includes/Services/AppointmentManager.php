@@ -165,7 +165,7 @@ class AppointmentManager {
         }
         
         // Generate time slots
-        $duration = $service->getDuration();
+        $duration = $service->getDuration() ?? 60; // Default to60 minutes if not set
         $buffer_before = $service->getBufferTimeBefore();
         $buffer_after = $service->getBufferTimeAfter();
         

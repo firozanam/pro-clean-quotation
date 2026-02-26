@@ -1533,7 +1533,7 @@ class AdminMenu {
                 'name' => sanitize_text_field($data['name'] ?? ''),
                 'description' => sanitize_textarea_field($data['description'] ?? ''),
                 'category_id' => intval($data['category_id'] ?? 0) ?: null,
-                'duration' => max(15, intval($data['duration'] ?? 60)),
+                'duration' => $data['duration'] !== '' && $data['duration'] !== null ? max(15, intval($data['duration'])) : null,
                 'base_rate' => max(0, floatval($data['base_rate'] ?? 20.00)),
                 'rate_per_sqm' => max(0, floatval($data['rate_per_sqm'] ?? 20.00)),
                 'rate_per_linear_meter' => max(0, floatval($data['rate_per_linear_meter'] ?? 5.00)),

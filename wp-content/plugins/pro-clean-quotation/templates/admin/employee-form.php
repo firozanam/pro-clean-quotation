@@ -195,7 +195,7 @@ if ($is_edit && $employee->getId()) {
                                         <?php echo esc_html($service->getName()); ?>
                                     </span>
                                     <small class="pcq-service-details">
-                                        <?php echo $service->getDuration(); ?> min • €<?php echo number_format($service->getPrice(), 2); ?>
+                                        <?php $dur = $service->getDuration(); echo $dur !== null ? $dur . ' min • ' : ''; ?>€<?php echo number_format($service->getPrice(), 2); ?>
                                     </small>
                                 </label>
                                 <?php endforeach; ?>

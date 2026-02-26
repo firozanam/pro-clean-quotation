@@ -423,9 +423,9 @@ class QuoteCalculator {
         }
         
         return [
-            'base_rate' => $service->getBaseRate() ?: $defaults['base_rate'],
-            'rate_per_sqm' => $service->getRatePerSqm() ?: $defaults['rate_per_sqm'],
-            'rate_per_linear_meter' => $service->getRatePerLinearMeter() ?: $defaults['rate_per_linear_meter']
+            'base_rate' => $service->getBaseRate() ?? $defaults['base_rate'],
+            'rate_per_sqm' => $service->getRatePerSqm() ?? $defaults['rate_per_sqm'],
+            'rate_per_linear_meter' => $service->getRatePerLinearMeter() ?? $defaults['rate_per_linear_meter']
         ];
     }
     

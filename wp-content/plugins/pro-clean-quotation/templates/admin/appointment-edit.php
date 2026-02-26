@@ -55,12 +55,13 @@ $assigned_employee_ids = $appointment->getEmployeeIds();
                                 <select name="service_id" id="service_id" class="regular-text" required>
                                     <option value=""><?php _e('Select Service', 'pro-clean-quotation'); ?></option>
                                     <?php foreach ($services as $svc): ?>
-                                        <option value="<?php echo $svc->getId(); ?>" 
+                                        <?php $svcDur = $svc->getDuration(); ?>
+                                        <option value="<?php echo $svc->getId(); ?>"
                                                 <?php selected($appointment->getServiceId(), $svc->getId()); ?>
-                                                data-duration="<?php echo $svc->getDuration(); ?>"
+                                                data-duration="<?php echo $svcDur ?? 0; ?>"
                                                 data-price="<?php echo $svc->getPrice(); ?>">
                                             <?php echo esc_html($svc->getName()); ?>
-                                            (<?php echo $svc->getDuration(); ?> min - €<?php echo number_format($svc->getPrice(), 2); ?>)
+                                            (<?php echo $svcDur !== null ? $svcDur . ' min' : 'No duration'; ?> - €<?php echo number_format($svc->getPrice(), 2); ?>)
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

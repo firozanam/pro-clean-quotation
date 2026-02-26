@@ -61,7 +61,7 @@ if (!defined('ABSPATH')) {
                                 <span class="pcq-service-name-text"><?php echo esc_html($service->getName()); ?></span>
                             </td>
                             <td>
-                                <?php echo $service->getDuration(); ?> <?php _e('min', 'pro-clean-quotation'); ?>
+                                <?php $duration = $service->getDuration(); echo $duration !== null ? $duration . ' ' . __('min', 'pro-clean-quotation') : '—'; ?>
                             </td>
                             <td>
                                 €<?php echo number_format($service->getBaseRate(), 2); ?>

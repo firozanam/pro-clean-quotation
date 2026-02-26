@@ -92,14 +92,16 @@ defined('ABSPATH') || exit;
                                                     <?php echo esc_html($service->getName()); ?>
                                                 </td>
                                             </tr>
+                                            <?php $svcDuration = $service->getDuration(); if ($svcDuration !== null): ?>
                                             <tr>
                                                 <td style="padding: 8px 0; color: #7f8c8d; font-size: 14px;">
                                                     <?php echo esc_html__('Duration:', 'pro-clean-quotation'); ?>
                                                 </td>
                                                 <td align="right" style="padding: 8px 0; color: #2c3e50; font-size: 14px;">
-                                                    <?php echo esc_html($service->getDuration()); ?> <?php echo esc_html__('minutes', 'pro-clean-quotation'); ?>
+                                                    <?php echo esc_html($svcDuration); ?> <?php echo esc_html__('minutes', 'pro-clean-quotation'); ?>
                                                 </td>
                                             </tr>
+                                            <?php endif; ?>
                                             <?php endif; ?>
                                             
                                             <?php if ($employee): ?>

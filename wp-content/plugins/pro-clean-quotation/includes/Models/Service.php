@@ -158,7 +158,7 @@ class Service {
         return [
             'name' => '%s',
             'description' => '%s',
-            'duration' => '%d',
+            'duration' => '%d',  // Can be null for optional scheduling
             'price' => '%f',
             'base_rate' => '%f',
             'rate_per_sqm' => '%f',
@@ -215,8 +215,10 @@ class Service {
         return $this->data['description'] ?? '';
     }
     
-    public function getDuration(): int {
-        return (int) ($this->data['duration'] ?? 60);
+    public function getDuration(): ?int {
+        return isset($this->data['duration']) && $this->data['duration'] !== null && $this->data['duration'] !== ''
+            ? (int) $this->data['duration']
+            : null;
     }
     
     public function getPrice(): float {
@@ -288,7 +290,7 @@ class Service {
         $this->data['description'] = $description;
     }
     
-    public function setDuration(int $duration): void {
+    public function setDuration(?int $duration): void {
         $this->data['duration'] = $duration;
     }
     
